@@ -1,5 +1,6 @@
 import { addDoc, collection, getDocs, limit, onSnapshot, orderBy, query, where, Timestamp, serverTimestamp } from "firebase/firestore";
 import { db } from "./firebase";
+import { successMsg, errorMsg } from '../firebase/utils';
 
 export async function getUser(user, password) {
     try {
@@ -34,5 +35,47 @@ export async function getUser(user, password) {
     } catch (error) {
         console.error("Error fetching users:", error);
         return [];
+    }
+}
+
+export async function addData(table, arrayData) {
+    try {
+        const IdStored = arrayData.user;
+        if (IdStored) {
+            const collectionRef = collection(db, table)
+            await addDoc(collectionRef, {
+                ...arrayData,
+                user: IdStored,
+                createdAt: serverTimestamp()
+            })
+            return successMsg('Successfully Added.')
+        }
+        else
+            return errorMsg('No LoggedIn User Found.')
+    } catch (error) {
+        console.log(error)
+        return errorMsg('check console for error.')
+    }
+}
+
+export async function getData(table, setIncomeData, isFetching) {
+    // console.log('Fetching data from table:', table);
+    try {
+        const q = query(
+            collection(db, table),
+            orderBy("createdAt", "desc")
+        );
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const newData = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+            setIncomeData(newData);
+            isFetching(false);
+        });
+        return unsubscribe;
+    } catch (error) {
+        console.error("Error fetching data: ", error);
+        throw new Error("Failed to fetch data");
     }
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { login,refreshPage } from "../firebase/controller";
+import { login } from "../firebase/controller";
 
 export default function LoginPage({onLogin}) {
     const [user, setUser] = useState('');

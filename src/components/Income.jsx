@@ -1,0 +1,134 @@
+import React, { useState, useEffect } from 'react';
+import { income, getIncome } from '../firebase/controller';
+
+const Income = () => {
+    const [formDescription, setFormDescription] = useState('');
+    const [formExpected, setFormExpected] = useState('');
+    const [formAmount, setFormAmount] = useState('');
+    const [date, setDate] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [isFetching, setIsFetching] = useState(true);
+    const [incomeData, setIncomeData] = useState([]);
+
+    const fromSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        if (!formDescription || !formExpected || !formAmount)
+            return console.log('Please fill up all fields.')
+        income({
+            description: formDescription,
+            expected: parseInt(formExpected),
+            amount: parseInt(formAmount),
+            date: date,
+        }).then((response) => {
+            // console.log(response)
+            if (response && response.status == 'success') {
+                console.log('Income Added.')
+            } else {
+                console.log('Failed to Add Income.')
+            }
+        }).catch((error) => { console.log(error) }).finally(() => {
+            clearForm()
+            setLoading(false)
+        })
+    }
+    useEffect(() => {
+        const a = async () => {
+            setIsFetching(true);
+            return await getIncome(setIncomeData, setIsFetching);
+        }
+
+        return () => a();
+    }, []);
+
+    return (
+        <>
+            <div>
+                <form onSubmit={fromSubmit}>
+                    <div>
+                        <label htmlFor="descIncome">description:</label>
+                        <input
+                            type="text"
+                            id="descIncome"
+                            value={formDescription}
+                            onChange={(e) => setFormDescription(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="expectedIncome">Expected:</label>
+                        <input
+                            type='text'
+                            id="expectedIncome"
+                            value={formExpected}
+                            onChange={(e) => setFormExpected(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="amountIncome">Amount:</label>
+                        <input
+                            type="text"
+                            id="amountIncome"
+                            value={formAmount}
+                            onChange={(e) => setFormAmount(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="incomeDate">Date:</label>
+                        <input
+                            type="date"
+                            id="incomeDate"
+                            value={date}
+                            onChange={(e) => setDate(e.target.value)}
+                        />
+                    </div>
+                    <button disabled={loading}>{loading ? 'Loading' : 'Submit'}</button>
+                </form>
+                <button onClick={clearForm}>Clear Form</button>
+            </div>
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            {/* <th>#</th> */}
+                            <th>Description</th>
+                            <th>Expected</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {isFetching ? (
+                            <tr><td colSpan={6}>Loading...</td></tr>
+                        ) : (
+                            incomeData.map((item, index) => (
+                                <tr key={index + 1}>
+                                    <td>{item.description}</td>
+                                    <td>{item.expected}</td>
+                                    <td>{item.amount}</td>
+                                    <td>{item.date}</td>
+                                    <td><button>Delete</button></td>
+                                </tr>
+                            ))
+                        )}
+                    </tbody>
+                </table>
+                <div>
+                    {
+                        console.log("Fetching Income : ", isFetching)
+                    }
+                </div>
+            </div>
+        </>
+    )
+
+    function clearForm() {
+        setFormDescription('')
+        setFormExpected('')
+        setFormAmount('')
+        setDate('')
+        setLoading(false)
+    }
+}
+export default Income;
+
