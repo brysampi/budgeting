@@ -121,6 +121,35 @@ export async function getExpenses(setExpensesData, isFetching) {
         console.error("Error fetching expenses:", error);
     }
 }
+// -------------------------- Expenses Tracker -----------------------------------
+export async function expensesTracker(arrayData) {
+    if (arrayData.description === '' || arrayData.category === 0 || arrayData.amount === 0) {
+        return errorMsg('Please fill up all fields.')
+    }
+    if (arrayData.amount <= 0) {
+        return errorMsg("Amount Can't be negative.")
+    }
+    if (arrayData.expected <= 0) {
+        return errorMsg("expected can't be negative.")
+    }
+    if (!getUserID())
+        return errorMsg('No LoggedIn User Found.')
+    const data = {
+        category: arrayData.category,
+        description: arrayData.description,
+        amount: arrayData.amount,
+        date: arrayData.date,
+        user: getUserID(),
+    }
+    return await addData('expensesTracker', data)
+}
+export async function getExpensesTracker(setExpensesData, isFetching) {
+    try {
+        await getData('expensesTracker', setExpensesData, isFetching);
+    } catch (error) {
+        console.error("Error fetching Expenses Tracker:", error);
+    }
+}
 // --------------------------------------------------------------------
 export function logout() {
     Object.keys(Cookies.get()).forEach(cookieName => {

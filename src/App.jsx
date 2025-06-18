@@ -5,6 +5,7 @@ import Income from './components/Income';
 import Cookies from 'js-cookie';
 import Bills from './components/Bills';
 import Expenses from './components/Expenses';
+import ExpensesTracker from './components/ExpensesTracker';
 function App() {
   const [loggedIn, setLoggedIn] = useState(Cookies.get('logged_status') ? true : false)
   const handleLogin = () => {
@@ -23,13 +24,13 @@ function App() {
       {/* <Income /> */}
       ------------- Bills -------------
       <br />
-      <Bills />
+      {/* <Bills /> */}
       ------------- Expenses -------------
       <br />
-      <Expenses />
+      {/* <Expenses /> */}
       ------------- Expenses Tracker -------------
       <br />
-      {/* <AddExpensesTracker /> */}
+      <ExpensesTracker />
     </>
   )
 }
