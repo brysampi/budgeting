@@ -3,6 +3,7 @@ import Login from './components/LoginPage'
 import Logout from './components/Logout'
 import Income from './components/Income';
 import Cookies from 'js-cookie';
+import Bills from './components/Bills';
 function App() {
   const [loggedIn, setLoggedIn] = useState(Cookies.get('logged_status') ? true : false)
   const handleLogin = () => {
@@ -21,7 +22,7 @@ function App() {
       <Income />
       ------------- Bills -------------
       <br />
-      {/* <AddBiils /> */}
+      <Bills />
       ------------- Expenses -------------
       <br />
       {/* <AddExpenses /> */}

@@ -61,11 +61,11 @@ export async function addData(table, arrayData) {
 export async function getData(table, setIncomeData, isFetching) {
     // console.log('Fetching data from table:', table);
     try {
-        const q = query(
+        const que = query(
             collection(db, table),
             orderBy("createdAt", "desc")
         );
-        const unsubscribe = onSnapshot(q, (snapshot) => {
+        const unsubscribe = onSnapshot(que, (snapshot) => {
             const newData = snapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data(),

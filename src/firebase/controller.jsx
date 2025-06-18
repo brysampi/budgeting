@@ -1,7 +1,8 @@
 import { getUser } from '../firebase/model';
 import Cookies from 'js-cookie';
-import { successMsg, errorMsg } from '../firebase/utils';
+import { successMsg, errorMsg, getUserID } from '../firebase/utils';
 import { addData, getData } from '../firebase/model';
+
 
 export async function login(user, password) {
     return await getUser(user, password).then((response) => {
@@ -41,36 +42,86 @@ export async function income(arrayData) {
         return errorMsg("Amount Can't be negative.")
     }
     if (arrayData.expected <= 0) {
-        return errorMsg("Amount can't be negative.")
+        return errorMsg("expected can't be negative.")
     }
-    const IdStored = Cookies.get('id') ? Cookies.get('id') : null;
-    if (!IdStored)
+    if (!getUserID())
         return errorMsg('No LoggedIn User Found.')
     const data = {
         description: arrayData.description,
         expected: arrayData.expected,
         amount: arrayData.amount,
         date: arrayData.date,
-        user: IdStored,
+        user: getUserID(),
     }
     return await addData('income', data)
 }
-export async function getIncome(setIncomeData,isFetching) {
-    // console.log('Fetching income data...');
+export async function getIncome(setIncomeData, isFetching) {
     try {
-        const data = await getData('income', setIncomeData,isFetching);
-        // console.log('data',data);  // Log the fetched data
-        // console.log(JSON.stringify(data, null, 2));
-        // data.map((doc: any) => {
-        //   console.log(doc);
-        // })
-        // return data;
+        await getData('income', setIncomeData, isFetching);
     } catch (error) {
         console.error("Error fetching income:", error);
     }
 }
-
-
+// -------------------------- Bills -----------------------------------
+export async function bills(arrayData) {
+    console.log(getUserID())
+    if (arrayData.description === '' || arrayData.dueDate === '' || arrayData.budget === 0 || arrayData.actual === 0 || arrayData.date === '') {
+        return errorMsg('Please fill up all fields.')
+    }
+    if (arrayData.actual <= 0) {
+        return errorMsg("Actual Can't be negative.")
+    }
+    if (arrayData.budget <= 0) {
+        return errorMsg("Budget can't be negative.")
+    }
+    if (!getUserID())
+        return errorMsg('No LoggedIn User Found.')
+    const data = {
+        description: arrayData.description,
+        budget: arrayData.budget,
+        actual: arrayData.actual,
+        date: arrayData.date,
+        user: getUserID().toString(),
+    }
+    return await addData('bills', data)
+}
+export async function getBills(setBillsData, isFetching) {
+    try {
+        await getData('bills', setBillsData, isFetching);
+    } catch (error) {
+        console.error("Error fetching bills:", error);
+    }
+}
+// -------------------------- Expenses -----------------------------------
+export async function bills(arrayData) {
+    console.log(getUserID())
+    if (arrayData.description === '' || arrayData.budget === 0 || arrayData.actual === 0 || arrayData.date === '') {
+        return errorMsg('Please fill up all fields.')
+    }
+    if (arrayData.actual <= 0) {
+        return errorMsg("Actual Can't be negative.")
+    }
+    if (arrayData.budget <= 0) {
+        return errorMsg("Budget can't be negative.")
+    }
+    if (!getUserID())
+        return errorMsg('No LoggedIn User Found.')
+    const data = {
+        description: arrayData.description,
+        budget: arrayData.budget,
+        actual: arrayData.actual,
+        date: arrayData.date,
+        user: getUserID().toString(),
+    }
+    return await addData('bills', data)
+}
+export async function getBills(setBillsData, isFetching) {
+    try {
+        await getData('bills', setBillsData, isFetching);
+    } catch (error) {
+        console.error("Error fetching bills:", error);
+    }
+}
 // --------------------------------------------------------------------
 export function logout() {
     Object.keys(Cookies.get()).forEach(cookieName => {
@@ -79,5 +130,3 @@ export function logout() {
     // refreshPage();
     return successMsg('Logout successful');
 }
-// -------------------------- Utils -----------------------------------
-
