@@ -58,7 +58,7 @@ export async function addData(table, arrayData) {
     }
 }
 
-export async function getData(table, setIncomeData, isFetching) {
+export async function getData(table, setData, isFetching) {
     // console.log('Fetching data from table:', table);
     try {
         const que = query(
@@ -70,7 +70,9 @@ export async function getData(table, setIncomeData, isFetching) {
                 id: doc.id,
                 ...doc.data(),
             }));
-            setIncomeData(newData);
+            if (!newData.length === 0) {
+                setData([]);
+            }else setData(newData);
             isFetching(false);
         });
         return unsubscribe;

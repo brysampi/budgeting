@@ -93,8 +93,7 @@ export async function getBills(setBillsData, isFetching) {
     }
 }
 // -------------------------- Expenses -----------------------------------
-export async function bills(arrayData) {
-    console.log(getUserID())
+export async function expenses(arrayData) {
     if (arrayData.description === '' || arrayData.budget === 0 || arrayData.actual === 0 || arrayData.date === '') {
         return errorMsg('Please fill up all fields.')
     }
@@ -107,19 +106,19 @@ export async function bills(arrayData) {
     if (!getUserID())
         return errorMsg('No LoggedIn User Found.')
     const data = {
-        description: arrayData.description,
+        category: arrayData.category,
         budget: arrayData.budget,
         actual: arrayData.actual,
         date: arrayData.date,
-        user: getUserID().toString(),
+        user: getUserID(),
     }
-    return await addData('bills', data)
+    return await addData('expenses', data)
 }
-export async function getBills(setBillsData, isFetching) {
+export async function getExpenses(setExpensesData, isFetching) {
     try {
-        await getData('bills', setBillsData, isFetching);
+        await getData('expenses', setExpensesData, isFetching);
     } catch (error) {
-        console.error("Error fetching bills:", error);
+        console.error("Error fetching expenses:", error);
     }
 }
 // --------------------------------------------------------------------

@@ -4,6 +4,7 @@ import Logout from './components/Logout'
 import Income from './components/Income';
 import Cookies from 'js-cookie';
 import Bills from './components/Bills';
+import Expenses from './components/Expenses';
 function App() {
   const [loggedIn, setLoggedIn] = useState(Cookies.get('logged_status') ? true : false)
   const handleLogin = () => {
@@ -13,19 +14,19 @@ function App() {
   const handleLogout = () => {
     setLoggedIn(false); // Switch back to Login component
   };
-  if (loggedIn===false) return <Login onLogin={handleLogin} />
+  if (loggedIn === false) return <Login onLogin={handleLogin} />
   return (
     <>
       <Logout onLogout={handleLogout} /><br />
       ------------- Income -------------
       <br />
-      <Income />
+      {/* <Income /> */}
       ------------- Bills -------------
       <br />
       <Bills />
       ------------- Expenses -------------
       <br />
-      {/* <AddExpenses /> */}
+      <Expenses />
       ------------- Expenses Tracker -------------
       <br />
       {/* <AddExpensesTracker /> */}

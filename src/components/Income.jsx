@@ -101,15 +101,17 @@ const Income = () => {
                         {isFetching ? (
                             <tr><td colSpan={6}>Loading...</td></tr>
                         ) : (
-                            incomeData.map((item, index) => (
-                                <tr key={index + 1}>
-                                    <td>{item.description}</td>
-                                    <td>{item.expected}</td>
-                                    <td>{item.amount}</td>
-                                    <td>{item.date}</td>
-                                    <td><button>Delete</button></td>
-                                </tr>
-                            ))
+                            incomeData.length === 0 ?
+                                <tr><td colSpan={6}>No Data Found</td></tr> :
+                                incomeData.map((item, index) => (
+                                    <tr key={index + 1}>
+                                        <td>{item.description}</td>
+                                        <td>{item.expected}</td>
+                                        <td>{item.amount}</td>
+                                        <td>{item.date}</td>
+                                        <td><button>Delete</button></td>
+                                    </tr>
+                                ))
                         )}
                     </tbody>
                 </table>

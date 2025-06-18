@@ -1,33 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { bills, getBills } from '../firebase/controller';
+import { expenses, getExpenses } from '../firebase/controller';
 
-const Bills = () => {
-    const [formDescription, setFormDescription] = useState('');
-    const [dueDate, setDueDate] = useState('');
+const Expenses = () => {
+    const [formCategory, setFormCategory] = useState('');
     const [formBudget, setFormBudget] = useState('');
     const [formActual, setFormActual] = useState('');
     const [date, setDate] = useState('');
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
-    const [billsData, setBillsData] = useState([]);
+    const [expensesData, setExpensesData] = useState([]);
 
     const fromSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        if (!formDescription || !dueDate || !formBudget || !formActual)
+        if (!formCategory || !formBudget || !formActual)
             return console.log('Please fill up all fields.')
-        bills({
-            description: formDescription,
-            dueDate: dueDate,
+        expenses({
+            category: formCategory,
             budget: parseInt(formBudget),
             actual: parseInt(formActual),
             date: date,
         }).then((response) => {
             // console.log(response)
             if (response && response.status == 'success') {
-                console.log('Bill Added.')
+                console.log('Expense Added.')
             } else {
-                console.log('Failed to Add Bill.')
+                console.log('Failed to Add Expense.')
             }
         }).catch((error) => { console.log(error) }).finally(() => {
             clearForm()
@@ -37,7 +35,7 @@ const Bills = () => {
     useEffect(() => {
         const a = async () => {
             setIsFetching(true);
-            return await getBills(setBillsData, setIsFetching);
+            await getExpenses(setExpensesData, setIsFetching);
         }
 
         return () => a();
@@ -48,46 +46,37 @@ const Bills = () => {
             <div>
                 <form onSubmit={fromSubmit}>
                     <div>
-                        <label htmlFor="descBills">description:</label>
+                        <label htmlFor="expensesCategory">Category:</label>
                         <input
                             type="text"
-                            id="descBills"
-                            value={formDescription}
-                            onChange={(e) => setFormDescription(e.target.value)}
+                            id="expensesCategory"
+                            value={formCategory}
+                            onChange={(e) => setFormCategory(e.target.value)}
                         />
                     </div>
                     <div>
-                        <label htmlFor="billsDueDate">Due-Date:</label>
-                        <input
-                            type="date"
-                            id="billsDueDate"
-                            value={dueDate}
-                            onChange={(e) => setDueDate(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="budgetBills">Budget:</label>
+                        <label htmlFor="expensesBudget">Budget:</label>
                         <input
                             type='text'
-                            id="budgetBills"
+                            id="expensesBudget"
                             value={formBudget}
                             onChange={(e) => setFormBudget(e.target.value)}
                         />
                     </div>
                     <div>
-                        <label htmlFor="actualBills">Actual:</label>
+                        <label htmlFor="expensesActual">Actual:</label>
                         <input
                             type="text"
-                            id="actualBills"
+                            id="expensesActual"
                             value={formActual}
                             onChange={(e) => setFormActual(e.target.value)}
                         />
                     </div>
                     <div>
-                        <label htmlFor="BillsDate">Date:</label>
+                        <label htmlFor="expensesDate">Date:</label>
                         <input
                             type="date"
-                            id="BillsDate"
+                            id="expensesDate"
                             value={date}
                             onChange={(e) => setDate(e.target.value)}
                         />
@@ -101,10 +90,10 @@ const Bills = () => {
                     <thead>
                         <tr>
                             {/* <th>#</th> */}
-                            <th>Description</th>
-                            <th>Due-Date</th>
+                            <th>Category</th>
                             <th>Budget</th>
                             <th>Actual</th>
+                            <th>Remaining</th>
                             <th>Date</th>
                             <th>Action</th>
                         </tr>
@@ -113,14 +102,14 @@ const Bills = () => {
                         {isFetching ? (
                             <tr><td colSpan={6}>Loading...</td></tr>
                         ) : (
-                            billsData.length === 0 ?
+                            expensesData.length === 0 ?
                                 <tr><td colSpan={6}>No Data Found</td></tr> :
-                                billsData.map((item, index) => (
+                                expensesData.map((item, index) => (
                                     <tr key={index + 1}>
-                                        <td>{item.description}</td>
-                                        <td>{item.dueDate}</td>
+                                        <td>{item.category}</td>
                                         <td>{item.budget}</td>
                                         <td>{item.actual}</td>
+                                        <td>{item.budget - item.actual}</td>
                                         <td>{item.date}</td>
                                         <td><button>Delete</button></td>
                                     </tr>
@@ -138,13 +127,12 @@ const Bills = () => {
     )
 
     function clearForm() {
-        setFormDescription('')
-        setDueDate('')
+        setFormCategory('')
         setFormBudget('')
         setFormActual('')
         setDate('')
         setLoading(false)
     }
 }
-export default Bills;
+export default Expenses;
 
