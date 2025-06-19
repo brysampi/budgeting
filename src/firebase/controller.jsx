@@ -48,7 +48,9 @@ export async function income(arrayData) {
 }
 export async function getIncome(setIncomeData, isFetching) {
     try {
-        await getData('income', setIncomeData, isFetching);
+        await getData('income', setIncomeData, isFetching).catch(error => {
+            console.error("🔥 Fetch error:", error);
+        });
     } catch (error) {
         console.error("Error fetching income:", error);
     }
@@ -77,7 +79,9 @@ export async function bills(arrayData) {
 }
 export async function getBills(setBillsData, isFetching) {
     try {
-        await getData('bills', setBillsData, isFetching);
+        await getData('bills', setBillsData, isFetching).catch(error => {
+            console.error("🔥 Fetch error:", error);
+        });
     } catch (error) {
         console.error("Error fetching bills:", error);
     }
@@ -106,7 +110,9 @@ export async function expenses(arrayData) {
 }
 export async function getExpenses(setExpensesData, isFetching) {
     try {
-        await getData('expenses', setExpensesData, isFetching);
+        await getData('expenses', setExpensesData, isFetching).catch(error => {
+            console.error("🔥 Fetch error:", error);
+        });
     } catch (error) {
         console.error("Error fetching expenses:", error);
     }

@@ -69,9 +69,11 @@ export async function getData(table, setData, isFetching) {
                 id: doc.id,
                 ...doc.data(),
             }));
-            if (!newData.length === 0) {
-                setData([]);
-            } else setData(newData);
+            if (newData.length === 0) {
+                setData([]); // no documents
+            } else {
+                setData(newData); // set fetched docs
+            }
             isFetching(false);
         });
         return unsubscribe;
