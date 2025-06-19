@@ -21,13 +21,14 @@ const Income = () => {
             amount: parseInt(formAmount),
             date: date,
         }).then((response) => {
-            // console.log(response)
-            if (response && response.status == 'success') {
+            if (response && response.status == 'success')
                 console.log('Income Added.')
-            } else {
+            else
                 console.log('Failed to Add Income.')
-            }
-        }).catch((error) => { console.log(error) }).finally(() => {
+
+        }).catch((error) => {
+            console.log(error)
+        }).finally(() => {
             clearForm()
             setLoading(false)
         })
@@ -93,7 +94,7 @@ const Income = () => {
                             <th>Description</th>
                             <th>Expected</th>
                             <th>Amount</th>
-                            <th>Date</th>
+                            {/* <th>Date</th> */}
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -108,18 +109,13 @@ const Income = () => {
                                         <td>{item.description}</td>
                                         <td>{item.expected}</td>
                                         <td>{item.amount}</td>
-                                        <td>{item.date}</td>
+                                        {/* <td>{item.date}</td> */}
                                         <td><button>Delete</button></td>
                                     </tr>
                                 ))
                         )}
                     </tbody>
                 </table>
-                <div>
-                    {
-                        console.log("Fetching Income : ", isFetching)
-                    }
-                </div>
             </div>
         </>
     )

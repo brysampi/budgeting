@@ -1,29 +1,20 @@
 import { getUser } from '../firebase/model';
 import Cookies from 'js-cookie';
 import { successMsg, errorMsg, getUserID } from '../firebase/utils';
-import { addData, getData } from '../firebase/model';
+import { addData, getData, getExpensesTrackerData } from '../firebase/model';
 
 
 export async function login(user, password) {
     return await getUser(user, password).then((response) => {
-        // console.log(response)
-        // console.log(!response ? 'No Response' : response)
         Object.entries(response).forEach(([key, value]) => {
-            // console.log(`${key}: ${value}`);
             Cookies.set(key, value);
         });
         Cookies.set('logged_status', true);
-        if (response && response.id) {
-            // console.log('Successful LogIn.');
-            // console.log(response)
-            // logSession(true)
-            // window.location.reload();
-            // refreshPage();
+        if (response && response.id)
             return successMsg('Login successful', response);
-        } else {
-            // console.log('Failed to Login.');
+        else
             return errorMsg('Login failed. Please check your username and password.');
-        }
+
     }).catch((error) => {
         // console.error('Error during login:', error);
         return errorMsg('An error occurred during login');
@@ -35,15 +26,15 @@ export async function login(user, password) {
 }
 // -------------------------- Income -----------------------------------
 export async function income(arrayData) {
-    if (arrayData.description === '' || arrayData.expected === 0 || arrayData.amount === 0) {
+    if (arrayData.description === '' || arrayData.expected === 0 || arrayData.amount === 0)
         return errorMsg('Please fill up all fields.')
-    }
-    if (arrayData.amount <= 0) {
+
+    if (arrayData.amount <= 0)
         return errorMsg("Amount Can't be negative.")
-    }
-    if (arrayData.expected <= 0) {
+
+    if (arrayData.expected <= 0)
         return errorMsg("expected can't be negative.")
-    }
+
     if (!getUserID())
         return errorMsg('No LoggedIn User Found.')
     const data = {
@@ -64,16 +55,15 @@ export async function getIncome(setIncomeData, isFetching) {
 }
 // -------------------------- Bills -----------------------------------
 export async function bills(arrayData) {
-    console.log(getUserID())
-    if (arrayData.description === '' || arrayData.dueDate === '' || arrayData.budget === 0 || arrayData.actual === 0 || arrayData.date === '') {
+    if (arrayData.description === '' || arrayData.dueDate === '' || arrayData.budget === 0 || arrayData.actual === 0 || arrayData.date === '')
         return errorMsg('Please fill up all fields.')
-    }
-    if (arrayData.actual <= 0) {
+
+    if (arrayData.actual <= 0)
         return errorMsg("Actual Can't be negative.")
-    }
-    if (arrayData.budget <= 0) {
+
+    if (arrayData.budget <= 0)
         return errorMsg("Budget can't be negative.")
-    }
+
     if (!getUserID())
         return errorMsg('No LoggedIn User Found.')
     const data = {
@@ -94,15 +84,15 @@ export async function getBills(setBillsData, isFetching) {
 }
 // -------------------------- Expenses -----------------------------------
 export async function expenses(arrayData) {
-    if (arrayData.description === '' || arrayData.budget === 0 || arrayData.actual === 0 || arrayData.date === '') {
+    if (arrayData.description === '' || arrayData.budget === 0 || arrayData.actual === 0 || arrayData.date === '')
         return errorMsg('Please fill up all fields.')
-    }
-    if (arrayData.actual <= 0) {
+
+    if (arrayData.actual <= 0)
         return errorMsg("Actual Can't be negative.")
-    }
-    if (arrayData.budget <= 0) {
+
+    if (arrayData.budget <= 0)
         return errorMsg("Budget can't be negative.")
-    }
+
     if (!getUserID())
         return errorMsg('No LoggedIn User Found.')
     const data = {
@@ -123,15 +113,15 @@ export async function getExpenses(setExpensesData, isFetching) {
 }
 // -------------------------- Expenses Tracker -----------------------------------
 export async function expensesTracker(arrayData) {
-    if (arrayData.description === '' || arrayData.category === 0 || arrayData.amount === 0) {
+    if (arrayData.description === '' || arrayData.category === '' || arrayData.amount === 0)
         return errorMsg('Please fill up all fields.')
-    }
-    if (arrayData.amount <= 0) {
+
+    if (arrayData.amount <= 0)
         return errorMsg("Amount Can't be negative.")
-    }
-    if (arrayData.expected <= 0) {
+
+    if (arrayData.expected <= 0)
         return errorMsg("expected can't be negative.")
-    }
+
     if (!getUserID())
         return errorMsg('No LoggedIn User Found.')
     const data = {
@@ -145,7 +135,7 @@ export async function expensesTracker(arrayData) {
 }
 export async function getExpensesTracker(setExpensesData, isFetching) {
     try {
-        await getData('expensesTracker', setExpensesData, isFetching);
+        await getExpensesTrackerData(setExpensesData, isFetching);
     } catch (error) {
         console.error("Error fetching Expenses Tracker:", error);
     }

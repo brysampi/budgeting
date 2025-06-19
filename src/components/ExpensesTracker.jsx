@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { expensesTracker, getExpensesTracker } from '../firebase/controller';
+import { expensesTracker, getExpensesTracker, getExpenses } from '../firebase/controller';
 
 const ExpensesTracker = () => {
     const [formCategory, setFormCategory] = useState('');
@@ -8,12 +8,18 @@ const ExpensesTracker = () => {
     const [date, setDate] = useState('');
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
+    const [isFetchingTracker, setIsFetchingTracker] = useState(true);
     const [expensesTrackerData, setExpensesTrackerData] = useState([]);
+    const [expensesData, setExpensesData] = useState([]);
 
     const fromSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        if (!formDescription || !formCategory || !formAmount)
+        console.log('formCategory:', formCategory);
+        console.log('formDescription:', formDescription);
+        console.log('formAmount:', formAmount);
+        console.log('date:', date);
+        if (!formDescription || !formCategory || !formAmount || !date)
             return console.log('Please fill up all fields.')
         expensesTracker({
             category: formCategory,
@@ -21,24 +27,33 @@ const ExpensesTracker = () => {
             amount: parseInt(formAmount),
             date: date,
         }).then((response) => {
-            // console.log(response)
-            if (response && response.status == 'success') {
+            if (response && response.status == 'success')
                 console.log('Expenses Tracker Added.')
-            } else {
+            else
                 console.log('Failed to Add Expenses Tracker.')
-            }
-        }).catch((error) => { console.log(error) }).finally(() => {
+
+        }).catch((error) => {
+            console.log(error)
+        }).finally(() => {
             clearForm()
             setLoading(false)
         })
     }
     useEffect(() => {
+        let unsubscribe;
         const a = async () => {
             setIsFetching(true);
-            return await getExpensesTracker(setExpensesTrackerData, setIsFetching);
+            await getExpenses(setExpensesData, setIsFetching);
+            unsubscribe = await getExpensesTracker(setExpensesTrackerData, setIsFetchingTracker);
         }
-
-        return () => a();
+        a();
+        return () => {
+            clearForm();
+            if (unsubscribe) {
+                unsubscribe(); // 👈 stop listening to Firestore updates
+                console.log('Unsubscribed from expensesTracker listener');
+            }
+        };
     }, []);
 
     return (
@@ -47,12 +62,35 @@ const ExpensesTracker = () => {
                 <form onSubmit={fromSubmit}>
                     <div>
                         <label htmlFor="expensesTrackerCategory">Category:</label>
-                        <input
+                        {/* <input
                             type='text'
                             id="expensesTrackerCategory"
                             value={formCategory}
                             onChange={(e) => setFormCategory(e.target.value)}
-                        />
+                        /> */}
+                        <select
+                            value={formCategory}
+                            onChange={(e) => { setFormCategory(e.target.value) }}
+                            name="expensesTrackerCategory"
+                            id="expensesTrackerCategory"
+                        >
+                            {isFetching ? (
+                                <option value="" disabled>Fetching Data Please Wait. . .</option>
+                            ) : (
+                                expensesData.length === 0 ?
+                                    <option value="" disabled>No Data Found</option> :
+                                    expensesData.map((item, index) => (
+                                        // <tr key={index + 1}>
+                                        //     <td>{item.category}</td>
+                                        //     <td>{item.description}</td>
+                                        //     <td>{item.amount}</td>
+                                        //     {/* <td>{item.date}</td> */}
+                                        //     <td><button>Delete</button></td>
+                                        // </tr>
+                                        <option value={item.id} key={index + 1}>{item.category}</option>
+                                    ))
+                            )}
+                        </select>
                     </div>
                     <div>
                         <label htmlFor="expensesTrackerDescription">Description:</label>
@@ -93,12 +131,12 @@ const ExpensesTracker = () => {
                             <th>Category</th>
                             <th>Description</th>
                             <th>Amount</th>
-                            <th>Date</th>
+                            {/* <th>Date</th> */}
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {isFetching ? (
+                        {isFetchingTracker ? (
                             <tr><td colSpan={6}>Loading...</td></tr>
                         ) : (
                             expensesTrackerData.length === 0 ?
@@ -108,18 +146,13 @@ const ExpensesTracker = () => {
                                         <td>{item.category}</td>
                                         <td>{item.description}</td>
                                         <td>{item.amount}</td>
-                                        <td>{item.date}</td>
+                                        {/* <td>{item.date}</td> */}
                                         <td><button>Delete</button></td>
                                     </tr>
                                 ))
                         )}
                     </tbody>
                 </table>
-                <div>
-                    {
-                        console.log("Fetching Income : ", isFetching)
-                    }
-                </div>
             </div>
         </>
     )

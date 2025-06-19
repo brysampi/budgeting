@@ -1,4 +1,4 @@
-import { addDoc, collection, getDocs, limit, onSnapshot, orderBy, query, where, Timestamp, serverTimestamp } from "firebase/firestore";
+import { addDoc, collection, getDocs, limit, onSnapshot, orderBy, query, where, Timestamp, serverTimestamp, getDoc, doc } from "firebase/firestore";
 import { db } from "./firebase";
 import { successMsg, errorMsg } from '../firebase/utils';
 
@@ -59,7 +59,6 @@ export async function addData(table, arrayData) {
 }
 
 export async function getData(table, setData, isFetching) {
-    // console.log('Fetching data from table:', table);
     try {
         const que = query(
             collection(db, table),
@@ -72,9 +71,67 @@ export async function getData(table, setData, isFetching) {
             }));
             if (!newData.length === 0) {
                 setData([]);
-            }else setData(newData);
+            } else setData(newData);
             isFetching(false);
         });
+        return unsubscribe;
+    } catch (error) {
+        console.error("Error fetching data: ", error);
+        throw new Error("Failed to fetch data");
+    }
+}
+export async function getExpensesTrackerData(setData, isFetching) {
+    try {
+        const que = query(
+            collection(db, 'expensesTracker'),
+            orderBy("createdAt", "desc")
+        );
+
+        const unsubscribe = onSnapshot(que, async (snapshot) => {
+            const promises = snapshot.docs.map(async (docSnap) => {
+                const docData = docSnap.data();
+                if (docData.category) {
+                    try {
+                        const categoryRef = doc(db, "expenses", docData.category);
+                        const categorySnap = await getDoc(categoryRef);
+
+                        if (categorySnap.exists())
+                            docData.category = categorySnap.data().category;
+                        else
+                            docData.category = "Unknown Category";
+
+                        // ---------------------------------------------------------------------------
+                        // const categoryRef = collection(db, "expenses");
+
+                        // const que = query(
+                        //     categoryRef,
+                        //     where("id", "==", docData.category),
+                        // );
+                        // const categorySnap = await getDocs(que);
+                        // console.log("Category Snap: ", categorySnap);
+                        // if (categorySnap.empty) {
+                        //     docData.category = categorySnap.data().category;
+                        // } else {
+                        //     docData.category = "Unknown Category";
+                        // }
+                    } catch (err) {
+                        console.error("Error fetching category:", err);
+                        docData.category = "No Data";
+                    }
+                }
+
+                return {
+                    id: docSnap.id,
+                    ...docData,
+                };
+            });
+
+            const resolvedData = await Promise.all(promises);
+            // console.log("Fetched Data: ", resolvedData);
+            setData(resolvedData);
+            isFetching(false);
+        });
+
         return unsubscribe;
     } catch (error) {
         console.error("Error fetching data: ", error);

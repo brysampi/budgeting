@@ -20,17 +20,11 @@ export default function LoginPage({onLogin}) {
         }
         try {
             const test = await login(user, pass)
-            console.log(test.status)
-            if (test.status === 'success' && test.boolean && test.data) {
-                // console.log('Login successful:', test.data);
-                // test.data && Object.entries(test.data).forEach(([key, value]) => {
-                //     console.log(`${key}: ${value}`);
-                //     // localStorage.setItem(key, value);
-                // })
+            if (test.status === 'success' && test.boolean && test.data) 
                 onLogin();
-            } else {
+             else 
                 console.log('Login failed:', test.message);
-            }
+            
             clearForm()
         } catch (error) {
             clearForm()

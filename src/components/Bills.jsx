@@ -23,13 +23,14 @@ const Bills = () => {
             actual: parseInt(formActual),
             date: date,
         }).then((response) => {
-            // console.log(response)
-            if (response && response.status == 'success') {
+            if (response && response.status == 'success')
                 console.log('Bill Added.')
-            } else {
+            else
                 console.log('Failed to Add Bill.')
-            }
-        }).catch((error) => { console.log(error) }).finally(() => {
+
+        }).catch((error) => {
+            console.log(error)
+        }).finally(() => {
             clearForm()
             setLoading(false)
         })
@@ -105,7 +106,7 @@ const Bills = () => {
                             <th>Due-Date</th>
                             <th>Budget</th>
                             <th>Actual</th>
-                            <th>Date</th>
+                            {/* <th>Date</th> */}
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -121,18 +122,13 @@ const Bills = () => {
                                         <td>{item.dueDate}</td>
                                         <td>{item.budget}</td>
                                         <td>{item.actual}</td>
-                                        <td>{item.date}</td>
+                                        {/* <td>{item.date}</td> */}
                                         <td><button>Delete</button></td>
                                     </tr>
                                 ))
                         )}
                     </tbody>
                 </table>
-                {/* <div>
-                    {
-                        console.log("Fetching Bills : ", isFetching)
-                    }
-                </div> */}
             </div>
         </>
     )
