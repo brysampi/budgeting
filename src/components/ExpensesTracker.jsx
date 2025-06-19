@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { expensesTracker, getExpensesTracker, getExpenses } from '../firebase/controller';
+import { expensesTracker, getExpensesTracker, getExpenses, deleteDataController } from '../firebase/controller';
 
 const ExpensesTracker = () => {
     const [formCategory, setFormCategory] = useState('');
@@ -147,7 +147,7 @@ const ExpensesTracker = () => {
                                         <td>{item.description}</td>
                                         <td>{item.amount}</td>
                                         {/* <td>{item.date}</td> */}
-                                        <td><button>Delete</button></td>
+                                        <td><button onClick={async () => { await deleteDataController('expensesTracker', item.id) }}>Delete</button></td>
                                     </tr>
                                 ))
                         )}

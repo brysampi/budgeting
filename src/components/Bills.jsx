@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { bills, getBills } from '../firebase/controller';
+import { bills, getBills, deleteDataController } from '../firebase/controller';
 
 const Bills = () => {
     const [formDescription, setFormDescription] = useState('');
@@ -123,7 +123,7 @@ const Bills = () => {
                                         <td>{item.budget}</td>
                                         <td>{item.actual}</td>
                                         {/* <td>{item.date}</td> */}
-                                        <td><button>Delete</button></td>
+                                        <td><button onClick={async () => { await deleteDataController('bills', item.id) }}>Delete</button></td>
                                     </tr>
                                 ))
                         )}

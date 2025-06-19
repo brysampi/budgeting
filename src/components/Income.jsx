@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { income, getIncome } from '../firebase/controller';
+import { income, getIncome, deleteDataController } from '../firebase/controller';
 
 const Income = () => {
     const [formDescription, setFormDescription] = useState('');
@@ -110,7 +110,7 @@ const Income = () => {
                                         <td>{item.expected}</td>
                                         <td>{item.amount}</td>
                                         {/* <td>{item.date}</td> */}
-                                        <td><button>Delete</button></td>
+                                        <td><button onClick={async () => { await deleteDataController('income', item.id) }}>Delete</button></td>
                                     </tr>
                                 ))
                         )}

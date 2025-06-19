@@ -1,7 +1,7 @@
 import { getUser } from '../firebase/model';
 import Cookies from 'js-cookie';
 import { successMsg, errorMsg, getUserID } from '../firebase/utils';
-import { addData, getData, getExpensesTrackerData } from '../firebase/model';
+import { addData, getData, getExpensesTrackerData, deleteData } from '../firebase/model';
 
 
 export async function login(user, password) {
@@ -140,6 +140,7 @@ export async function getExpensesTracker(setExpensesData, isFetching) {
         console.error("Error fetching Expenses Tracker:", error);
     }
 }
+
 // --------------------------------------------------------------------
 export function logout() {
     Object.keys(Cookies.get()).forEach(cookieName => {
@@ -147,4 +148,15 @@ export function logout() {
     });
     // refreshPage();
     return successMsg('Logout successful');
+}
+export async function deleteDataController(table, id) {
+    await deleteData(table, id).then((response) => {
+        if (response && response.status === 'success') {
+            console.log('Data deleted successfully.');
+        } else {
+            console.log('Failed to delete data.');
+        }
+    }).catch((error) => {
+        console.error('Error deleting data:', error);
+    });
 }

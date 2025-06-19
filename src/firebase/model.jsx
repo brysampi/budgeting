@@ -1,4 +1,4 @@
-import { addDoc, collection, getDocs, limit, onSnapshot, orderBy, query, where, Timestamp, serverTimestamp, getDoc, doc } from "firebase/firestore";
+import { addDoc, collection, getDocs, limit, onSnapshot, orderBy, query, where, serverTimestamp, getDoc, doc, deleteDoc } from "firebase/firestore";
 import { db } from "./firebase";
 import { successMsg, errorMsg } from '../firebase/utils';
 
@@ -62,7 +62,7 @@ export async function getData(table, setData, isFetching) {
     try {
         const que = query(
             collection(db, table),
-            orderBy("createdAt", "desc")
+            orderBy("date", "desc")
         );
         const unsubscribe = onSnapshot(que, (snapshot) => {
             const newData = snapshot.docs.map(doc => ({
@@ -84,7 +84,7 @@ export async function getExpensesTrackerData(setData, isFetching) {
     try {
         const que = query(
             collection(db, 'expensesTracker'),
-            orderBy("createdAt", "desc")
+            orderBy("date", "desc")
         );
 
         const unsubscribe = onSnapshot(que, async (snapshot) => {
@@ -136,5 +136,15 @@ export async function getExpensesTrackerData(setData, isFetching) {
     } catch (error) {
         console.error("Error fetching data: ", error);
         throw new Error("Failed to fetch data");
+    }
+}
+export async function deleteData(table, id) {
+    try {
+        const docRef = doc(db, table, id);
+        await deleteDoc(docRef);
+        return successMsg('Successfully Deleted.')
+    } catch (error) {
+        console.error("Error deleting data:", error);
+        return errorMsg('Failed to delete data. Check console for error.')
     }
 }

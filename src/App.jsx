@@ -21,13 +21,13 @@ function App() {
       <Logout onLogout={handleLogout} /><br />
       ------------- Income -------------
       <br />
-      {/* <Income /> */}
+      <Income />
       ------------- Bills -------------
       <br />
-      {/* <Bills /> */}
+      <Bills />
       ------------- Expenses -------------
       <br />
-      {/* <Expenses /> */}
+      <Expenses />
       ------------- Expenses Tracker -------------
       <br />
       <ExpensesTracker />
