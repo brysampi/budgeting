@@ -16,7 +16,7 @@ const Savings = () => {
             return console.log('Please fill up all fields.')
         savings({
             description: formDescription,
-            amount: parseInt(formAmount),
+            amount: parseFloat(formAmount),
             date: date,
         }).then((response) => {
             if (response && response.status == 'success')

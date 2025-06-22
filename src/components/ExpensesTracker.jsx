@@ -24,7 +24,7 @@ const ExpensesTracker = () => {
         expensesTracker({
             category: formCategory,
             description: formDescription,
-            amount: parseInt(formAmount),
+            amount: parseFloat(formAmount),
             date: formDate,
         }).then((response) => {
             if (response && response.status == 'success')

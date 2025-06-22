@@ -17,8 +17,8 @@ const Income = () => {
             return console.log('Please fill up all fields.')
         income({
             description: formDescription,
-            expected: parseInt(formExpected),
-            amount: parseInt(formAmount),
+            expected: parseFloat(formExpected),
+            amount: parseFloat(formAmount),
             date: date,
         }).then((response) => {
             if (response && response.status == 'success')

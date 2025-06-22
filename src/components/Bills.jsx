@@ -19,8 +19,8 @@ const Bills = () => {
         bills({
             description: formDescription,
             dueDate: dueDate,
-            budget: parseInt(formBudget),
-            actual: parseInt(formActual),
+            budget: parseFloat(formBudget),
+            actual: parseFloat(formActual),
             date: date,
         }).then((response) => {
             if (response && response.status == 'success')
