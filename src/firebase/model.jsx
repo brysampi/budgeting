@@ -101,21 +101,6 @@ export async function getExpensesTrackerData(setData, isFetching) {
                             docData.category = categorySnap.data().category;
                         else
                             docData.category = "Unknown Category";
-
-                        // ---------------------------------------------------------------------------
-                        // const categoryRef = collection(db, "expenses");
-
-                        // const que = query(
-                        //     categoryRef,
-                        //     where("id", "==", docData.category),
-                        // );
-                        // const categorySnap = await getDocs(que);
-                        // console.log("Category Snap: ", categorySnap);
-                        // if (categorySnap.empty) {
-                        //     docData.category = categorySnap.data().category;
-                        // } else {
-                        //     docData.category = "Unknown Category";
-                        // }
                     } catch (err) {
                         console.error("Error fetching category:", err);
                         docData.category = "No Data";
@@ -138,6 +123,49 @@ export async function getExpensesTrackerData(setData, isFetching) {
     } catch (error) {
         console.error("Error fetching data: ", error);
         throw new Error("Failed to fetch data");
+    }
+}
+export async function getExpensesData(setExpensesData, isFetching) {
+    try {
+        const que = query(
+            collection(db, 'expenses'),
+            orderBy("date", "desc")
+        );
+        const unsubscribe = onSnapshot(que, async (snapshot) => {
+            const promises = snapshot.docs.map(async (docSnap) => {
+                const docData = docSnap.data();
+                if (!docSnap.exists()) {
+                    console.log("No such document!");
+                    return null;
+                } else {
+                    const expensesTrackerRef = collection(db, "expensesTracker");
+                    const que = query(
+                        expensesTrackerRef,
+                        where("category", "==", docSnap.id)
+                    );
+                    const querySnapshot = await getDocs(que);
+                    const expensesData = querySnapshot.docs.map((doc) => {
+                        if (!docData.actual)
+                            docData.actual = 0;
+                        docData.actual += doc.data().amount;
+                    });
+                    return {
+                        id: docSnap.id,
+                        ...docData,
+                    };
+                }
+            });
+            const resolvedData = await Promise.all(promises);
+            // console.log("Resolved Data: ", resolvedData);
+            setExpensesData(resolvedData)
+            isFetching(false);
+        });
+
+
+        return unsubscribe;
+    } catch (error) {
+        console.error("Error fetching expenses: ", error);
+        throw new Error("Failed to fetch expenses");
     }
 }
 export async function deleteData(table, id) {

@@ -1,7 +1,7 @@
 import { getUser } from '../firebase/model';
 import Cookies from 'js-cookie';
 import { successMsg, errorMsg, getUserID } from '../firebase/utils';
-import { addData, getData, getExpensesTrackerData, deleteData } from '../firebase/model';
+import { addData, getData, getExpensesTrackerData, deleteData, getExpensesData } from '../firebase/model';
 
 
 export async function login(user, password) {
@@ -88,11 +88,11 @@ export async function getBills(setBillsData, isFetching) {
 }
 // -------------------------- Expenses -----------------------------------
 export async function expenses(arrayData) {
-    if (arrayData.description === '' || arrayData.budget === 0 || arrayData.actual === 0 || arrayData.date === '')
+    if (arrayData.description === '' || arrayData.budget === 0 || arrayData.date === '')
         return errorMsg('Please fill up all fields.')
 
-    if (arrayData.actual <= 0)
-        return errorMsg("Actual Can't be negative.")
+    // if (arrayData.actual <= 0)
+    //     return errorMsg("Actual Can't be negative.")
 
     if (arrayData.budget <= 0)
         return errorMsg("Budget can't be negative.")
@@ -102,15 +102,28 @@ export async function expenses(arrayData) {
     const data = {
         category: arrayData.category,
         budget: arrayData.budget,
-        actual: arrayData.actual,
+        // actual: arrayData.actual,
         date: arrayData.date,
         user: getUserID(),
     }
+    // await getExpensesData('expenses', data);
     return await addData('expenses', data)
 }
+// export async function getExpenses(setExpensesData, isFetching) {
+//     try {
+//         await getData('expenses', setExpensesData, isFetching).catch(error => {
+//             console.error("🔥 Fetch error:", error);
+//         });
+//     } catch (error) {
+//         console.error("Error fetching expenses:", error);
+//     }
+// }
 export async function getExpenses(setExpensesData, isFetching) {
     try {
-        await getData('expenses', setExpensesData, isFetching).catch(error => {
+        // await getData('expenses', setExpensesData, isFetching).catch(error => {
+        //     console.error("🔥 Fetch error:", error);
+        // });
+        await getExpensesData(setExpensesData, isFetching).catch(error => {
             console.error("🔥 Fetch error:", error);
         });
     } catch (error) {
@@ -156,13 +169,14 @@ export function logout() {
     return successMsg('Logout successful');
 }
 export async function deleteDataController(table, id) {
-    await deleteData(table, id).then((response) => {
-        if (response && response.status === 'success') {
-            console.log('Data deleted successfully.');
-        } else {
-            console.log('Failed to delete data.');
-        }
-    }).catch((error) => {
-        console.error('Error deleting data:', error);
-    });
+    // await deleteData(table, id).then((response) => {
+    //     if (response && response.status === 'success') {
+    //         console.log('Data deleted successfully.');
+    //     } else {
+    //         console.log('Failed to delete data.');
+    //     }
+    // }).catch((error) => {
+    //     console.error('Error deleting data:', error);
+    // });
+    console.log('Delete is Working But Will Not Delete Data');
 }

@@ -4,7 +4,7 @@ import { expenses, getExpenses, deleteDataController } from '../firebase/control
 const Expenses = () => {
     const [formCategory, setFormCategory] = useState('');
     const [formBudget, setFormBudget] = useState('');
-    const [formActual, setFormActual] = useState('');
+    // const [formActual, setFormActual] = useState('');
     const [date, setDate] = useState('');
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
@@ -13,12 +13,12 @@ const Expenses = () => {
     const fromSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        if (!formCategory || !formBudget || !formActual)
+        if (!formCategory || !formBudget)
             return console.log('Please fill up all fields.')
         expenses({
             category: formCategory,
             budget: parseInt(formBudget),
-            actual: parseInt(formActual),
+            // actual: parseInt(formActual),
             date: date,
         }).then((response) => {
             if (response && response.status == 'success') {
@@ -64,7 +64,7 @@ const Expenses = () => {
                             onChange={(e) => setFormBudget(e.target.value)}
                         />
                     </div>
-                    <div>
+                    {/* <div>
                         <label htmlFor="expensesActual">Actual:</label>
                         <input
                             type="text"
@@ -72,7 +72,7 @@ const Expenses = () => {
                             value={formActual}
                             onChange={(e) => setFormActual(e.target.value)}
                         />
-                    </div>
+                    </div> */}
                     <div>
                         <label htmlFor="expensesDate">Date:</label>
                         <input

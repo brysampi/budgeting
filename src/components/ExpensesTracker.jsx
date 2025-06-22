@@ -5,7 +5,7 @@ const ExpensesTracker = () => {
     const [formCategory, setFormCategory] = useState('');
     const [formDescription, setFormDescription] = useState('');
     const [formAmount, setFormAmount] = useState('');
-    const [date, setDate] = useState('');
+    const [formDate, setFormDate] = useState('');
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [isFetchingTracker, setIsFetchingTracker] = useState(true);
@@ -18,14 +18,14 @@ const ExpensesTracker = () => {
         console.log('formCategory:', formCategory);
         console.log('formDescription:', formDescription);
         console.log('formAmount:', formAmount);
-        console.log('date:', date);
-        if (!formDescription || !formCategory || !formAmount || !date)
+        console.log('formDate:', formDate);
+        if (!formDescription || !formCategory || !formAmount || !formDate)
             return console.log('Please fill up all fields.')
         expensesTracker({
             category: formCategory,
             description: formDescription,
             amount: parseInt(formAmount),
-            date: date,
+            date: formDate,
         }).then((response) => {
             if (response && response.status == 'success')
                 console.log('Expenses Tracker Added.')
@@ -44,6 +44,8 @@ const ExpensesTracker = () => {
         const a = async () => {
             setIsFetching(true);
             await getExpenses(setExpensesData, setIsFetching);
+            // setFormCategory();
+
             unsubscribe = await getExpensesTracker(setExpensesTrackerData, setIsFetchingTracker);
         }
         a();
@@ -52,6 +54,7 @@ const ExpensesTracker = () => {
             if (unsubscribe) {
                 unsubscribe(); // 👈 stop listening to Firestore updates
                 console.log('Unsubscribed from expensesTracker listener');
+
             }
         };
     }, []);
@@ -70,10 +73,13 @@ const ExpensesTracker = () => {
                         /> */}
                         <select
                             value={formCategory}
-                            onChange={(e) => { setFormCategory(e.target.value) }}
+                            onChange={(e) => { console.log("Changing to:", e.target.value); setFormCategory(e.target.value); console.log("Selected Category:", formCategory); }}
                             name="expensesTrackerCategory"
                             id="expensesTrackerCategory"
                         >
+                            <option value="" disabled>
+                                Select a category
+                            </option>
                             {isFetching ? (
                                 <option value="" disabled>Fetching Data Please Wait. . .</option>
                             ) : (
@@ -115,8 +121,8 @@ const ExpensesTracker = () => {
                         <input
                             type="date"
                             id="expensesTrackerDate"
-                            value={date}
-                            onChange={(e) => setDate(e.target.value)}
+                            value={formDate}
+                            onChange={(e) => setFormDate(e.target.value)}
                         />
                     </div>
                     <button disabled={loading}>{loading ? 'Loading' : 'Submit'}</button>
@@ -161,7 +167,7 @@ const ExpensesTracker = () => {
         setFormDescription('')
         setFormCategory('')
         setFormAmount('')
-        setDate('')
+        setFormDate('')
         setLoading(false)
     }
 }
