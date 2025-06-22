@@ -159,6 +159,33 @@ export async function getExpensesTracker(setExpensesData, isFetching) {
         console.error("Error fetching Expenses Tracker:", error);
     }
 }
+// --------------------------------------------------------------------
+export async function savings(arrayData) {
+    if (arrayData.description === '' || arrayData.amount === 0)
+        return errorMsg('Please fill up all fields.')
+
+    if (arrayData.amount <= 0)
+        return errorMsg("Amount Can't be negative.")
+
+    if (!getUserID())
+        return errorMsg('No LoggedIn User Found.')
+    const data = {
+        description: arrayData.description,
+        amount: arrayData.amount,
+        date: arrayData.date,
+        user: getUserID(),
+    }
+    return await addData('savings', data)
+}
+export async function getSavings(setSavingsData, isFetching) {
+    try {
+        await getData('savings', setSavingsData, isFetching).catch(error => {
+            console.error("🔥 Fetch error:", error);
+        });
+    } catch (error) {
+        console.error("Error fetching savings:", error);
+    }
+}
 
 // --------------------------------------------------------------------
 export function logout() {
@@ -179,4 +206,13 @@ export async function deleteDataController(table, id) {
     //     console.error('Error deleting data:', error);
     // });
     console.log('Delete is Working But Will Not Delete Data');
+}
+// --------------------------------------------------------------------
+export async function collectedData() {
+    const remainingIncome = '';
+    const totalExpenses = '';
+    const totalBills = '';
+
+
+
 }

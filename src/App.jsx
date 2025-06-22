@@ -5,6 +5,7 @@ import Logout from './components/Logout'
 import Cookies from 'js-cookie';
 import SideNav from './components/SideNav';
 import Income from './components/Income';
+import Savings from './components/Savings';
 import Bills from './components/Bills';
 import Expenses from './components/Expenses';
 import ExpensesTracker from './components/ExpensesTracker';
@@ -34,6 +35,7 @@ function App() {
           <div className="main-content">
             <Routes>
               <Route path="/income" element={<Income />} />
+              <Route path="/savings" element={<Savings />} />
               <Route path="/bills" element={<Bills />} />
               <Route path="/expenses" element={<Expenses />} />
               <Route path="/expensestracker" element={<ExpensesTracker />} />

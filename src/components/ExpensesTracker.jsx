@@ -40,11 +40,15 @@ const ExpensesTracker = () => {
         })
     }
     useEffect(() => {
-        const returnExpensesTracker = async () => {
-            setIsFetchingTracker(true);
-            return await getExpensesTracker(setExpensesTrackerData, setIsFetchingTracker);
+        let unsubscribe;
+        const returnSavings = async () => {
+            setIsFetching(true);
+            await getExpenses(setExpensesData, setIsFetching);
+            // setFormCategory();
+            await getExpensesTracker(setExpensesTrackerData, setIsFetchingTracker);
+            clearForm();
         }
-        returnExpensesTracker();
+        returnSavings();
     }, []);
 
     return (

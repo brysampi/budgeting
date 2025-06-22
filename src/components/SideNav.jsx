@@ -5,6 +5,7 @@ export default function SideNav() {
             <h2>Nav</h2>
             <ul>
                 <li><Link to="/">Income</Link></li>
+                <li><Link to="/savings">Savings</Link></li>
                 <li><Link to="/bills">Bills</Link></li>
                 <li><Link to="/expenses">Expenses</Link></li>
                 <li><Link to="/expensestracker">Expenses Tracker</Link></li>
