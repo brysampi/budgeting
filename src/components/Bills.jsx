@@ -38,13 +38,8 @@ const Bills = () => {
     useEffect(() => {
         const returnBills = async () => {
             setIsFetching(true);
-            try {
-                return await getBills(setBillsData, setIsFetching);
-            } catch (error) {
-                console.log(error);
-            }
+            return await getBills(setBillsData, setIsFetching);
         }
-
         returnBills();
     }, []);
 

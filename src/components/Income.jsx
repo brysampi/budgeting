@@ -34,12 +34,11 @@ const Income = () => {
         })
     }
     useEffect(() => {
-        const a = async () => {
+        const returnIncome = async () => {
             setIsFetching(true);
             return await getIncome(setIncomeData, setIsFetching);
         }
-
-        return () => a();
+        returnIncome();
     }, []);
 
     return (

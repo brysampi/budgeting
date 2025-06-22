@@ -34,12 +34,12 @@ const Expenses = () => {
         })
     }
     useEffect(() => {
-        const a = async () => {
+        const returnExpenses = async () => {
             setIsFetching(true);
-            await getExpenses(setExpensesData, setIsFetching);
+            return await getExpenses(setExpensesData, setIsFetching);
         }
 
-        return () => a();
+        returnExpenses();
     }, []);
 
     return (

@@ -40,23 +40,11 @@ const ExpensesTracker = () => {
         })
     }
     useEffect(() => {
-        let unsubscribe;
-        const a = async () => {
-            setIsFetching(true);
-            await getExpenses(setExpensesData, setIsFetching);
-            // setFormCategory();
-
-            unsubscribe = await getExpensesTracker(setExpensesTrackerData, setIsFetchingTracker);
+        const returnExpensesTracker = async () => {
+            setIsFetchingTracker(true);
+            return await getExpensesTracker(setExpensesTrackerData, setIsFetchingTracker);
         }
-        a();
-        return () => {
-            clearForm();
-            if (unsubscribe) {
-                unsubscribe(); // 👈 stop listening to Firestore updates
-                console.log('Unsubscribed from expensesTracker listener');
-
-            }
-        };
+        returnExpensesTracker();
     }, []);
 
     return (
@@ -73,7 +61,7 @@ const ExpensesTracker = () => {
                         /> */}
                         <select
                             value={formCategory}
-                            onChange={(e) => { setFormCategory(e.target.value)}}
+                            onChange={(e) => { setFormCategory(e.target.value) }}
                             name="expensesTrackerCategory"
                             id="expensesTrackerCategory"
                         >
