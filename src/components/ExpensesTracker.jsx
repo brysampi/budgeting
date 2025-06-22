@@ -15,10 +15,10 @@ const ExpensesTracker = () => {
     const fromSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        console.log('formCategory:', formCategory);
-        console.log('formDescription:', formDescription);
-        console.log('formAmount:', formAmount);
-        console.log('formDate:', formDate);
+        // console.log('formCategory:', formCategory);
+        // console.log('formDescription:', formDescription);
+        // console.log('formAmount:', formAmount);
+        // console.log('formDate:', formDate);
         if (!formDescription || !formCategory || !formAmount || !formDate)
             return console.log('Please fill up all fields.')
         expensesTracker({
@@ -73,7 +73,7 @@ const ExpensesTracker = () => {
                         /> */}
                         <select
                             value={formCategory}
-                            onChange={(e) => { console.log("Changing to:", e.target.value); setFormCategory(e.target.value); console.log("Selected Category:", formCategory); }}
+                            onChange={(e) => { setFormCategory(e.target.value)}}
                             name="expensesTrackerCategory"
                             id="expensesTrackerCategory"
                         >
