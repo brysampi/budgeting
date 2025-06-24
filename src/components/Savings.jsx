@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { savings, getSavings } from '../firebase/controller';
+import { getTodayDate } from '../firebase/utils';
 
 const Savings = () => {
     const [formDescription, setFormDescription] = useState('');
     const [formAmount, setFormAmount] = useState('');
-    const [date, setDate] = useState('');
+    const [date, setDate] = useState(getTodayDate());
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [savingsData, setSavingsData] = useState([]);
@@ -66,7 +67,7 @@ const Savings = () => {
                         <input
                             type="date"
                             id="savingsDate"
-                            value={date}
+                            defaultValue={date}
                             onChange={(e) => setDate(e.target.value)}
                         />
                     </div>
@@ -96,7 +97,7 @@ const Savings = () => {
                                     <tr key={index + 1}>
                                         <td>{item.description}</td>
                                         {/* <td>{item.expected}</td> */}
-                                        <td>{item.amount}</td>
+                                        <td>{item.amount.toFixed(2)}</td>
                                         {/* <td>{item.date}</td> */}
                                         <td><button onClick={async () => { await deleteDataController('savings', item.id) }}>Delete</button></td>
                                     </tr>
@@ -111,7 +112,7 @@ const Savings = () => {
     function clearForm() {
         setFormDescription('')
         setFormAmount('')
-        setDate('')
+        setDate(getTodayDate())
         setLoading(false)
     }
 }

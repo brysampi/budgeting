@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { expensesTracker, getExpensesTracker, getExpenses, deleteDataController } from '../firebase/controller';
+import { getTodayDate,convertTimestamp } from '../firebase/utils';
+
 
 const ExpensesTracker = () => {
     const [formCategory, setFormCategory] = useState('');
     const [formDescription, setFormDescription] = useState('');
-    const [formAmount, setFormAmount] = useState('');
-    const [formDate, setFormDate] = useState('');
+    const [formPrice, setFormPrice] = useState('');
+    const [formDiscount, setFormDiscount] = useState('');
+    const [formDate, setFormDate] = useState(getTodayDate());
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [isFetchingTracker, setIsFetchingTracker] = useState(true);
@@ -17,14 +20,15 @@ const ExpensesTracker = () => {
         setLoading(true);
         // console.log('formCategory:', formCategory);
         // console.log('formDescription:', formDescription);
-        // console.log('formAmount:', formAmount);
+        // console.log('formPrice:', formPrice);
         // console.log('formDate:', formDate);
-        if (!formDescription || !formCategory || !formAmount || !formDate)
+        if (!formDescription || !formCategory || !formPrice || !formDate)
             return console.log('Please fill up all fields.')
         expensesTracker({
             category: formCategory,
             description: formDescription,
-            amount: parseFloat(formAmount),
+            price: parseFloat(formPrice),
+            discount: parseFloat(formDiscount),
             date: formDate,
         }).then((response) => {
             if (response && response.status == 'success')
@@ -100,12 +104,21 @@ const ExpensesTracker = () => {
                         />
                     </div>
                     <div>
-                        <label htmlFor="expensesTrackerAmount">Amount:</label>
+                        <label htmlFor="expensesTrackerPrice">Price:</label>
                         <input
                             type="text"
-                            id="expensesTrackerAmount"
-                            value={formAmount}
-                            onChange={(e) => setFormAmount(e.target.value)}
+                            id="expensesTrackerPrice"
+                            value={formPrice}
+                            onChange={(e) => setFormPrice(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="expensesTrackerDiscount">Discount:</label>
+                        <input
+                            type="text"
+                            id="expensesTrackerDiscount"
+                            value={formDiscount}
+                            onChange={(e) => setFormDiscount(e.target.value)}
                         />
                     </div>
                     <div>
@@ -128,7 +141,7 @@ const ExpensesTracker = () => {
                             {/* <th>#</th> */}
                             <th>Category</th>
                             <th>Description</th>
-                            <th>Amount</th>
+                            <th>Price</th>
                             {/* <th>Date</th> */}
                             <th>Action</th>
                         </tr>
@@ -143,8 +156,9 @@ const ExpensesTracker = () => {
                                     <tr key={index + 1}>
                                         <td>{item.category}</td>
                                         <td>{item.description}</td>
-                                        <td>{item.amount}</td>
+                                        <td>{item.amount.toFixed(2)}</td>
                                         {/* <td>{item.date}</td> */}
+                                        {/* <td>{convertTimestamp(item.date)}</td> */}
                                         <td><button onClick={async () => { await deleteDataController('expensesTracker', item.id) }}>Delete</button></td>
                                     </tr>
                                 ))
@@ -158,8 +172,9 @@ const ExpensesTracker = () => {
     function clearForm() {
         setFormDescription('')
         setFormCategory('')
-        setFormAmount('')
-        setFormDate('')
+        setFormPrice('')
+        setFormDiscount('')
+        setFormDate(getTodayDate())
         setLoading(false)
     }
 }

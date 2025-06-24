@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { expenses, getExpenses, deleteDataController } from '../firebase/controller';
+import { getTodayDate } from '../firebase/utils';
 
 const Expenses = () => {
     const [formCategory, setFormCategory] = useState('');
     const [formBudget, setFormBudget] = useState('');
     // const [formActual, setFormActual] = useState('');
-    const [date, setDate] = useState('');
+    const [date, setDate] = useState(getTodayDate());
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [expensesData, setExpensesData] = useState([]);
@@ -78,7 +79,7 @@ const Expenses = () => {
                         <input
                             type="date"
                             id="expensesDate"
-                            value={date}
+                            defaultValue={date}
                             onChange={(e) => setDate(e.target.value)}
                         />
                     </div>
@@ -108,9 +109,9 @@ const Expenses = () => {
                                 expensesData.map((item, index) => (
                                     <tr key={index + 1}>
                                         <td>{item.category}</td>
-                                        <td>{item.budget}</td>
-                                        <td>{item.actual}</td>
-                                        <td>{item.budget - item.actual}</td>
+                                        <td>{item.budget.toFixed(2)}</td>
+                                        <td>{!item.actual ? 0.00 : item.actual.toFixed(2)}</td>
+                                        <td>{!item.actual ? item.budget.toFixed(2) : (item.budget - item.actual).toFixed(2)}</td>
                                         {/* <td>{item.date}</td> */}
                                         <td><button onClick={async () => { await deleteDataController('expenses', item.id) }}>Delete</button></td>
                                     </tr>
@@ -126,7 +127,7 @@ const Expenses = () => {
         setFormCategory('')
         setFormBudget('')
         setFormActual('')
-        setDate('')
+        setDate(getTodayDate())
         setLoading(false)
     }
 }

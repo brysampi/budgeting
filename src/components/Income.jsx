@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { income, getIncome, deleteDataController } from '../firebase/controller';
+import { getTodayDate } from '../firebase/utils';
+
 
 const Income = () => {
     const [formDescription, setFormDescription] = useState('');
     const [formExpected, setFormExpected] = useState('');
     const [formAmount, setFormAmount] = useState('');
-    const [date, setDate] = useState('');
+    const [date, setDate] = useState(getTodayDate());
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [incomeData, setIncomeData] = useState([]);
@@ -77,7 +79,7 @@ const Income = () => {
                         <input
                             type="date"
                             id="incomeDate"
-                            value={date}
+                            defaultValue={date}
                             onChange={(e) => setDate(e.target.value)}
                         />
                     </div>
@@ -106,8 +108,8 @@ const Income = () => {
                                 incomeData.map((item, index) => (
                                     <tr key={index + 1}>
                                         <td>{item.description}</td>
-                                        <td>{item.expected}</td>
-                                        <td>{item.amount}</td>
+                                        <td>{item.expected.toFixed(2)}</td>
+                                        <td>{item.amount.toFixed(2)}</td>
                                         {/* <td>{item.date}</td> */}
                                         <td><button onClick={async () => { await deleteDataController('income', item.id) }}>Delete</button></td>
                                     </tr>
@@ -123,7 +125,7 @@ const Income = () => {
         setFormDescription('')
         setFormExpected('')
         setFormAmount('')
-        setDate('')
+        setDate(getTodayDate())
         setLoading(false)
     }
 }

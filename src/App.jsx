@@ -25,13 +25,13 @@ function App() {
   return (
     <>
       <Logout onLogout={handleLogout} /><br />
-      ------------- Income -------------
       <Router>
         <div className="app-container">
           {/* Side Navigation */}
           <SideNav />
 
           {/* Main Content Area */}
+
           <div className="main-content">
             <Routes>
               <Route path="/income" element={<Income />} />
@@ -42,6 +42,7 @@ function App() {
               <Route path="/" element={<Income />} /> {/* Default route */}
             </Routes>
           </div>
+          
         </div>
       </Router>
     </>

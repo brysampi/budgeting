@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { bills, getBills, deleteDataController } from '../firebase/controller';
+import { getTodayDate } from '../firebase/utils';
 
 const Bills = () => {
     const [formDescription, setFormDescription] = useState('');
     const [dueDate, setDueDate] = useState('');
     const [formBudget, setFormBudget] = useState('');
     const [formActual, setFormActual] = useState('');
-    const [date, setDate] = useState('');
+    const [date, setDate] = useState(getTodayDate());
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [billsData, setBillsData] = useState([]);
@@ -88,7 +89,7 @@ const Bills = () => {
                         <input
                             type="date"
                             id="BillsDate"
-                            value={date}
+                            defaultValue={date}
                             onChange={(e) => setDate(e.target.value)}
                         />
                     </div>
@@ -119,8 +120,8 @@ const Bills = () => {
                                     <tr key={index + 1}>
                                         <td>{item.description}</td>
                                         <td>{item.dueDate}</td>
-                                        <td>{item.budget}</td>
-                                        <td>{item.actual}</td>
+                                        <td>{item.budget.toFixed(2)}</td>
+                                        <td>{item.actual.toFixed(2)}</td>
                                         {/* <td>{item.date}</td> */}
                                         <td><button onClick={async () => { await deleteDataController('bills', item.id) }}>Delete</button></td>
                                     </tr>
@@ -137,7 +138,7 @@ const Bills = () => {
         setDueDate('')
         setFormBudget('')
         setFormActual('')
-        setDate('')
+        setDate(getTodayDate())
         setLoading(false)
     }
 }

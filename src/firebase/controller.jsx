@@ -1,7 +1,7 @@
 import { getUser } from '../firebase/model';
 import Cookies from 'js-cookie';
-import { successMsg, errorMsg, getUserID } from '../firebase/utils';
-import { addData, getData, getExpensesTrackerData, deleteData, getExpensesData } from '../firebase/model';
+import { successMsg, errorMsg, getUserID, convertDate } from '../firebase/utils';
+import { addData, getData, getExpensesTrackerData, deleteData, getExpensesData, getTotal } from '../firebase/model';
 
 
 export async function login(user, password) {
@@ -41,7 +41,7 @@ export async function income(arrayData) {
         description: arrayData.description,
         expected: arrayData.expected,
         amount: arrayData.amount,
-        date: arrayData.date,
+        date: convertDate(arrayData.date),
         user: getUserID(),
     }
     return await addData('income', data)
@@ -72,7 +72,7 @@ export async function bills(arrayData) {
         description: arrayData.description,
         budget: arrayData.budget,
         actual: arrayData.actual,
-        date: arrayData.date,
+        date: convertDate(arrayData.date),
         user: getUserID().toString(),
     }
     return await addData('bills', data)
@@ -103,7 +103,7 @@ export async function expenses(arrayData) {
         category: arrayData.category,
         budget: arrayData.budget,
         // actual: arrayData.actual,
-        date: arrayData.date,
+        date: convertDate(arrayData.date),
         user: getUserID(),
     }
     // await getExpensesData('expenses', data);
@@ -143,13 +143,18 @@ export async function expensesTracker(arrayData) {
 
     if (!getUserID())
         return errorMsg('No LoggedIn User Found.')
+
+    const discountPrice = !arrayData.discount || arrayData.discount === '' ? 0 : arrayData.discount;
     const data = {
         category: arrayData.category,
         description: arrayData.description,
-        amount: arrayData.amount,
-        date: arrayData.date,
+        price: arrayData.price,
+        discount: discountPrice,
+        amount: arrayData.price - discountPrice,
+        date: convertDate(arrayData.date),
         user: getUserID(),
     }
+    // console.log('data: ',data)
     return await addData('expensesTracker', data)
 }
 export async function getExpensesTracker(setExpensesData, isFetching) {
@@ -172,16 +177,17 @@ export async function savings(arrayData) {
     const data = {
         description: arrayData.description,
         amount: arrayData.amount,
-        date: arrayData.date,
+        date: convertDate(arrayData.date),
         user: getUserID(),
     }
     return await addData('savings', data)
 }
 export async function getSavings(setSavingsData, isFetching) {
     try {
-        await getData('savings', setSavingsData, isFetching).catch(error => {
-            console.error("🔥 Fetch error:", error);
-        });
+        await getData('savings', setSavingsData, isFetching)
+        // .catch(error => {
+        //     console.error("🔥 Fetch error:", error);
+        // });
     } catch (error) {
         console.error("Error fetching savings:", error);
     }
@@ -192,7 +198,6 @@ export function logout() {
     Object.keys(Cookies.get()).forEach(cookieName => {
         Cookies.remove(cookieName);
     });
-    // refreshPage();
     return successMsg('Logout successful');
 }
 export async function deleteDataController(table, id) {
@@ -205,14 +210,56 @@ export async function deleteDataController(table, id) {
     // }).catch((error) => {
     //     console.error('Error deleting data:', error);
     // });
-    console.log('Delete is Working But Will Not Delete Data');
+    console.log('Delete is Working But Will Not Delete in Production.');
 }
 // --------------------------------------------------------------------
 export async function collectedData() {
-    const remainingIncome = '';
-    const totalExpenses = '';
-    const totalBills = '';
+    let totalIncome = 0, totalSavings = 0, totalBills = 0, totalExpenses = 0;
+    let remainingIncome = 0;
 
+    const database = ['income', 'savings', 'bills', 'expensesTracker']
 
+    for (const items of database) {
+        const fetch = await getTotal(items, '2025-06-01')
+        fetch.forEach(data => {
+            if (items == 'income')
+                totalIncome += data.amount
 
+            if (items == 'savings')
+                totalSavings += data.amount
+
+            if (items == 'bills')
+                totalBills += data.actual
+
+            if (items == 'expensesTracker')
+                totalExpenses += data.amount
+        })
+    }
+
+    remainingIncome = totalIncome - totalSavings - totalBills - totalExpenses;
+
+    const dataArray = {
+        remainingIncome: remainingIncome,
+        totalIncome: totalIncome,
+        totalSavings: totalSavings,
+        totalBills: totalBills,
+        totalExpenses: totalExpenses,
+    }
+    console.log(dataArray)
+    // return await collectedDataInput(dataArray)
+
+}
+export async function collectedDataInput(arrayData) {
+    if (!getUserID())
+        return errorMsg('No LoggedIn User Found.')
+    const data = {
+        remainingIncome: arrayData.description,
+        totalExpenses: arrayData.amount,
+        totalBills: arrayData.date,
+        totalSavings: arrayData.date,
+
+        date: arrayData.date,
+        user: getUserID(),
+    }
+    return await addData('collectedData', data)
 }
