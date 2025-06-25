@@ -1,6 +1,6 @@
 import { addDoc, collection, getDocs, limit, onSnapshot, orderBy, query, where, serverTimestamp, getDoc, doc, deleteDoc } from "firebase/firestore";
 import { db } from "./firebase";
-import { successMsg, errorMsg, getMonthRangeFromInput } from '../firebase/utils';
+import { successMsg, errorMsg, getMonthRangeFromInput, getUserID } from '../firebase/utils';
 
 export async function getUser(user, password) {
     try {
@@ -58,11 +58,16 @@ export async function addData(table, arrayData) {
     }
 }
 
-export async function getData(table, setData, isFetching) {
+export async function getDataRealTime(table, setData, isFetching, inputDate) {
     try {
+        const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
         const que = query(
             collection(db, table),
-            orderBy("date", "desc")
+            where("user", "==", getUserID()),
+            where("date", ">=", startOfMonth),
+            where("date", "<=", endOfMonth),
+            orderBy("date", "desc"),
+            orderBy("createdAt", "desc"),
         );
         const unsubscribe = onSnapshot(que, async (snapshot) => {
             const promises = snapshot.docs.map(async (docSnap) => ({
@@ -80,11 +85,16 @@ export async function getData(table, setData, isFetching) {
         throw new Error("Failed to fetch data");
     }
 }
-export async function getExpensesData(setExpensesData, isFetching) {
+export async function getExpensesDataRealTime(setExpensesData, isFetching, inputDate) {
     try {
+        const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
         const que = query(
             collection(db, 'expenses'),
-            orderBy("date", "desc")
+            where("user", "==", getUserID()),
+            where("date", ">=", startOfMonth),
+            where("date", "<=", endOfMonth),
+            orderBy("date", "desc"),
+            orderBy("createdAt", "desc"),
         );
         const unsubscribe = onSnapshot(que, async (snapshot) => {
             const promises = snapshot.docs.map(async (docSnap) => {
@@ -114,6 +124,7 @@ export async function getExpensesData(setExpensesData, isFetching) {
             // console.log("Resolved Data: ", resolvedData);
             setExpensesData(resolvedData)
             isFetching(false);
+            return resolvedData
         });
 
 
@@ -123,12 +134,16 @@ export async function getExpensesData(setExpensesData, isFetching) {
         throw new Error("Failed to fetch expenses");
     }
 }
-//--------------------------------------------------------------------
-export async function getExpensesTrackerData(setData, isFetching) {
+export async function getExpensesTrackerDataRealTime(setData, isFetching, inputDate) {
     try {
+        const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
         const que = query(
             collection(db, 'expensesTracker'),
-            orderBy("createdAt", "desc")
+            where("user", "==", getUserID()),
+            where("date", ">=", startOfMonth),
+            where("date", "<=", endOfMonth),
+            orderBy("date", "desc"),
+            orderBy("createdAt", "desc"),
         );
 
         const unsubscribe = onSnapshot(que, async (snapshot) => {
@@ -168,17 +183,40 @@ export async function getExpensesTrackerData(setData, isFetching) {
         throw new Error("Failed to fetch data");
     }
 }
-export async function getTotal(table, inputDate) {
+export async function getCollectedDataRealTime(table, setData, isFetching) {
+    try {
+        const que = query(
+            collection(db, table),
+            where("user", "==", getUserID()),
+            orderBy("date", "desc"),
+        );
+        const unsubscribe = onSnapshot(que, async (snapshot) => {
+            const promises = snapshot.docs.map(async (docSnap) => ({
+                id: docSnap.id,
+                ...docSnap.data(),
+            }));
+            const resolvedData = await Promise.all(promises);
+            setData(resolvedData);
+            isFetching(false);
+            return resolvedData;
+        });
+        return unsubscribe;
+    } catch (error) {
+        console.error("Error fetching data: ", error);
+        throw new Error("Failed to fetch data");
+    }
+}
+export async function getData(table, inputDate) {
     try {
         const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
         const usersRef = collection(db, table);
         const que = query(
             usersRef,
+            where("user", "==", getUserID()),
             where("date", ">=", startOfMonth),
-            where("date", "<=", endOfMonth)
-            // where("username),
-            // where("password", "==", password),
-            // limit(1)
+            where("date", "<=", endOfMonth),
+            orderBy("date", "desc"),
+            orderBy("createdAt", "desc"),
         );
         const querySnapshot = await getDocs(que);
         // console.log(querySnapshot.docs)
@@ -189,16 +227,7 @@ export async function getTotal(table, inputDate) {
             };
         })
         const resolvedData = await Promise.all(promises);
-        // console.log(resolvedData)
         return resolvedData;
-        // const query = querySnapshot.forEach((test) => {
-        //     return {
-        //         id: test.id,
-        //         ...test.data(),
-        //     }
-        // })
-        // console.log(query)
-        // return query;
     } catch (error) {
         console.error("Error fetching: ", error);
         return [];

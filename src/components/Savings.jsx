@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { savings, getSavings } from '../firebase/controller';
+import { savings, getSavings, deleteDataController } from '../firebase/controller';
 import { getTodayDate } from '../firebase/utils';
+import { useParams, useNavigate } from 'react-router-dom';
+
+
 
 const Savings = () => {
+    const { paramMonth } = useParams();
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (!paramMonth) {
+            navigate('/'); // Redirect to home if paramMonth is missing
+        }
+    }, [paramMonth, navigate]);
     const [formDescription, setFormDescription] = useState('');
     const [formAmount, setFormAmount] = useState('');
     const [date, setDate] = useState(getTodayDate());
@@ -13,7 +23,7 @@ const Savings = () => {
     const fromSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        if (!formDescription  || !formAmount)
+        if (!formDescription || !formAmount)
             return console.log('Please fill up all fields.')
         savings({
             description: formDescription,
@@ -35,7 +45,7 @@ const Savings = () => {
     useEffect(() => {
         const returnSavings = async () => {
             setIsFetching(true);
-            return await getSavings(setSavingsData, setIsFetching);
+            return await getSavings(setSavingsData, setIsFetching, paramMonth);
         }
         returnSavings();
     }, []);

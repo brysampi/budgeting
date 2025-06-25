@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { income, getIncome, deleteDataController } from '../firebase/controller';
 import { getTodayDate } from '../firebase/utils';
+import { useParams, useNavigate } from 'react-router-dom';
+
 
 
 const Income = () => {
+    const { paramMonth } = useParams();
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (!paramMonth) {
+            navigate('/'); // Redirect to home if paramMonth is missing
+        }
+    }, [paramMonth, navigate]);
     const [formDescription, setFormDescription] = useState('');
     const [formExpected, setFormExpected] = useState('');
     const [formAmount, setFormAmount] = useState('');
@@ -11,6 +20,7 @@ const Income = () => {
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [incomeData, setIncomeData] = useState([]);
+
 
     const fromSubmit = async (e) => {
         e.preventDefault();
@@ -38,7 +48,7 @@ const Income = () => {
     useEffect(() => {
         const returnIncome = async () => {
             setIsFetching(true);
-            return await getIncome(setIncomeData, setIsFetching);
+            return await getIncome(setIncomeData, setIsFetching, paramMonth);
         }
         returnIncome();
     }, []);

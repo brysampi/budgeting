@@ -17,12 +17,12 @@ export function getTodayDate() {
     return new Date().toISOString().split('T')[0];
 }
 // Convert the date for timestamp date
-export function convertDate(date) {
+export function convertToTimeStamp(date) {
     const dateObject = new Date(date); // JS Date object
     const timestamp = Timestamp.fromDate(dateObject); // Firestore Timestamp
     return timestamp;
 }
-export function convertTimestamp(date) {
+export function convertToDate(date) {
     if (!date) return ""; // Handle null/undefined
 
     // If it's a Firestore Timestamp object
@@ -60,4 +60,11 @@ export function getMonthRangeFromInput(inputDateString) {
     const endOfMonth = new Date(year, month + 1, 0, 23, 59, 59, 999);
 
     return { startOfMonth, endOfMonth };
+}
+export function getMonthNames(inputDate) {
+    const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    return monthNames[inputDate.toDate().getMonth()];
 }

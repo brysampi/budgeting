@@ -1,13 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { bills, getBills, deleteDataController } from '../firebase/controller';
-import { getTodayDate } from '../firebase/utils';
+import { convertToDate, getTodayDate } from '../firebase/utils';
+import { useParams, useNavigate } from 'react-router-dom';
+
 
 const Bills = () => {
+    const { paramMonth } = useParams();
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (!paramMonth) {
+            navigate('/'); // Redirect to home if paramMonth is missing
+        }
+    }, [paramMonth, navigate]);
     const [formDescription, setFormDescription] = useState('');
     const [dueDate, setDueDate] = useState('');
     const [formBudget, setFormBudget] = useState('');
     const [formActual, setFormActual] = useState('');
-    const [date, setDate] = useState(getTodayDate());
+    // const [date, setDate] = useState(getTodayDate());
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [billsData, setBillsData] = useState([]);
@@ -22,7 +31,7 @@ const Bills = () => {
             dueDate: dueDate,
             budget: parseFloat(formBudget),
             actual: parseFloat(formActual),
-            date: date,
+            date: paramMonth,
         }).then((response) => {
             if (response && response.status == 'success')
                 console.log('Bill Added.')
@@ -39,7 +48,7 @@ const Bills = () => {
     useEffect(() => {
         const returnBills = async () => {
             setIsFetching(true);
-            return await getBills(setBillsData, setIsFetching);
+            return await getBills(setBillsData, setIsFetching, paramMonth);
         }
         returnBills();
     }, []);
@@ -84,7 +93,7 @@ const Bills = () => {
                             onChange={(e) => setFormActual(e.target.value)}
                         />
                     </div>
-                    <div>
+                    {/* <div>
                         <label htmlFor="BillsDate">Date:</label>
                         <input
                             type="date"
@@ -92,7 +101,7 @@ const Bills = () => {
                             defaultValue={date}
                             onChange={(e) => setDate(e.target.value)}
                         />
-                    </div>
+                    </div> */}
                     <button disabled={loading}>{loading ? 'Loading' : 'Submit'}</button>
                 </form>
                 <button onClick={clearForm}>Clear Form</button>
@@ -119,7 +128,7 @@ const Bills = () => {
                                 billsData.map((item, index) => (
                                     <tr key={index + 1}>
                                         <td>{item.description}</td>
-                                        <td>{item.dueDate}</td>
+                                        <td>{convertToDate(item.dueDate)}</td>
                                         <td>{item.budget.toFixed(2)}</td>
                                         <td>{item.actual.toFixed(2)}</td>
                                         {/* <td>{item.date}</td> */}
@@ -138,7 +147,7 @@ const Bills = () => {
         setDueDate('')
         setFormBudget('')
         setFormActual('')
-        setDate(getTodayDate())
+        // setDate(getTodayDate())
         setLoading(false)
     }
 }

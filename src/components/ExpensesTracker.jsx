@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { expensesTracker, getExpensesTracker, getExpenses, deleteDataController } from '../firebase/controller';
-import { getTodayDate,convertTimestamp } from '../firebase/utils';
+import { getTodayDate,convertToDate } from '../firebase/utils';
+import { useParams, useNavigate } from 'react-router-dom';
+
 
 
 const ExpensesTracker = () => {
+    const { paramMonth } = useParams();
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (!paramMonth) {
+            navigate('/'); // Redirect to home if paramMonth is missing
+        }
+    }, [paramMonth, navigate]);
     const [formCategory, setFormCategory] = useState('');
     const [formDescription, setFormDescription] = useState('');
     const [formPrice, setFormPrice] = useState('');
@@ -47,9 +56,9 @@ const ExpensesTracker = () => {
         let unsubscribe;
         const returnSavings = async () => {
             setIsFetching(true);
-            await getExpenses(setExpensesData, setIsFetching);
+            await getExpenses(setExpensesData, setIsFetching, paramMonth);
             // setFormCategory();
-            await getExpensesTracker(setExpensesTrackerData, setIsFetchingTracker);
+            await getExpensesTracker(setExpensesTrackerData, setIsFetchingTracker, paramMonth);
             clearForm();
         }
         returnSavings();
@@ -158,7 +167,7 @@ const ExpensesTracker = () => {
                                         <td>{item.description}</td>
                                         <td>{item.amount.toFixed(2)}</td>
                                         {/* <td>{item.date}</td> */}
-                                        {/* <td>{convertTimestamp(item.date)}</td> */}
+                                        {/* <td>{convertToDate(item.date)}</td> */}
                                         <td><button onClick={async () => { await deleteDataController('expensesTracker', item.id) }}>Delete</button></td>
                                     </tr>
                                 ))

@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { expenses, getExpenses, deleteDataController } from '../firebase/controller';
 import { getTodayDate } from '../firebase/utils';
+import { useParams, useNavigate } from 'react-router-dom';
+
+
 
 const Expenses = () => {
+    const { paramMonth } = useParams();
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (!paramMonth) {
+            navigate('/'); // Redirect to home if paramMonth is missing
+        }
+    }, [paramMonth, navigate]);
     const [formCategory, setFormCategory] = useState('');
     const [formBudget, setFormBudget] = useState('');
     // const [formActual, setFormActual] = useState('');
@@ -37,7 +47,7 @@ const Expenses = () => {
     useEffect(() => {
         const returnExpenses = async () => {
             setIsFetching(true);
-            return await getExpenses(setExpensesData, setIsFetching);
+            return await getExpenses(setExpensesData, setIsFetching,paramMonth);
         }
 
         returnExpenses();
