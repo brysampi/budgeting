@@ -1,9 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { income, getIncome, deleteDataController } from '../firebase/controller';
-import { getTodayDate } from '../firebase/utils';
 import { useParams, useNavigate } from 'react-router-dom';
-
-
 
 const Income = () => {
     const { paramMonth } = useParams();
@@ -16,11 +13,9 @@ const Income = () => {
     const [formDescription, setFormDescription] = useState('');
     const [formExpected, setFormExpected] = useState('');
     const [formAmount, setFormAmount] = useState('');
-    const [date, setDate] = useState(getTodayDate());
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [incomeData, setIncomeData] = useState([]);
-
 
     const fromSubmit = async (e) => {
         e.preventDefault();
@@ -31,7 +26,7 @@ const Income = () => {
             description: formDescription,
             expected: parseFloat(formExpected),
             amount: parseFloat(formAmount),
-            date: date,
+            date: paramMonth,
         }).then((response) => {
             if (response && response.status == 'success')
                 console.log('Income Added.')
@@ -84,15 +79,6 @@ const Income = () => {
                             onChange={(e) => setFormAmount(e.target.value)}
                         />
                     </div>
-                    <div>
-                        <label htmlFor="incomeDate">Date:</label>
-                        <input
-                            type="date"
-                            id="incomeDate"
-                            defaultValue={date}
-                            onChange={(e) => setDate(e.target.value)}
-                        />
-                    </div>
                     <button disabled={loading}>{loading ? 'Loading' : 'Submit'}</button>
                 </form>
                 <button onClick={clearForm}>Clear Form</button>
@@ -101,11 +87,9 @@ const Income = () => {
                 <table>
                     <thead>
                         <tr>
-                            {/* <th>#</th> */}
                             <th>Description</th>
                             <th>Expected</th>
                             <th>Amount</th>
-                            {/* <th>Date</th> */}
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -120,7 +104,6 @@ const Income = () => {
                                         <td>{item.description}</td>
                                         <td>{item.expected.toFixed(2)}</td>
                                         <td>{item.amount.toFixed(2)}</td>
-                                        {/* <td>{item.date}</td> */}
                                         <td><button onClick={async () => { await deleteDataController('income', item.id) }}>Delete</button></td>
                                     </tr>
                                 ))
@@ -135,7 +118,6 @@ const Income = () => {
         setFormDescription('')
         setFormExpected('')
         setFormAmount('')
-        setDate(getTodayDate())
         setLoading(false)
     }
 }

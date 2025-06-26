@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { expensesTracker, getExpensesTracker, getExpenses, deleteDataController } from '../firebase/controller';
-import { getTodayDate,convertToDate } from '../firebase/utils';
 import { useParams, useNavigate } from 'react-router-dom';
 
 
@@ -17,7 +16,6 @@ const ExpensesTracker = () => {
     const [formDescription, setFormDescription] = useState('');
     const [formPrice, setFormPrice] = useState('');
     const [formDiscount, setFormDiscount] = useState('');
-    const [formDate, setFormDate] = useState(getTodayDate());
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [isFetchingTracker, setIsFetchingTracker] = useState(true);
@@ -27,10 +25,6 @@ const ExpensesTracker = () => {
     const fromSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        // console.log('formCategory:', formCategory);
-        // console.log('formDescription:', formDescription);
-        // console.log('formPrice:', formPrice);
-        // console.log('formDate:', formDate);
         if (!formDescription || !formCategory || !formPrice || !formDate)
             return console.log('Please fill up all fields.')
         expensesTracker({
@@ -38,7 +32,7 @@ const ExpensesTracker = () => {
             description: formDescription,
             price: parseFloat(formPrice),
             discount: parseFloat(formDiscount),
-            date: formDate,
+            date: paramMonth,
         }).then((response) => {
             if (response && response.status == 'success')
                 console.log('Expenses Tracker Added.')
@@ -69,18 +63,12 @@ const ExpensesTracker = () => {
             <div>
                 <form onSubmit={fromSubmit}>
                     <div>
-                        <label htmlFor="expensesTrackerCategory">Category:</label>
-                        {/* <input
-                            type='text'
-                            id="expensesTrackerCategory"
-                            value={formCategory}
-                            onChange={(e) => setFormCategory(e.target.value)}
-                        /> */}
+                        <label htmlFor="categoryExpensesTracker">Category:</label>
                         <select
                             value={formCategory}
                             onChange={(e) => { setFormCategory(e.target.value) }}
-                            name="expensesTrackerCategory"
-                            id="expensesTrackerCategory"
+                            name="categoryExpensesTracker"
+                            id="categoryExpensesTracker"
                         >
                             <option value="" disabled>
                                 Select a category
@@ -91,52 +79,36 @@ const ExpensesTracker = () => {
                                 expensesData.length === 0 ?
                                     <option value="" disabled>No Data Found</option> :
                                     expensesData.map((item, index) => (
-                                        // <tr key={index + 1}>
-                                        //     <td>{item.category}</td>
-                                        //     <td>{item.description}</td>
-                                        //     <td>{item.amount}</td>
-                                        //     {/* <td>{item.date}</td> */}
-                                        //     <td><button>Delete</button></td>
-                                        // </tr>
                                         <option value={item.id} key={index + 1}>{item.category}</option>
                                     ))
                             )}
                         </select>
                     </div>
                     <div>
-                        <label htmlFor="expensesTrackerDescription">Description:</label>
+                        <label htmlFor="descriptionExpensesTracker">Description:</label>
                         <input
                             type="text"
-                            id="expensesTrackerDescription"
+                            id="descriptionExpensesTracker"
                             value={formDescription}
                             onChange={(e) => setFormDescription(e.target.value)}
                         />
                     </div>
                     <div>
-                        <label htmlFor="expensesTrackerPrice">Price:</label>
+                        <label htmlFor="priceExpensesTracker">Price:</label>
                         <input
                             type="text"
-                            id="expensesTrackerPrice"
+                            id="priceExpensesTracker"
                             value={formPrice}
                             onChange={(e) => setFormPrice(e.target.value)}
                         />
                     </div>
                     <div>
-                        <label htmlFor="expensesTrackerDiscount">Discount:</label>
+                        <label htmlFor="discountExpensesTracker">Discount:</label>
                         <input
                             type="text"
-                            id="expensesTrackerDiscount"
+                            id="discountExpensesTracker"
                             value={formDiscount}
                             onChange={(e) => setFormDiscount(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="expensesTrackerDate">Date:</label>
-                        <input
-                            type="date"
-                            id="expensesTrackerDate"
-                            value={formDate}
-                            onChange={(e) => setFormDate(e.target.value)}
                         />
                     </div>
                     <button disabled={loading}>{loading ? 'Loading' : 'Submit'}</button>
@@ -183,7 +155,6 @@ const ExpensesTracker = () => {
         setFormCategory('')
         setFormPrice('')
         setFormDiscount('')
-        setFormDate(getTodayDate())
         setLoading(false)
     }
 }

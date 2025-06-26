@@ -1,22 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { bills, getBills, deleteDataController } from '../firebase/controller';
 import { convertToDate } from '../firebase/utils';
 import { useParams, useNavigate } from 'react-router-dom';
-
 
 const Bills = () => {
     const { paramMonth } = useParams();
     const navigate = useNavigate();
     useEffect(() => {
         if (!paramMonth) {
-            navigate('/monthSelect'); // Redirect to home if paramMonth is missing
+            navigate('/monthSelect');
         }
     }, [paramMonth, navigate]);
     const [formDescription, setFormDescription] = useState('');
-    const [dueDate, setDueDate] = useState('');
+    const [formDueDate, setFormDueDate] = useState('');
     const [formBudget, setFormBudget] = useState('');
     const [formActual, setFormActual] = useState('');
-    // const [date, setDate] = useState(getTodayDate());
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [billsData, setBillsData] = useState([]);
@@ -24,11 +22,11 @@ const Bills = () => {
     const fromSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        if (!formDescription || !dueDate || !formBudget || !formActual)
+        if (!formDescription || !formDueDate || !formBudget || !formActual)
             return console.log('Please fill up all fields.')
         bills({
             description: formDescription,
-            dueDate: dueDate,
+            dueDate: formDueDate,
             budget: parseFloat(formBudget),
             actual: parseFloat(formActual),
             date: paramMonth,
@@ -67,12 +65,12 @@ const Bills = () => {
                         />
                     </div>
                     <div>
-                        <label htmlFor="billsDueDate">Due-Date:</label>
+                        <label htmlFor="dueDateBills">Due-Date:</label>
                         <input
                             type="date"
-                            id="billsDueDate"
-                            value={dueDate}
-                            onChange={(e) => setDueDate(e.target.value)}
+                            id="dueDateBills"
+                            value={formDueDate}
+                            onChange={(e) => setFormDueDate(e.target.value)}
                         />
                     </div>
                     <div>
@@ -93,15 +91,6 @@ const Bills = () => {
                             onChange={(e) => setFormActual(e.target.value)}
                         />
                     </div>
-                    {/* <div>
-                        <label htmlFor="BillsDate">Date:</label>
-                        <input
-                            type="date"
-                            id="BillsDate"
-                            defaultValue={date}
-                            onChange={(e) => setDate(e.target.value)}
-                        />
-                    </div> */}
                     <button disabled={loading}>{loading ? 'Loading' : 'Submit'}</button>
                 </form>
                 <button onClick={clearForm}>Clear Form</button>
@@ -144,10 +133,9 @@ const Bills = () => {
 
     function clearForm() {
         setFormDescription('')
-        setDueDate('')
+        setFormDueDate('')
         setFormBudget('')
         setFormActual('')
-        // setDate(getTodayDate())
         setLoading(false)
     }
 }

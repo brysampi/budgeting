@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { savings, getSavings, deleteDataController } from '../firebase/controller';
-import { getTodayDate } from '../firebase/utils';
 import { useParams, useNavigate } from 'react-router-dom';
 
 
@@ -15,7 +14,6 @@ const Savings = () => {
     }, [paramMonth, navigate]);
     const [formDescription, setFormDescription] = useState('');
     const [formAmount, setFormAmount] = useState('');
-    const [date, setDate] = useState(getTodayDate());
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [savingsData, setSavingsData] = useState([]);
@@ -28,7 +26,7 @@ const Savings = () => {
         savings({
             description: formDescription,
             amount: parseFloat(formAmount),
-            date: date,
+            date: paramMonth,
         }).then((response) => {
             if (response && response.status == 'success')
                 console.log('Savings Added.')
@@ -72,15 +70,6 @@ const Savings = () => {
                             onChange={(e) => setFormAmount(e.target.value)}
                         />
                     </div>
-                    <div>
-                        <label htmlFor="savingsDate">Date:</label>
-                        <input
-                            type="date"
-                            id="savingsDate"
-                            defaultValue={date}
-                            onChange={(e) => setDate(e.target.value)}
-                        />
-                    </div>
                     <button disabled={loading}>{loading ? 'Loading' : 'Submit'}</button>
                 </form>
                 <button onClick={clearForm}>Clear Form</button>
@@ -122,7 +111,6 @@ const Savings = () => {
     function clearForm() {
         setFormDescription('')
         setFormAmount('')
-        setDate(getTodayDate())
         setLoading(false)
     }
 }

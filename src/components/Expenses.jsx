@@ -1,9 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { expenses, getExpenses, deleteDataController } from '../firebase/controller';
-import { getTodayDate } from '../firebase/utils';
 import { useParams, useNavigate } from 'react-router-dom';
-
-
 
 const Expenses = () => {
     const { paramMonth } = useParams();
@@ -15,8 +12,6 @@ const Expenses = () => {
     }, [paramMonth, navigate]);
     const [formCategory, setFormCategory] = useState('');
     const [formBudget, setFormBudget] = useState('');
-    // const [formActual, setFormActual] = useState('');
-    const [date, setDate] = useState(getTodayDate());
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [expensesData, setExpensesData] = useState([]);
@@ -29,8 +24,7 @@ const Expenses = () => {
         expenses({
             category: formCategory,
             budget: parseInt(formBudget),
-            // actual: parseInt(formActual),
-            date: date,
+            date: paramMonth,
         }).then((response) => {
             if (response && response.status == 'success') {
                 console.log('Expense Added.')
@@ -58,39 +52,21 @@ const Expenses = () => {
             <div>
                 <form onSubmit={fromSubmit}>
                     <div>
-                        <label htmlFor="expensesCategory">Category:</label>
+                        <label htmlFor="categoryExpenses">Category:</label>
                         <input
                             type="text"
-                            id="expensesCategory"
+                            id="categoryExpenses"
                             value={formCategory}
                             onChange={(e) => setFormCategory(e.target.value)}
                         />
                     </div>
                     <div>
-                        <label htmlFor="expensesBudget">Budget:</label>
+                        <label htmlFor="budgetExpenses">Budget:</label>
                         <input
                             type='text'
-                            id="expensesBudget"
+                            id="budgetExpenses"
                             value={formBudget}
                             onChange={(e) => setFormBudget(e.target.value)}
-                        />
-                    </div>
-                    {/* <div>
-                        <label htmlFor="expensesActual">Actual:</label>
-                        <input
-                            type="text"
-                            id="expensesActual"
-                            value={formActual}
-                            onChange={(e) => setFormActual(e.target.value)}
-                        />
-                    </div> */}
-                    <div>
-                        <label htmlFor="expensesDate">Date:</label>
-                        <input
-                            type="date"
-                            id="expensesDate"
-                            defaultValue={date}
-                            onChange={(e) => setDate(e.target.value)}
                         />
                     </div>
                     <button disabled={loading}>{loading ? 'Loading' : 'Submit'}</button>
@@ -137,7 +113,6 @@ const Expenses = () => {
         setFormCategory('')
         setFormBudget('')
         setFormActual('')
-        setDate(getTodayDate())
         setLoading(false)
     }
 }
