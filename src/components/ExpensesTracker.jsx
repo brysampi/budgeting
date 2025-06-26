@@ -25,7 +25,7 @@ const ExpensesTracker = () => {
     const fromSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        if (!formDescription || !formCategory || !formPrice || !formDate)
+        if (!formDescription || !formCategory || !formPrice )
             return console.log('Please fill up all fields.')
         expensesTracker({
             category: formCategory,
