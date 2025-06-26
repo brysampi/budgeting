@@ -6,7 +6,6 @@ import {
     getDataRealTime, getExpensesTrackerDataRealTime, getExpensesDataRealTime, getCollectedDataRealTime,
 } from '../firebase/model';
 
-
 export async function login(user, password) {
     return await getUser(user, password).then((response) => {
         Object.entries(response).forEach(([key, value]) => {
@@ -19,89 +18,63 @@ export async function login(user, password) {
             return errorMsg('Login failed. Please check your username and password.');
 
     }).catch((error) => {
-        // console.error('Error during login:', error);
         return errorMsg('An error occurred during login');
-    }).finally(() => {
-        // clearForm()
-        // window.location.reload();
     })
-    // return getUser(user, password)
 }
 // -------------------------- Collected Data -----------------------------------
 export async function getCollectedData(setData, isFetching) {
-    try {
-        await getCollectedDataRealTime('collectedData', setData, isFetching)
-    }
-    catch (error) {
-        console.log(error)
-    }
-
+    await getCollectedDataRealTime('collectedData', setData, isFetching)
 }
 export async function collectedData(inputDate) {
-    let totalIncomeData = 0, totalSavingsData = 0, totalBillsData = 0, totalExpensesData = 0;
+    if (!getUserID())
+        return errorMsg('No LoggedIn User Found.')
+    let totalIncomeData = 0, totalBillsData = 0, totalExpensesData = 0;
     let remainingIncomeData = 0;
-
-    const database = ['income', 'savings', 'bills', 'expensesTracker']
-
+    const databaseTable = ['income', 'bills', 'expensesTracker']
     try {
-        for (const items of database) {
-            const fetch = await getData(items, inputDate)
+        for (const databaseItem of databaseTable) {
+            const fetch = await getData(databaseItem, inputDate)
             fetch.forEach(data => {
-                if (items == 'income')
+                if (databaseItem == 'income')
                     totalIncomeData += data.amount
 
-                if (items == 'savings')
-                    totalSavingsData += data.amount
-
-                if (items == 'bills')
+                if (databaseItem == 'bills')
                     totalBillsData += data.actual
 
-                if (items == 'expensesTracker')
+                if (databaseItem == 'expensesTracker')
                     totalExpensesData += data.amount
             })
         }
 
-        remainingIncomeData = totalIncomeData - totalSavingsData - totalBillsData - totalExpensesData;
-        if (!getUserID())
-            return errorMsg('No LoggedIn User Found.')
+        remainingIncomeData = totalIncomeData - totalBillsData - totalExpensesData;
+
         const data = {
             remainingIncome: remainingIncomeData,
             totalIncome: totalIncomeData,
-            totalSavings: totalSavingsData,
+            // totalSavings: totalSavingsData,
             totalBills: totalBillsData,
             totalExpenses: totalExpensesData,
             date: convertToTimeStamp(inputDate),
             user: getUserID(),
         }
-
+        console.log(data)
         return data
     }
     catch (error) {
         console.log(error)
-    }
-}
-
-export async function addCollectedData(data) {
-    try {
-        const add = await addData('collectedData', data)
-        return add;
-    }
-    catch (error) {
-        console.log(error)
+        return errorMsg('check console for error.')
     }
 }
 export async function checkCollectedData(table, inputDate) {
-    try {
-        const getDataCollected = await getData(table, inputDate)
-        if (getDataCollected.length === 0 || getDataCollected.length < 1 || !getDataCollected)
-            return false
-        else
-            return true
-    }
-    catch (error) {
-        console.log(error)
-    }
-
+    const getDataCollected = await getData(table, inputDate)
+    if (getDataCollected.length === 0 || getDataCollected.length < 1 || !getDataCollected)
+        return false
+    else
+        return true
+}
+export async function addCollectedData(arrayData) {
+    const addReturn = await addData('collectedData', arrayData)
+    return successMsg('Successfully Added.', addReturn);
 }
 export async function getCollectedDataByMonth(inputDate) {
     const checked = await checkCollectedData('collectedData', inputDate);
@@ -109,10 +82,14 @@ export async function getCollectedDataByMonth(inputDate) {
         const collect = await collectedData(inputDate);
         if (collect) {
             const addCollect = await addCollectedData(collect)
-            return addCollect;
+            return successMsg('Successfully Added.', addCollect);
+        } else {
+            console.log('Failed to Add Data in Controller.')
+            return errorMsg('check console for error.')
         }
     }
     else {
+        console.log('Already Have Data.')
         return errorMsg('Already Have Data.')
     }
 }
@@ -136,15 +113,14 @@ export async function income(arrayData) {
         date: convertToTimeStamp(arrayData.date),
         user: getUserID(),
     }
-    return await addData('income', data)
+    const addReturn = await addData('income', data)
+    return successMsg('Successfully Added.', addReturn)
 }
 export async function getIncome(setIncomeData, isFetching, inputDate) {
     try {
-        await getDataRealTime('income', setIncomeData, isFetching, inputDate).catch(error => {
-            console.error("🔥 Fetch error:", error);
-        });
+        await getDataRealTime('income', setIncomeData, isFetching, inputDate)
     } catch (error) {
-        console.error("Error fetching income:", error);
+        console.error("Error fetching income in Controller:", error);
     }
 }
 // -------------------------- Savings -----------------------------------
@@ -163,16 +139,14 @@ export async function savings(arrayData) {
         date: convertToTimeStamp(arrayData.date),
         user: getUserID(),
     }
-    return await addData('savings', data)
+    const addReturn = await addData('savings', data)
+    return successMsg('Successfully Added.', addReturn)
 }
 export async function getSavings(setSavingsData, isFetching, inputDate) {
     try {
         await getDataRealTime('savings', setSavingsData, isFetching, inputDate)
-        // .catch(error => {
-        //     console.error("🔥 Fetch error:", error);
-        // });
     } catch (error) {
-        console.error("Error fetching savings:", error);
+        console.error("Error fetching savings in Controller:", error);
     }
 }
 
@@ -197,24 +171,20 @@ export async function bills(arrayData) {
         date: convertToTimeStamp(arrayData.date),
         user: getUserID().toString(),
     }
-    return await addData('bills', data)
+    const addReturn = await addData('bills', data)
+    return successMsg('Successfully Added.', addReturn)
 }
 export async function getBills(setBillsData, isFetching, inputDate) {
     try {
-        await getDataRealTime('bills', setBillsData, isFetching, inputDate).catch(error => {
-            console.error("🔥 Fetch error:", error);
-        });
+        await getDataRealTime('bills', setBillsData, isFetching, inputDate)
     } catch (error) {
-        console.error("Error fetching bills:", error);
+        console.error("Error fetching bills in Controller:", error);
     }
 }
 // -------------------------- Expenses -----------------------------------
 export async function expenses(arrayData) {
     if (arrayData.description === '' || arrayData.budget === 0 || arrayData.date === '')
         return errorMsg('Please fill up all fields.')
-
-    // if (arrayData.actual <= 0)
-    //     return errorMsg("Actual Can't be negative.")
 
     if (arrayData.budget <= 0)
         return errorMsg("Budget can't be negative.")
@@ -228,28 +198,14 @@ export async function expenses(arrayData) {
         date: convertToTimeStamp(arrayData.date),
         user: getUserID(),
     }
-    // await getExpensesDataRealTime('expenses', data);
-    return await addData('expenses', data)
+    const addReturn = await addData('expenses', data)
+    return successMsg('Successfully Added.', addReturn)
 }
-// export async function getExpenses(setExpensesData, isFetching) {
-//     try {
-//         await getDataRealTime('expenses', setExpensesData, isFetching).catch(error => {
-//             console.error("🔥 Fetch error:", error);
-//         });
-//     } catch (error) {
-//         console.error("Error fetching expenses:", error);
-//     }
-// }
 export async function getExpenses(setExpensesData, isFetching, inputDate) {
     try {
-        // await getDataRealTime('expenses', setExpensesData, isFetching).catch(error => {
-        //     console.error("🔥 Fetch error:", error);
-        // });
-        await getExpensesDataRealTime(setExpensesData, isFetching, inputDate).catch(error => {
-            console.error("🔥 Fetch error:", error);
-        });
+        await getExpensesDataRealTime(setExpensesData, isFetching, inputDate)
     } catch (error) {
-        console.error("Error fetching expenses:", error);
+        console.error("Error fetching expenses in Controller:", error);
     }
 }
 // -------------------------- Expenses Tracker -----------------------------------
@@ -276,14 +232,14 @@ export async function expensesTracker(arrayData) {
         date: convertToTimeStamp(arrayData.date),
         user: getUserID(),
     }
-    // console.log('data: ',data)
-    return await addData('expensesTracker', data)
+    const addReturn = await addData('expensesTracker', data)
+    return successMsg('Successfully Added.', addReturn)
 }
 export async function getExpensesTracker(setExpensesData, isFetching, inputDate) {
     try {
         await getExpensesTrackerDataRealTime(setExpensesData, isFetching, inputDate);
     } catch (error) {
-        console.error("Error fetching Expenses Tracker:", error);
+        console.error("Error fetching Expenses Tracker in Controller:", error);
     }
 }
 
@@ -296,11 +252,11 @@ export function logout() {
 }
 export async function deleteDataController(table, id) {
     await deleteData(table, id).then((response) => {
-        if (response && response.status === 'success') {
+        if (response && response.status === 'success')
             console.log('Data deleted successfully.');
-        } else {
+        else
             console.log('Failed to delete data.');
-        }
+
     }).catch((error) => {
         console.error('Error deleting data:', error);
     });

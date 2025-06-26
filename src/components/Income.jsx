@@ -10,7 +10,7 @@ const Income = () => {
     const navigate = useNavigate();
     useEffect(() => {
         if (!paramMonth) {
-            navigate('/'); // Redirect to home if paramMonth is missing
+            navigate('/monthSelect'); // Redirect to home if paramMonth is missing
         }
     }, [paramMonth, navigate]);
     const [formDescription, setFormDescription] = useState('');

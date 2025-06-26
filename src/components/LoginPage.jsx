@@ -30,6 +30,7 @@ export default function LoginPage({onLogin}) {
             clearForm()
             console.error('Error during login:', error);
         }
+        
     }
     return (
         <>

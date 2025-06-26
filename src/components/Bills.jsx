@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { bills, getBills, deleteDataController } from '../firebase/controller';
-import { convertToDate, getTodayDate } from '../firebase/utils';
+import { convertToDate } from '../firebase/utils';
 import { useParams, useNavigate } from 'react-router-dom';
 
 
@@ -9,7 +9,7 @@ const Bills = () => {
     const navigate = useNavigate();
     useEffect(() => {
         if (!paramMonth) {
-            navigate('/'); // Redirect to home if paramMonth is missing
+            navigate('/monthSelect'); // Redirect to home if paramMonth is missing
         }
     }, [paramMonth, navigate]);
     const [formDescription, setFormDescription] = useState('');

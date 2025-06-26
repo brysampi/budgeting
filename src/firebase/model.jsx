@@ -1,11 +1,13 @@
-import { addDoc, collection, getDocs, limit, onSnapshot, orderBy, query, where, serverTimestamp, getDoc, doc, deleteDoc } from "firebase/firestore";
+import {
+    addDoc, collection, getDocs, limit, onSnapshot,
+    orderBy, query, where, serverTimestamp, getDoc, doc, deleteDoc
+} from "firebase/firestore";
 import { db } from "./firebase";
 import { successMsg, errorMsg, getMonthRangeFromInput, getUserID } from '../firebase/utils';
 
 export async function getUser(user, password) {
     try {
         const usersRef = collection(db, "users");
-
         const que = query(
             usersRef,
             where("username", "==", user),
@@ -18,13 +20,7 @@ export async function getUser(user, password) {
             console.log("No users found");
             return [];
         }
-        // Get Multiple Data
-        // const userData = querySnapshot.docs.map((doc) => ({
-        //   id: doc.id,
-        //   ...doc.data(),
-        // }));
-
-        // Get the first data since i use limit
+        
         const doc = querySnapshot.docs[0];
         const userData = {
             id: doc.id,

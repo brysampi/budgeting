@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { getCollectedData, getCollectedDataByMonth } from '../firebase/controller'
 import { getMonthNames } from '../firebase/utils'
-import { Link } from 'react-router-dom'
+import Logout from '../components/Logout'
 
-export default function MonthSelection() {
+export default function MonthSelection({ onLogOut }) {
     const [monthData, setMonthData] = useState('')
     const [monthCollectionData, setMonthCollectionData] = useState([])
     const [isFetching, setIsFetching] = useState(false)
     const [addNewMonth, setAddNewMonth] = useState(false)
-
-
 
     useEffect(() => {
         const returnData = async () => {
@@ -23,16 +22,12 @@ export default function MonthSelection() {
         e.preventDefault();
         setAddNewMonth(true)
         const collected = await getCollectedDataByMonth(monthData);
-        if (collected) {
-            console.log(collected.message)
-            setAddNewMonth(false)
-        } else {
-            setAddNewMonth(true)
-        }
+        collected ? setAddNewMonth(false) : setAddNewMonth(true)
     }
 
     return (
         <>
+            <Logout onLogout={onLogOut} />
             <div>
                 <form onSubmit={collectData}>
                     <input type="month"
@@ -61,7 +56,6 @@ export default function MonthSelection() {
                         ))
                 )}
             </div>
-
         </>
     )
 }
