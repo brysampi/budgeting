@@ -3,7 +3,7 @@ import {
     orderBy, query, where, serverTimestamp, getDoc, doc, deleteDoc
 } from "firebase/firestore";
 import { db } from "./firebase";
-import { successMsg, errorMsg, getMonthRangeFromInput, getUserID } from '../firebase/utils';
+import { successMsg, errorMsg, getMonthRangeFromInput, getUserID, convertToDate } from '../firebase/utils';
 
 export async function getUser(user, password) {
     try {
@@ -20,7 +20,7 @@ export async function getUser(user, password) {
             console.log("No users found");
             return [];
         }
-        
+
         const doc = querySnapshot.docs[0];
         const userData = {
             id: doc.id,
@@ -143,8 +143,12 @@ export async function getExpensesTrackerDataRealTime(setData, isFetching, inputD
         );
 
         const unsubscribe = onSnapshot(que, async (snapshot) => {
+            let groupedByDay = []
             const promises = snapshot.docs.map(async (docSnap) => {
                 const docData = docSnap.data();
+                const dayCreated = (docData.createdAt).toDate().getDate()
+                // console.log(dayCreated)
+
                 if (docData.category) {
                     try {
                         const categoryRef = doc(db, "expenses", docData.category);
@@ -160,17 +164,24 @@ export async function getExpensesTrackerDataRealTime(setData, isFetching, inputD
                     }
                 }
 
-                return {
+                const datas = {
                     id: docSnap.id,
                     ...docData,
                 };
+
+                if (!groupedByDay[dayCreated]) {
+                    groupedByDay[dayCreated] = [];
+                }
+                groupedByDay[dayCreated].push(datas);
+                return datas;
             });
 
             const resolvedData = await Promise.all(promises);
+            // console.log("grouped ", groupedByDay)
             // console.log("Fetched Data: ", resolvedData);
-            setData(resolvedData);
+            setData(groupedByDay);
             isFetching(false);
-            return resolvedData;
+            return groupedByDay;
         });
 
         return unsubscribe;

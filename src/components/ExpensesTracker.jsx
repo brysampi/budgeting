@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { expensesTracker, getExpensesTracker, getExpenses, deleteDataController } from '../firebase/controller';
 import { useParams, useNavigate } from 'react-router-dom';
 
@@ -25,7 +25,7 @@ const ExpensesTracker = () => {
     const fromSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        if (!formDescription || !formCategory || !formPrice )
+        if (!formDescription || !formCategory || !formPrice)
             return console.log('Please fill up all fields.')
         expensesTracker({
             category: formCategory,
@@ -57,7 +57,6 @@ const ExpensesTracker = () => {
         }
         returnSavings();
     }, []);
-
     return (
         <>
             <div>
@@ -119,12 +118,8 @@ const ExpensesTracker = () => {
                 <table>
                     <thead>
                         <tr>
-                            {/* <th>#</th> */}
                             <th>Category</th>
-                            <th>Description</th>
                             <th>Price</th>
-                            {/* <th>Date</th> */}
-                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -133,20 +128,40 @@ const ExpensesTracker = () => {
                         ) : (
                             expensesTrackerData.length === 0 ?
                                 <tr><td colSpan={6}>No Data Found</td></tr> :
-                                expensesTrackerData.map((item, index) => (
-                                    <tr key={index + 1}>
-                                        <td>{item.category}</td>
-                                        <td>{item.description}</td>
-                                        <td>{item.amount.toFixed(2)}</td>
-                                        {/* <td>{item.date}</td> */}
-                                        {/* <td>{convertToDate(item.date)}</td> */}
-                                        <td><button onClick={async () => { await deleteDataController('expensesTracker', item.id) }}>Delete</button></td>
-                                    </tr>
-                                ))
+                                Object.entries(expensesTrackerData).map(([key, value]) => {
+                                    let total = 0;
+                                    return (
+                                        <React.Fragment key={key}>
+                                            <tr><td colSpan={6} style={{ textAlign: 'center' }}>{ key}</td></tr>
+                                            {
+                                                value.map((item, index) => {
+                                                    total += item.amount;
+                                                    return (
+                                                        <tr key={index}>
+                                                            <td>{item.category}</td>
+                                                            <td>{item.description}</td>
+                                                            <td>{item.amount.toFixed(2)}</td>
+                                                            <td>
+                                                                <button onClick={async () => {
+                                                                    await deleteDataController('expensesTracker', item.id)
+                                                                }}>Delete</button>
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                }
+                                                )
+                                            }
+                                            <tr><td colSpan={6} style={{ textAlign: 'right', fontWeight: 'bold', backgroundColor: 'yellow' }}>Total: {total.toFixed(2)}</td></tr>
+                                        </React.Fragment >
+                                    )
+                                }
+                                )
                         )}
                     </tbody>
                 </table>
-            </div>
+            </div >
+
+
         </>
     )
 
