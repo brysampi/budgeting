@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { getCollectedData, getCollectedDataByMonth } from '../firebase/controller'
+import { getCollectedDataRealTimeController, creteCollectedData } from '../firebase/controller'
 import { getMonthNames } from '../firebase/utils'
 import Logout from '../components/Logout'
 
@@ -13,7 +13,7 @@ export default function MonthSelection({ onLogOut }) {
     useEffect(() => {
         const returnData = async () => {
             setIsFetching(true)
-            await getCollectedData(setMonthCollectionData, setIsFetching)
+            await getCollectedDataRealTimeController(setMonthCollectionData, setIsFetching)
             console.log(monthCollectionData)
         }
         returnData()
@@ -21,7 +21,7 @@ export default function MonthSelection({ onLogOut }) {
     const collectData = async (e) => {
         e.preventDefault();
         setAddNewMonth(true)
-        const collected = await getCollectedDataByMonth(monthData);
+        const collected = await creteCollectedData(monthData);
         collected ? setAddNewMonth(false) : setAddNewMonth(true)
     }
 

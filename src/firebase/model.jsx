@@ -1,5 +1,5 @@
 import {
-    addDoc, collection, getDocs, limit, onSnapshot,
+    addDoc, collection, getDocs, limit, onSnapshot, updateDoc,
     orderBy, query, where, serverTimestamp, getDoc, doc, deleteDoc
 } from "firebase/firestore";
 import { db } from "./firebase";
@@ -155,12 +155,12 @@ export async function getExpensesTrackerDataRealTime(setData, isFetching, inputD
                         const categorySnap = await getDoc(categoryRef);
 
                         if (categorySnap.exists())
-                            docData.category = categorySnap.data().category;
+                            docData.categoryName = categorySnap.data().category;
                         else
-                            docData.category = "Unknown Category";
+                            docData.categoryName = "Unknown Category";
                     } catch (err) {
                         console.error("Error fetching category:", err);
-                        docData.category = "No Data";
+                        docData.categoryName = "No Data";
                     }
                 }
 
@@ -238,6 +238,20 @@ export async function getData(table, inputDate) {
     } catch (error) {
         console.error("Error fetching: ", error);
         return [];
+    }
+}
+// --------------------------------------------------------------------
+export async function updateData(table, id, arrayData) {
+    try {
+        const docRef = doc(db, table, id);
+        await updateDoc(docRef, {
+            ...arrayData,
+            updatedAt: serverTimestamp()
+        });
+        return successMsg('Successfully Updated.')
+    } catch (error) {
+        console.log("Error updating data:", error)
+        return errorMsg('Failed to update data. Check console for error.')
     }
 }
 // --------------------------------------------------------------------

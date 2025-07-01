@@ -1,10 +1,16 @@
-import { getUser } from '../firebase/model';
+import { } from '../firebase/model';
 import Cookies from 'js-cookie';
 import { successMsg, errorMsg, getUserID, convertToTimeStamp } from '../firebase/utils';
 import {
-    addData, deleteData, getData,
+    addData, updateData, deleteData, getData, getUser,
     getDataRealTime, getExpensesTrackerDataRealTime, getExpensesDataRealTime, getCollectedDataRealTime,
 } from '../firebase/model';
+
+export async function checkStaticData(inputDate) {
+    const getDataCollected = await getData('collectedData', inputDate)
+    console.log(getDataCollected)
+
+}
 
 export async function login(user, password) {
     return await getUser(user, password).then((response) => {
@@ -22,7 +28,7 @@ export async function login(user, password) {
     })
 }
 // -------------------------- Collected Data -----------------------------------
-export async function getCollectedData(setData, isFetching) {
+export async function getCollectedDataRealTimeController(setData, isFetching) {
     await getCollectedDataRealTime('collectedData', setData, isFetching)
 }
 export async function collectedData(inputDate) {
@@ -72,16 +78,28 @@ export async function checkCollectedData(table, inputDate) {
     else
         return true
 }
-export async function addCollectedData(arrayData) {
+
+export async function addCollectedData(inputDate, arrayData) {
     const addReturn = await addData('collectedData', arrayData)
+    await updateCollectedData(inputDate)
     return successMsg('Successfully Added.', addReturn);
 }
-export async function getCollectedDataByMonth(inputDate) {
+export async function creteCollectedData(inputDate) {
     const checked = await checkCollectedData('collectedData', inputDate);
     if (!checked) {
         const collect = await collectedData(inputDate);
         if (collect) {
-            const addCollect = await addCollectedData(collect)
+            const addCollect = await addCollectedData(inputDate, collect)
+            const expensesDefault = { 'Foods': 200, 'Dirty Foods': 50, 'Fruits and Condiments': 50 };
+            Object.entries(expensesDefault).forEach(async ([key, value]) => {
+                await addData('expenses', {
+                    category: key,
+                    budget: value,
+                    date: convertToTimeStamp(inputDate),
+                    user: getUserID(),
+                })
+            })
+            const addReturn = await addData('expenses', data)
             return successMsg('Successfully Added.', addCollect);
         } else {
             console.log('Failed to Add Data in Controller.')
@@ -91,6 +109,23 @@ export async function getCollectedDataByMonth(inputDate) {
     else {
         console.log('Already Have Data.')
         return errorMsg('Already Have Data.')
+    }
+}
+export async function updateCollectedData(inputDate) {
+    const getDataCollected = await getData('collectedData', inputDate)
+    if (getDataCollected.length === 0 || getDataCollected.length < 1 || !getDataCollected) {
+        console.log('No Data Found.')
+        return false
+    }
+    else {
+        const collect = await collectedData(inputDate);
+        if (collect) {
+            const updateReturn = await updateData('collectedData', getDataCollected[0].id, collect);
+            return successMsg('Successfully Updated.', updateReturn);
+        } else {
+            console.log('Failed to Add Data in Controller.')
+            return errorMsg('check console for error.')
+        }
     }
 }
 // -------------------------- Income -----------------------------------
@@ -114,6 +149,7 @@ export async function income(arrayData) {
         user: getUserID(),
     }
     const addReturn = await addData('income', data)
+    await updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
 export async function getIncome(setIncomeData, isFetching, inputDate) {
@@ -140,6 +176,7 @@ export async function savings(arrayData) {
         user: getUserID(),
     }
     const addReturn = await addData('savings', data)
+    await updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
 export async function getSavings(setSavingsData, isFetching, inputDate) {
@@ -172,6 +209,7 @@ export async function bills(arrayData) {
         user: getUserID().toString(),
     }
     const addReturn = await addData('bills', data)
+    await updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
 export async function getBills(setBillsData, isFetching, inputDate) {
@@ -199,6 +237,7 @@ export async function expenses(arrayData) {
         user: getUserID(),
     }
     const addReturn = await addData('expenses', data)
+    await updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
 export async function getExpenses(setExpensesData, isFetching, inputDate) {
@@ -233,6 +272,7 @@ export async function expensesTracker(arrayData) {
         user: getUserID(),
     }
     const addReturn = await addData('expensesTracker', data)
+    await updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
 export async function getExpensesTracker(setExpensesData, isFetching, inputDate) {
@@ -242,7 +282,31 @@ export async function getExpensesTracker(setExpensesData, isFetching, inputDate)
         console.error("Error fetching Expenses Tracker in Controller:", error);
     }
 }
-
+// --------------------------------------------------------------------
+export async function exprenseTrackerUpdate(id, arrayData) {
+    const discountPrice = !arrayData.discount || arrayData.discount === '' ? 0 : arrayData.discount;
+    const data = {
+        category: arrayData.category,
+        description: arrayData.description,
+        price: arrayData.price,
+        discount: discountPrice,
+        amount: arrayData.price - discountPrice,
+    }
+    await updateData('expensesTracker', id, data).then((response) => {
+        if (response && response.status === 'success') {
+            console.log('Data updated successfully.');
+            updateCollectedData(arrayData.date)
+            return successMsg('Successfully Updated.')
+        }
+        else {
+            console.log('Failed to update data.');
+            return errorMsg('Failed to update data. Check console for error.')
+        }
+    }).catch((error) => {
+        console.error('Error updating data:', error);
+        return errorMsg('Failed to update data. Check console for error.')
+    });
+}
 // --------------------------------------------------------------------
 export function logout() {
     Object.keys(Cookies.get()).forEach(cookieName => {

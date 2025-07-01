@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { expensesTracker, getExpensesTracker, getExpenses, deleteDataController } from '../firebase/controller';
+import { expensesTracker, getExpensesTracker, getExpenses, deleteDataController, exprenseTrackerUpdate, checkStaticData } from '../firebase/controller';
 import { useParams, useNavigate } from 'react-router-dom';
 
 
@@ -21,6 +21,8 @@ const ExpensesTracker = () => {
     const [isFetchingTracker, setIsFetchingTracker] = useState(true);
     const [expensesTrackerData, setExpensesTrackerData] = useState([]);
     const [expensesData, setExpensesData] = useState([]);
+    const [updateDataStatus, setUpdateStatus] = useState(false);
+    const [updateId, setUpdateId] = useState('');
 
     const fromSubmit = async (e) => {
         e.preventDefault();
@@ -46,8 +48,31 @@ const ExpensesTracker = () => {
             setLoading(false)
         })
     }
+    const updateSetData = (id, arrayData) => {
+        setUpdateStatus(true);
+        // console.log(arrayData.category)
+        setUpdateId(id)
+        setFormCategory(arrayData.category)
+        setFormDescription(arrayData.description)
+        setFormPrice(arrayData.price)
+        setFormDiscount(arrayData.discount)
+    }
+    const updateFormSubmit = async (e) => {
+        e.preventDefault();
+        // setLoading(true);
+        let data = {
+            category: formCategory,
+            description: formDescription,
+            price: parseFloat(formPrice),
+            discount: parseFloat(formDiscount),
+            date: paramMonth,
+        }
+        const test = await exprenseTrackerUpdate(updateId, data);
+        // Object.entries(test).forEach(([key, value]) => {
+        //     console.log(key, value)
+        // })
+    }
     useEffect(() => {
-        let unsubscribe;
         const returnSavings = async () => {
             setIsFetching(true);
             await getExpenses(setExpensesData, setIsFetching, paramMonth);
@@ -59,8 +84,9 @@ const ExpensesTracker = () => {
     }, []);
     return (
         <>
+            <button onClick={() => checkStaticData(paramMonth)}>Check Data</button>
             <div>
-                <form onSubmit={fromSubmit}>
+                <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
                     <div>
                         <label htmlFor="categoryExpensesTracker">Category:</label>
                         <select
@@ -79,7 +105,7 @@ const ExpensesTracker = () => {
                                     <option value="" disabled>No Data Found</option> :
                                     expensesData.map((item, index) => (
                                         <option value={item.id} key={index + 1}>{item.category}</option>
-                                    ))
+                                    )).reverse()
                             )}
                         </select>
                     </div>
@@ -110,16 +136,24 @@ const ExpensesTracker = () => {
                             onChange={(e) => setFormDiscount(e.target.value)}
                         />
                     </div>
-                    <button disabled={loading}>{loading ? 'Loading' : 'Submit'}</button>
+                    <button disabled={loading}>{
+                        loading ? 'Loading' :
+                            !updateDataStatus ? 'Add' : 'Update'
+                    }</button>
                 </form>
-                <button onClick={clearForm}>Clear Form</button>
-            </div>
+                <button disabled={loading} onClick={clearForm}>{
+                    loading ? 'Loading' :
+                        !updateDataStatus ? 'Clear Form' : 'Cancel Update'
+                }</button>
+            </div >
             <div>
                 <table>
                     <thead>
                         <tr>
                             <th>Category</th>
+                            <th>Description</th>
                             <th>Price</th>
+                            <th>Action</th >
                         </tr>
                     </thead>
                     <tbody>
@@ -132,36 +166,53 @@ const ExpensesTracker = () => {
                                     let total = 0;
                                     return (
                                         <React.Fragment key={key}>
-                                            <tr><td colSpan={6} style={{ textAlign: 'center' }}>{ key}</td></tr>
+                                            <tr><td colSpan={6} style={{
+                                                textAlign: 'center',
+                                                fontWeight: 'bold',
+                                                backgroundColor: 'lightgray',
+                                            }}> Day: {key}</td></tr>
                                             {
                                                 value.map((item, index) => {
+                                                    // console.log(item)
                                                     total += item.amount;
                                                     return (
                                                         <tr key={index}>
-                                                            <td>{item.category}</td>
+                                                            <td>{item.categoryName}</td>
                                                             <td>{item.description}</td>
                                                             <td>{item.amount.toFixed(2)}</td>
-                                                            <td>
+                                                            {/* <td>
                                                                 <button onClick={async () => {
                                                                     await deleteDataController('expensesTracker', item.id)
                                                                 }}>Delete</button>
-                                                            </td>
+                                                            </td> */}
+                                                            <td><button onClick={() => updateSetData(item.id,
+                                                                {
+                                                                    id: item.id,
+                                                                    category: item.category,
+                                                                    description: item.description,
+                                                                    price: item.price,
+                                                                    discount: item.discount
+                                                                }
+                                                            )
+                                                            }>Update</button></td>
                                                         </tr>
                                                     )
                                                 }
-                                                )
+                                                ).reverse()
                                             }
-                                            <tr><td colSpan={6} style={{ textAlign: 'right', fontWeight: 'bold', backgroundColor: 'yellow' }}>Total: {total.toFixed(2)}</td></tr>
+                                            <tr><td colSpan={6} style={{
+                                                textAlign: 'right',
+                                                fontWeight: 'bold',
+                                                backgroundColor: 'yellow',
+                                            }}>Total: {total.toFixed(2)}</td></tr>
                                         </React.Fragment >
                                     )
                                 }
-                                )
+                                ).reverse()
                         )}
                     </tbody>
                 </table>
             </div >
-
-
         </>
     )
 
@@ -170,6 +221,8 @@ const ExpensesTracker = () => {
         setFormCategory('')
         setFormPrice('')
         setFormDiscount('')
+        setUpdateStatus(false)
+        setUpdateId('')
         setLoading(false)
     }
 }
