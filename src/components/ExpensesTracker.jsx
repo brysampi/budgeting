@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { expensesTracker, getExpensesTracker, getExpenses, exprensesTrackerUpdate, checkStaticData } from '../firebase/controller';
+import { expensesTracker, getExpensesTracker, getExpenses, expensesTrackerUpdate, checkStaticData } from '../firebase/controller';
 import { useParams, useNavigate } from 'react-router-dom';
 
 
@@ -9,7 +9,7 @@ const ExpensesTracker = () => {
     const navigate = useNavigate();
     useEffect(() => {
         if (!paramMonth) {
-            navigate('/monthSelect'); // Redirect to home if paramMonth is missing
+            navigate('/monthSelect'); 
         }
     }, [paramMonth, navigate]);
     const [formCategory, setFormCategory] = useState('');
@@ -67,7 +67,7 @@ const ExpensesTracker = () => {
             discount: parseFloat(formDiscount),
             date: paramMonth,
         }
-        const test = await exprensesTrackerUpdate(updateId, data);
+        const test = await expensesTrackerUpdate(updateId, data);
         // Object.entries(test).forEach(([key, value]) => {
         //     console.log(key, value)
         // })
@@ -75,7 +75,7 @@ const ExpensesTracker = () => {
     useEffect(() => {
         const returnSavings = async () => {
             setIsFetching(true);
-            await getExpenses(paramMonth,setExpensesData, setIsFetching);
+            await getExpenses(paramMonth,setExpensesData, setIsFetching,true);
             // setFormCategory();
             await getExpensesTracker(paramMonth,setExpensesTrackerData, setIsFetchingTracker);
             clearForm();

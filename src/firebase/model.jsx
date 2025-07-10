@@ -82,7 +82,7 @@ export async function getDataRealTime(table, inputDate, setData, isFetching) {
     }
 }
 // ------------------------------- Savings -------------------------------------
-export async function getSavingsDataRealTime(inputDate, setData, isFetching) {
+export async function getSavingsDataRealTime(inputDate, setData, isFetching, dropdownData) {
     // console.log("Fetching savings tracker data for month: ", inputDate);
     try {
         // const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
@@ -97,13 +97,36 @@ export async function getSavingsDataRealTime(inputDate, setData, isFetching) {
         )
         const unsubscribe = onSnapshot(que, async (snapshot) => {
             const promises = snapshot.docs.map(async (docSnap) => {
-                return {
-                    id: docSnap.id,
-                    ...docSnap.data(),
-                };
+                // console.log(dropdownData)
+                if (dropdownData === true)
+                    return {
+                        id: docSnap.id,
+                        ...docSnap.data(),
+                    };
+                const docData = docSnap.data();
+                if (!docSnap.exists()) {
+                    console.log("No such document!");
+                    return null;
+                } else {
+                    const savingsTrackerRef = collection(db, "savingsTracker");
+                    const que = query(
+                        savingsTrackerRef,
+                        where("category", "==", docSnap.id)
+                    );
+                    const querySnapshot = await getDocs(que);
+                    querySnapshot.docs.map((doc) => {
+                        if (!docData.actual)
+                            docData.actual = 0;
+                        docData.actual += doc.data().amount;
+                    });
+                    return {
+                        id: docSnap.id,
+                        ...docData,
+                    };
+                }
             })
             const resolvedData = await Promise.all(promises);
-            console.log("Resolved Data: ", resolvedData);
+            // console.log("Resolved Data: ", resolvedData);
             setData(resolvedData);
             isFetching(false);
             return resolvedData;
@@ -115,7 +138,7 @@ export async function getSavingsDataRealTime(inputDate, setData, isFetching) {
     }
 }
 // ------------------------------- Expenses -------------------------------------
-export async function getExpensesDataRealTime(inputDate, setExpensesData, isFetching) {
+export async function getExpensesDataRealTime(inputDate, setExpensesData, isFetching, dropdownData) {
     try {
         const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
         const que = query(
@@ -128,6 +151,11 @@ export async function getExpensesDataRealTime(inputDate, setExpensesData, isFetc
         );
         const unsubscribe = onSnapshot(que, async (snapshot) => {
             const promises = snapshot.docs.map(async (docSnap) => {
+                if (dropdownData === true)
+                    return {
+                        id: docSnap.id,
+                        ...docSnap.data(),
+                    };
                 const docData = docSnap.data();
                 if (!docSnap.exists()) {
                     console.log("No such document!");
@@ -164,11 +192,11 @@ export async function getExpensesDataRealTime(inputDate, setExpensesData, isFetc
         throw new Error("Failed to fetch expenses");
     }
 }
-export async function getExpensesTrackerDataRealTime(inputDate, setData, isFetching) {
+export async function getDataCategoryRealTime(inputDate, setData, isFetching, table) {
     try {
         const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
         const que = query(
-            collection(db, 'expensesTracker'),
+            collection(db, table.tracker),
             where("user", "==", getUserID()),
             where("date", ">=", startOfMonth),
             where("date", "<=", endOfMonth),
@@ -180,34 +208,40 @@ export async function getExpensesTrackerDataRealTime(inputDate, setData, isFetch
             let groupedByDay = []
             const promises = snapshot.docs.map(async (docSnap) => {
                 const docData = docSnap.data();
-                const dayCreated = (docData.createdAt).toDate().getDate()
-                // console.log(dayCreated)
+                if (!docSnap.exists()) {
+                    console.log("No such document!");
+                    return null;
+                } else {
+                    const dayCreated = !docData.createdAt ? null : (docData.createdAt).toDate().getDate()
+                    // console.log(dayCreated)
 
-                if (docData.category) {
-                    try {
-                        const categoryRef = doc(db, "expenses", docData.category);
-                        const categorySnap = await getDoc(categoryRef);
+                    if (docData.category) {
+                        try {
+                            const categoryRef = doc(db, table.main, docData.category);
+                            const categorySnap = await getDoc(categoryRef);
 
-                        if (categorySnap.exists())
-                            docData.categoryName = categorySnap.data().category;
-                        else
-                            docData.categoryName = "Unknown Category";
-                    } catch (err) {
-                        console.error("Error fetching category:", err);
-                        docData.categoryName = "No Data";
+                            if (categorySnap.exists())
+                                docData.categoryName = categorySnap.data().category;
+                            else
+                                docData.categoryName = "Unknown Category";
+                        } catch (err) {
+                            console.error("Error fetching category:", err);
+                            docData.categoryName = "No Data";
+                        }
                     }
-                }
 
-                const datas = {
-                    id: docSnap.id,
-                    ...docData,
-                };
+                    const datas = {
+                        id: docSnap.id,
+                        ...docData,
+                    };
 
-                if (!groupedByDay[dayCreated]) {
-                    groupedByDay[dayCreated] = [];
+
+                    if (!groupedByDay[dayCreated]) {
+                        groupedByDay[dayCreated] = [];
+                    }
+                    groupedByDay[dayCreated].push(datas);
+                    return datas;
                 }
-                groupedByDay[dayCreated].push(datas);
-                return datas;
             });
 
             const resolvedData = await Promise.all(promises);

@@ -3,9 +3,11 @@ import Cookies from 'js-cookie';
 import { successMsg, errorMsg, getUserID, convertToTimeStamp } from '../firebase/utils';
 import {
     addData, updateData, deleteData, getData, getUser, getAllData,
-    getDataRealTime, getExpensesTrackerDataRealTime, getExpensesDataRealTime, getCollectedDataRealTime,
-    getSavingsDataRealTime, 
-    // getSavingsTrackerDataRealTime,
+    getDataRealTime,
+    //  getExpensesTrackerDataRealTime, 
+    getDataCategoryRealTime,
+    getExpensesDataRealTime, getCollectedDataRealTime,
+    getSavingsDataRealTime,
 } from '../firebase/model';
 
 export async function checkStaticData(inputDate) {
@@ -36,9 +38,9 @@ export async function getCollectedDataRealTimeController(setData, isFetching) {
 export async function collectedData(inputDate) {
     if (!getUserID())
         return errorMsg('No LoggedIn User Found.')
-    let totalIncomeData = 0, totalBillsData = 0, totalExpensesData = 0;
+    let totalIncomeData = 0, totalBillsData = 0, totalExpensesData = 0, totalSavingsData = 0;
     let remainingIncomeData = 0;
-    const databaseTable = ['income', 'bills', 'expensesTracker']
+    const databaseTable = ['income', 'bills', 'expensesTracker', 'savingsTracker'];
     try {
         for (const databaseItem of databaseTable) {
             const fetch = await getData(databaseItem, inputDate)
@@ -51,15 +53,18 @@ export async function collectedData(inputDate) {
 
                 if (databaseItem == 'expensesTracker')
                     totalExpensesData += data.amount
+
+                if (databaseItem == 'savingsTracker')
+                    totalExpensesData += data.amount
             })
         }
 
-        remainingIncomeData = totalIncomeData - totalBillsData - totalExpensesData;
+        remainingIncomeData = totalIncomeData - (totalBillsData + totalExpensesData + totalSavingsData);
 
         const data = {
             remainingIncome: remainingIncomeData,
             totalIncome: totalIncomeData,
-            // totalSavings: totalSavingsData,
+            totalSavings: totalSavingsData,
             totalBills: totalBillsData,
             totalExpenses: totalExpensesData,
             date: convertToTimeStamp(inputDate),
@@ -165,7 +170,36 @@ export async function getIncome(setIncomeData, isFetching, inputDate) {
 
 // -------------------------- Savings-----------------------------------
 export async function savings(arrayData) {
-    if (arrayData.category === '' || arrayData.amount === 0)
+    if (arrayData.category === '' || arrayData.target === 0)
+        return errorMsg('Please fill up all fields.')
+
+    if (arrayData.target <= 0)
+        return errorMsg("Amount Can't be negative.")
+
+    if (!getUserID())
+        return errorMsg('No LoggedIn User Found.')
+    const data = {
+        category: arrayData.category,
+        description: !arrayData.description ? '' : arrayData.description,
+        target: arrayData.target,
+        status: !arrayData.status ? 'active' : arrayData.status,
+        date: convertToTimeStamp(arrayData.date),
+        user: getUserID(),
+    }
+    const addReturn = await addData('savings', data)
+    await updateCollectedData(arrayData.date)
+    return successMsg('Successfully Added.', addReturn)
+}
+export async function getSavings(inputDate, setSavingsData, isFetching, dropdownData = false) {
+    try {
+        await getSavingsDataRealTime(inputDate, setSavingsData, isFetching, dropdownData);
+    } catch (error) {
+        console.error("Error fetching savings in Controller:", error);
+    }
+}
+export async function savingsTracker(arrayData) {
+
+    if (arrayData.category === '' || arrayData.description === '' || arrayData.amount === 0)
         return errorMsg('Please fill up all fields.')
 
     if (arrayData.amount <= 0)
@@ -175,21 +209,24 @@ export async function savings(arrayData) {
         return errorMsg('No LoggedIn User Found.')
     const data = {
         category: arrayData.category,
-        description: !arrayData.description ? '' : arrayData.description,
+        description: arrayData.description,
         amount: arrayData.amount,
-        status: !arrayData.status ? 'active' : arrayData.status,
         date: convertToTimeStamp(arrayData.date),
         user: getUserID(),
     }
-    const addReturn = await addData('savings', data)
+    const addReturn = await addData('savingsTracker', data)
     await updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
-export async function getSavings(inputDate, setSavingsData, isFetching) {
+export async function getSavingsTracker(inputDate, setExpensesData, isFetching) {
     try {
-        await getSavingsDataRealTime(inputDate, setSavingsData, isFetching);
+        const table = {
+            main: 'savings',
+            tracker: 'savingsTracker'
+        }
+        await getDataCategoryRealTime(inputDate, setExpensesData, isFetching, table);
     } catch (error) {
-        console.error("Error fetching savings in Controller:", error);
+        console.error("Error fetching Expenses Tracker in Controller:", error);
     }
 }
 
@@ -246,9 +283,9 @@ export async function expenses(arrayData) {
     await updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
-export async function getExpenses(inputDate, setExpensesData, isFetching) {
+export async function getExpenses(inputDate, setExpensesData, isFetching, dropdownData = false) {
     try {
-        await getExpensesDataRealTime(inputDate, setExpensesData, isFetching)
+        await getExpensesDataRealTime(inputDate, setExpensesData, isFetching, dropdownData)
     } catch (error) {
         console.error("Error fetching expenses in Controller:", error);
     }
@@ -283,13 +320,34 @@ export async function expensesTracker(arrayData) {
 }
 export async function getExpensesTracker(inputDate, setExpensesData, isFetching) {
     try {
-        await getExpensesTrackerDataRealTime(inputDate, setExpensesData, isFetching);
+        const table = {
+            main: 'expenses',
+            tracker: 'expensesTracker'
+        }
+        await getDataCategoryRealTime(inputDate, setExpensesData, isFetching, table);
     } catch (error) {
         console.error("Error fetching Expenses Tracker in Controller:", error);
     }
 }
 // --------------------------------------------------------------------
-export async function exprensesTrackerUpdate(id, arrayData) {
+export async function allUpdate(table, id, arrayData) {
+    const {date, ...removeDate} = arrayData;
+    await updateData(table, id, removeDate).then((response) => {
+        if (response && response.status === 'success') {
+            console.log('Data updated successfully.');
+            updateCollectedData(arrayData.date)
+            return successMsg('Successfully Updated.')
+        }
+        else {
+            console.log('Failed to update data.');
+            return errorMsg('Failed to update data. Check console for error.')
+        }
+    }).catch((error) => {
+        console.error('Error updating data:', error);
+        return errorMsg('Failed to update data. Check console for error.')
+    });
+}
+export async function expensesTrackerUpdate(id, arrayData) {
     const discountPrice = !arrayData.discount || arrayData.discount === '' ? 0 : arrayData.discount;
     const data = {
         category: arrayData.category,

@@ -26,6 +26,7 @@ export default function SideNav() {
                 <li><Link to={'/'}>Select Month</Link></li>
                 <li><Link to={`/income/${paramMonth}`}>Income</Link></li>
                 <li><Link to={`/savings/${paramMonth}`}>Savings</Link></li>
+                <li><Link to={`/savingsTracker/${paramMonth}`}>Savings Tracker</Link></li>
                 <li><Link to={`/bills/${paramMonth}`}>Bills</Link></li>
                 <li><Link to={`/expenses/${paramMonth}`}>Expenses</Link></li>
                 <li><Link to={`/expensestracker/${paramMonth}`}>Expenses Tracker</Link></li>

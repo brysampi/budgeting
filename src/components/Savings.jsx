@@ -12,7 +12,7 @@ const Savings = () => {
     }, [paramMonth, navigate]);
     const [formCategory, setFormCategory] = useState('');
     const [formDescription, setFormDescription] = useState('');
-    const [formAmount, setFormAmount] = useState('');
+    const [formTarget, setFormTarget] = useState('');
     const [formStatus, setFormStatus] = useState('');
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
@@ -23,12 +23,12 @@ const Savings = () => {
     const fromSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        if (!formCategory || !formAmount)
+        if (!formCategory || !formTarget)
             return console.log('Please fill up all fields.')
         await savings({
             category: formCategory,
             description: formDescription,
-            amount: parseInt(formAmount),
+            target: parseInt(formTarget),
             status: formStatus,
             date: paramMonth,
         }).then((response) => {
@@ -77,12 +77,12 @@ const Savings = () => {
                         />
                     </div>
                     <div>
-                        <label htmlFor="amountSavings">Target Amount:</label>
+                        <label htmlFor="targetSavings">Target Amount:</label>
                         <input
                             type='text'
-                            id="amountSavings"
-                            value={formAmount}
-                            onChange={(e) => setFormAmount(e.target.value)}
+                            id="targetSavings"
+                            value={formTarget}
+                            onChange={(e) => setFormTarget(e.target.value)}
                         />
                     </div>
                     {
@@ -113,7 +113,7 @@ const Savings = () => {
                             <th>Category</th>
                             <th>Target</th>
                             <th>Total</th>
-                            {/* <th>Remaining</th> */}
+                            <th>Remaining</th>
                             {/* <th>Date</th> */}
                             <th>Status</th>
                             <th>Action</th>
@@ -128,9 +128,9 @@ const Savings = () => {
                                 savingsData.map((item, index) => (
                                     <tr key={index + 1}>
                                         <td>{item.category}</td>
-                                        <td>{item.amount.toFixed(2)}</td>
-                                        <td>{!item.total ? 0.00 : item.total.toFixed(2)}</td>
-                                        {/* <td>{!item.actual ? item.budget.toFixed(2) : (item.budget - item.actual).toFixed(2)}</td> */}
+                                        <td>{item.target.toFixed(2)}</td>
+                                        <td>{!item.actual ? 0.00 : item.actual.toFixed(2)}</td>
+                                        <td>{!item.actual ? item.target.toFixed(2) : (item.target - item.actual).toFixed(2)}</td>
                                         <td>{item.status}</td>
                                         <td><button onClick={async () => { await deleteDataController('savings', item.id) }}>Delete</button></td>
                                     </tr>
@@ -145,7 +145,7 @@ const Savings = () => {
     function clearForm() {
         setFormCategory('')
         setFormDescription('')
-        setFormAmount('')
+        setFormTarget('')
         // setFormActual('')
         setLoading(false)
     }

@@ -5,6 +5,7 @@ import MainLayout from '../layouts/MainLayout';
 import Income from '../components/Income';
 import MonthSelection from '../components/MonthSelector';
 import Savings from '../components/Savings';
+import SavingsTracker from '../components/SavingsTracker';
 import Bills from '../components/Bills';
 import Expenses from '../components/Expenses';
 import ExpensesTracker from '../components/ExpensesTracker';
@@ -22,6 +23,7 @@ const AppRoutes = () => {
                     <Route element={<MainLayout />}>
                         <Route path="income/:paramMonth" element={<Income />} />
                         <Route path="savings/:paramMonth" element={<Savings />} />
+                        <Route path="savingsTracker/:paramMonth" element={<SavingsTracker />} />
                         <Route path="bills/:paramMonth" element={<Bills />} />
                         <Route path="expenses/:paramMonth" element={<Expenses />} />
                         <Route path="expensestracker/:paramMonth" element={<ExpensesTracker />} />
