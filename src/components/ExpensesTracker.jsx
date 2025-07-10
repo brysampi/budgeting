@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { expensesTracker, getExpensesTracker, getExpenses, deleteDataController, exprenseTrackerUpdate, checkStaticData } from '../firebase/controller';
+import { expensesTracker, getExpensesTracker, getExpenses, exprensesTrackerUpdate, checkStaticData } from '../firebase/controller';
 import { useParams, useNavigate } from 'react-router-dom';
 
 
@@ -67,7 +67,7 @@ const ExpensesTracker = () => {
             discount: parseFloat(formDiscount),
             date: paramMonth,
         }
-        const test = await exprenseTrackerUpdate(updateId, data);
+        const test = await exprensesTrackerUpdate(updateId, data);
         // Object.entries(test).forEach(([key, value]) => {
         //     console.log(key, value)
         // })
@@ -75,9 +75,9 @@ const ExpensesTracker = () => {
     useEffect(() => {
         const returnSavings = async () => {
             setIsFetching(true);
-            await getExpenses(setExpensesData, setIsFetching, paramMonth);
+            await getExpenses(paramMonth,setExpensesData, setIsFetching);
             // setFormCategory();
-            await getExpensesTracker(setExpensesTrackerData, setIsFetchingTracker, paramMonth);
+            await getExpensesTracker(paramMonth,setExpensesTrackerData, setIsFetchingTracker);
             clearForm();
         }
         returnSavings();

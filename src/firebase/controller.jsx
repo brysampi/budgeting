@@ -2,8 +2,10 @@ import { } from '../firebase/model';
 import Cookies from 'js-cookie';
 import { successMsg, errorMsg, getUserID, convertToTimeStamp } from '../firebase/utils';
 import {
-    addData, updateData, deleteData, getData, getUser,
+    addData, updateData, deleteData, getData, getUser, getAllData,
     getDataRealTime, getExpensesTrackerDataRealTime, getExpensesDataRealTime, getCollectedDataRealTime,
+    getSavingsDataRealTime, 
+    // getSavingsTrackerDataRealTime,
 } from '../firebase/model';
 
 export async function checkStaticData(inputDate) {
@@ -154,14 +156,16 @@ export async function income(arrayData) {
 }
 export async function getIncome(setIncomeData, isFetching, inputDate) {
     try {
-        await getDataRealTime('income', setIncomeData, isFetching, inputDate)
+        await getDataRealTime('income', inputDate, setIncomeData, isFetching)
     } catch (error) {
         console.error("Error fetching income in Controller:", error);
     }
 }
 // -------------------------- Savings -----------------------------------
+
+// -------------------------- Savings-----------------------------------
 export async function savings(arrayData) {
-    if (arrayData.description === '' || arrayData.amount === 0)
+    if (arrayData.category === '' || arrayData.amount === 0)
         return errorMsg('Please fill up all fields.')
 
     if (arrayData.amount <= 0)
@@ -170,8 +174,10 @@ export async function savings(arrayData) {
     if (!getUserID())
         return errorMsg('No LoggedIn User Found.')
     const data = {
-        description: arrayData.description,
+        category: arrayData.category,
+        description: !arrayData.description ? '' : arrayData.description,
         amount: arrayData.amount,
+        status: !arrayData.status ? 'active' : arrayData.status,
         date: convertToTimeStamp(arrayData.date),
         user: getUserID(),
     }
@@ -179,9 +185,9 @@ export async function savings(arrayData) {
     await updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
-export async function getSavings(setSavingsData, isFetching, inputDate) {
+export async function getSavings(inputDate, setSavingsData, isFetching) {
     try {
-        await getDataRealTime('savings', setSavingsData, isFetching, inputDate)
+        await getSavingsDataRealTime(inputDate, setSavingsData, isFetching);
     } catch (error) {
         console.error("Error fetching savings in Controller:", error);
     }
@@ -214,7 +220,7 @@ export async function bills(arrayData) {
 }
 export async function getBills(setBillsData, isFetching, inputDate) {
     try {
-        await getDataRealTime('bills', setBillsData, isFetching, inputDate)
+        await getDataRealTime('bills', inputDate, setBillsData, isFetching)
     } catch (error) {
         console.error("Error fetching bills in Controller:", error);
     }
@@ -240,9 +246,9 @@ export async function expenses(arrayData) {
     await updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
-export async function getExpenses(setExpensesData, isFetching, inputDate) {
+export async function getExpenses(inputDate, setExpensesData, isFetching) {
     try {
-        await getExpensesDataRealTime(setExpensesData, isFetching, inputDate)
+        await getExpensesDataRealTime(inputDate, setExpensesData, isFetching)
     } catch (error) {
         console.error("Error fetching expenses in Controller:", error);
     }
@@ -275,15 +281,15 @@ export async function expensesTracker(arrayData) {
     await updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
-export async function getExpensesTracker(setExpensesData, isFetching, inputDate) {
+export async function getExpensesTracker(inputDate, setExpensesData, isFetching) {
     try {
-        await getExpensesTrackerDataRealTime(setExpensesData, isFetching, inputDate);
+        await getExpensesTrackerDataRealTime(inputDate, setExpensesData, isFetching);
     } catch (error) {
         console.error("Error fetching Expenses Tracker in Controller:", error);
     }
 }
 // --------------------------------------------------------------------
-export async function exprenseTrackerUpdate(id, arrayData) {
+export async function exprensesTrackerUpdate(id, arrayData) {
     const discountPrice = !arrayData.discount || arrayData.discount === '' ? 0 : arrayData.discount;
     const data = {
         category: arrayData.category,

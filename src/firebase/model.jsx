@@ -54,7 +54,7 @@ export async function addData(table, arrayData) {
     }
 }
 
-export async function getDataRealTime(table, setData, isFetching, inputDate) {
+export async function getDataRealTime(table, inputDate, setData, isFetching) {
     try {
         const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
         const que = query(
@@ -81,7 +81,41 @@ export async function getDataRealTime(table, setData, isFetching, inputDate) {
         throw new Error("Failed to fetch data");
     }
 }
-export async function getExpensesDataRealTime(setExpensesData, isFetching, inputDate) {
+// ------------------------------- Savings -------------------------------------
+export async function getSavingsDataRealTime(inputDate, setData, isFetching) {
+    // console.log("Fetching savings tracker data for month: ", inputDate);
+    try {
+        // const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
+        const usersRef = collection(db, 'savings');
+        const que = query(usersRef,
+            where("user", "==", getUserID()),
+            // where("date", ">=", startOfMonth),
+            // where("date", "<=", endOfMonth),
+            // where("status", "==", "active"),
+            orderBy("date", "desc"),
+            orderBy("createdAt", "desc"),
+        )
+        const unsubscribe = onSnapshot(que, async (snapshot) => {
+            const promises = snapshot.docs.map(async (docSnap) => {
+                return {
+                    id: docSnap.id,
+                    ...docSnap.data(),
+                };
+            })
+            const resolvedData = await Promise.all(promises);
+            console.log("Resolved Data: ", resolvedData);
+            setData(resolvedData);
+            isFetching(false);
+            return resolvedData;
+        })
+        console.log("Fetching savings data for month: ", inputDate);
+    } catch (error) {
+        console.log("Error fetching savings data: ", error);
+        // throw new Error("Failed to fetch savings tracker data");
+    }
+}
+// ------------------------------- Expenses -------------------------------------
+export async function getExpensesDataRealTime(inputDate, setExpensesData, isFetching) {
     try {
         const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
         const que = query(
@@ -130,7 +164,7 @@ export async function getExpensesDataRealTime(setExpensesData, isFetching, input
         throw new Error("Failed to fetch expenses");
     }
 }
-export async function getExpensesTrackerDataRealTime(setData, isFetching, inputDate) {
+export async function getExpensesTrackerDataRealTime(inputDate, setData, isFetching) {
     try {
         const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
         const que = query(
@@ -240,6 +274,29 @@ export async function getData(table, inputDate) {
         return [];
     }
 }
+export async function getAllData(table) {
+    try {
+        const usersRef = collection(db, table);
+        const que = query(
+            usersRef,
+            where("user", "==", getUserID()),
+            orderBy("createdAt", "desc"),
+        );
+        const querySnapshot = await getDocs(que);
+        const promises = querySnapshot.docs.map(async (docSnap) => {
+            return {
+                id: docSnap.id,
+                ...docSnap.data(),
+            };
+        });
+        const resolvedData = await Promise.all(promises);
+        return resolvedData;
+    } catch (error) {
+        console.error("Error fetching all data: ", error);
+        return [];
+    }
+}
+
 // --------------------------------------------------------------------
 export async function updateData(table, id, arrayData) {
     try {

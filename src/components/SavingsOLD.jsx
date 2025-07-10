@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
-import { expenses, getExpenses, deleteDataController } from '../firebase/controller';
+import { savings, getSavings, deleteDataController } from '../firebase/controller';
 import { useParams, useNavigate } from 'react-router-dom';
 
-const Expenses = () => {
+
+
+const Savings = () => {
     const { paramMonth } = useParams();
     const navigate = useNavigate();
     useEffect(() => {
@@ -10,27 +12,27 @@ const Expenses = () => {
             navigate('/monthSelect'); // Redirect to home if paramMonth is missing
         }
     }, [paramMonth, navigate]);
-    const [formCategory, setFormCategory] = useState('');
-    const [formBudget, setFormBudget] = useState('');
+    const [formDescription, setFormDescription] = useState('');
+    const [formAmount, setFormAmount] = useState('');
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
-    const [expensesData, setExpensesData] = useState([]);
+    const [savingsData, setSavingsData] = useState([]);
 
     const fromSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        if (!formCategory || !formBudget)
+        if (!formDescription || !formAmount)
             return console.log('Please fill up all fields.')
-        expenses({
-            category: formCategory,
-            budget: parseInt(formBudget),
+        savings({
+            description: formDescription,
+            amount: parseFloat(formAmount),
             date: paramMonth,
         }).then((response) => {
-            if (response && response.status == 'success') {
-                console.log('Expense Added.')
-            } else {
-                console.log('Failed to Add Expense.')
-            }
+            if (response && response.status == 'success')
+                console.log('Savings Added.')
+            else
+                console.log('Failed to Add Savings.')
+
         }).catch((error) => {
             console.log(error)
         }).finally(() => {
@@ -39,12 +41,11 @@ const Expenses = () => {
         })
     }
     useEffect(() => {
-        const returnExpenses = async () => {
+        const returnSavings = async () => {
             setIsFetching(true);
-            return await getExpenses(paramMonth, setExpensesData, setIsFetching);
+            return await getSavings(setSavingsData, setIsFetching, paramMonth);
         }
-
-        returnExpenses();
+        returnSavings();
     }, []);
 
     return (
@@ -52,21 +53,21 @@ const Expenses = () => {
             <div>
                 <form onSubmit={fromSubmit}>
                     <div>
-                        <label htmlFor="categoryExpenses">Category:</label>
+                        <label htmlFor="descSavings">description:</label>
                         <input
                             type="text"
-                            id="categoryExpenses"
-                            value={formCategory}
-                            onChange={(e) => setFormCategory(e.target.value)}
+                            id="descSavings"
+                            value={formDescription}
+                            onChange={(e) => setFormDescription(e.target.value)}
                         />
                     </div>
                     <div>
-                        <label htmlFor="budgetExpenses">Budget:</label>
+                        <label htmlFor="amountSavings">Amount:</label>
                         <input
-                            type='text'
-                            id="budgetExpenses"
-                            value={formBudget}
-                            onChange={(e) => setFormBudget(e.target.value)}
+                            type="text"
+                            id="amountSavings"
+                            value={formAmount}
+                            onChange={(e) => setFormAmount(e.target.value)}
                         />
                     </div>
                     <button disabled={loading}>{loading ? 'Loading' : 'Submit'}</button>
@@ -78,10 +79,9 @@ const Expenses = () => {
                     <thead>
                         <tr>
                             {/* <th>#</th> */}
-                            <th>Category</th>
-                            <th>Budget</th>
-                            <th>Actual</th>
-                            <th>Remaining</th>
+                            <th>Description</th>
+                            {/* <th>Expected</th> */}
+                            <th>Amount</th>
                             {/* <th>Date</th> */}
                             <th>Action</th>
                         </tr>
@@ -90,16 +90,15 @@ const Expenses = () => {
                         {isFetching ? (
                             <tr><td colSpan={6}>Loading...</td></tr>
                         ) : (
-                            expensesData.length === 0 ?
+                            savingsData.length === 0 ?
                                 <tr><td colSpan={6}>No Data Found</td></tr> :
-                                expensesData.map((item, index) => (
+                                savingsData.map((item, index) => (
                                     <tr key={index + 1}>
-                                        <td>{item.category}</td>
-                                        <td>{item.budget.toFixed(2)}</td>
-                                        <td>{!item.actual ? 0.00 : item.actual.toFixed(2)}</td>
-                                        <td>{!item.actual ? item.budget.toFixed(2) : (item.budget - item.actual).toFixed(2)}</td>
+                                        <td>{item.description}</td>
+                                        {/* <td>{item.expected}</td> */}
+                                        <td>{item.amount.toFixed(2)}</td>
                                         {/* <td>{item.date}</td> */}
-                                        <td><button onClick={async () => { await deleteDataController('expenses', item.id) }}>Delete</button></td>
+                                        <td><button onClick={async () => { await deleteDataController('savings', item.id) }}>Delete</button></td>
                                     </tr>
                                 ))
                         )}
@@ -110,11 +109,10 @@ const Expenses = () => {
     )
 
     function clearForm() {
-        setFormCategory('')
-        setFormBudget('')
-        setFormActual('')
+        setFormDescription('')
+        setFormAmount('')
         setLoading(false)
     }
 }
-export default Expenses;
+export default Savings;
 
