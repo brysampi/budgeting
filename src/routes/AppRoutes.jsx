@@ -1,5 +1,5 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { useState } from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import MainLayout from '../layouts/MainLayout';
 import Income from '../components/Income';
@@ -9,10 +9,21 @@ import SavingsTracker from '../components/SavingsTracker';
 import Bills from '../components/Bills';
 import Expenses from '../components/Expenses';
 import ExpensesTracker from '../components/ExpensesTracker';
+import ExpensesDefault from '../components/ExpensesDefault';
 import LoginPage from '../components/LoginPage';
 
 
 const AppRoutes = () => {
+    const location = useLocation();
+    useEffect(() => {
+        if (location.pathname === "/income:paramMonth")
+            document.title = "income";
+        else if (location.pathname === "/settings")
+            document.title = "Settings";
+        else
+            document.title = "My App";
+
+    }, [location]);
     const [loggedIn, setLoggedIn] = useState(Cookies.get('logged_status') ? true : false)
     return (
         <Routes>
@@ -27,6 +38,7 @@ const AppRoutes = () => {
                         <Route path="bills/:paramMonth" element={<Bills />} />
                         <Route path="expenses/:paramMonth" element={<Expenses />} />
                         <Route path="expensestracker/:paramMonth" element={<ExpensesTracker />} />
+                        <Route path="expensesdefault/:paramMonth" element={<ExpensesDefault />} />
                     </Route>
                 </>
             )}

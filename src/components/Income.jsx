@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { income, getIncome, deleteDataController } from '../firebase/controller';
+import { income, getDataRealTimeController, deleteDataController } from '../firebase/controller';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const Income = () => {
@@ -43,7 +43,7 @@ const Income = () => {
     useEffect(() => {
         const returnIncome = async () => {
             setIsFetching(true);
-            return await getIncome(setIncomeData, setIsFetching, paramMonth);
+            return await getDataRealTimeController(paramMonth, setIncomeData, setIsFetching);
         }
         returnIncome();
     }, []);

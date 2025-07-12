@@ -159,13 +159,6 @@ export async function income(arrayData) {
     await updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
-export async function getIncome(setIncomeData, isFetching, inputDate) {
-    try {
-        await getDataRealTime('income', inputDate, setIncomeData, isFetching)
-    } catch (error) {
-        console.error("Error fetching income in Controller:", error);
-    }
-}
 // -------------------------- Savings -----------------------------------
 
 // -------------------------- Savings-----------------------------------
@@ -224,14 +217,14 @@ export async function getSavingsTracker(inputDate, setExpensesData, isFetching) 
             main: 'savings',
             tracker: 'savingsTracker'
         }
-        await getDataCategoryRealTime(inputDate, setExpensesData, isFetching, table);
+        await getDataCategoryRealTime(table, inputDate, setExpensesData, isFetching);
     } catch (error) {
         console.error("Error fetching Expenses Tracker in Controller:", error);
     }
 }
 
 // -------------------------- Bills -----------------------------------
-export async function bills(arrayData) {
+export async function addBills(arrayData) {
     if (arrayData.description === '' || arrayData.dueDate === '' || arrayData.budget === 0 || arrayData.actual === 0 || arrayData.date === '')
         return errorMsg('Please fill up all fields.')
 
@@ -254,13 +247,6 @@ export async function bills(arrayData) {
     const addReturn = await addData('bills', data)
     await updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
-}
-export async function getBills(setBillsData, isFetching, inputDate) {
-    try {
-        await getDataRealTime('bills', inputDate, setBillsData, isFetching)
-    } catch (error) {
-        console.error("Error fetching bills in Controller:", error);
-    }
 }
 // -------------------------- Expenses -----------------------------------
 export async function expenses(arrayData) {
@@ -324,14 +310,50 @@ export async function getExpensesTracker(inputDate, setExpensesData, isFetching)
             main: 'expenses',
             tracker: 'expensesTracker'
         }
-        await getDataCategoryRealTime(inputDate, setExpensesData, isFetching, table);
+        await getDataCategoryRealTime(table, inputDate, setExpensesData, isFetching);
     } catch (error) {
         console.error("Error fetching Expenses Tracker in Controller:", error);
     }
 }
+// -------------------------- Expenses Default -----------------------------------
+export async function expensesDefault(arrayData) {
+    if (arrayData.description === '' || arrayData.budget === 0 || arrayData.date === '')
+        return errorMsg('Please fill up all fields.')
+
+    if (arrayData.budget <= 0)
+        return errorMsg("Budget can't be negative.")
+
+    if (!getUserID())
+        return errorMsg('No LoggedIn User Found.')
+
+    const data = {
+        description: arrayData.description,
+        budget: arrayData.budget,
+        date: convertToTimeStamp(arrayData.date),
+        user: getUserID(),
+    }
+    const addReturn = await addData('expensesDefault', data)
+    // await updateCollectedData(arrayData.date)
+    return successMsg('Successfully Added.', addReturn)
+}
+export async function getAllDataController(table, setExpensesDefaultData, isFetching, inputDate) {
+    try {
+        await getAllData(table, inputDate, setExpensesDefaultData, isFetching)
+    } catch (error) {
+        console.error("Error fetching Expenses Default in Controller:", error);
+    }
+}
+export async function getDataRealTimeController(table, inputDate, setData, isFetching) {
+    try {
+        await getDataRealTime(table, inputDate, setData, isFetching);
+    } catch (error) {
+        console.error(`Error fetching data from ${table} in Controller:`, error);
+    }
+
+}
 // --------------------------------------------------------------------
 export async function allUpdate(table, id, arrayData) {
-    const {date, ...removeDate} = arrayData;
+    const { date, ...removeDate } = arrayData;
     await updateData(table, id, removeDate).then((response) => {
         if (response && response.status === 'success') {
             console.log('Data updated successfully.');

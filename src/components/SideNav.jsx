@@ -30,6 +30,7 @@ export default function SideNav() {
                 <li><Link to={`/bills/${paramMonth}`}>Bills</Link></li>
                 <li><Link to={`/expenses/${paramMonth}`}>Expenses</Link></li>
                 <li><Link to={`/expensestracker/${paramMonth}`}>Expenses Tracker</Link></li>
+                <li><Link to={`/expensesDefault/${paramMonth}`}>Expenses Default</Link></li>
                 <li onClick={onLogout}>Logout</li>
             </ul>
         </div >

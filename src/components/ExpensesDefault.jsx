@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { addBills, getDataRealTimeController, deleteDataController } from '../firebase/controller';
-import { convertToDate } from '../firebase/utils';
+import { expensesDefault, getAllDataController, deleteDataController } from '../firebase/controller';
 import { useParams, useNavigate } from 'react-router-dom';
 
-const Bills = () => {
+const ExpensesDefault = () => {
     const { paramMonth } = useParams();
     const navigate = useNavigate();
     useEffect(() => {
@@ -12,29 +11,25 @@ const Bills = () => {
         }
     }, [paramMonth, navigate]);
     const [formDescription, setFormDescription] = useState('');
-    const [formDueDate, setFormDueDate] = useState('');
     const [formBudget, setFormBudget] = useState('');
-    const [formActual, setFormActual] = useState('');
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
-    const [billsData, setBillsData] = useState([]);
+    const [expensesDefaultData, setExpensesDefaultData] = useState([]);
 
     const fromSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        if (!formDescription || !formDueDate || !formBudget || !formActual)
+        if (!formDescription  || !formBudget )
             return console.log('Please fill up all fields.')
-        addBills({
+        expensesDefault({
             description: formDescription,
-            dueDate: formDueDate,
             budget: parseFloat(formBudget),
-            actual: parseFloat(formActual),
             date: paramMonth,
         }).then((response) => {
             if (response && response.status == 'success')
-                console.log('Bill Added.')
+                console.log('Expenses Default Added.')
             else
-                console.log('Failed to Add Bill.')
+                console.log('Failed to Add Expenses Default.')
 
         }).catch((error) => {
             console.log(error)
@@ -44,11 +39,11 @@ const Bills = () => {
         })
     }
     useEffect(() => {
-        const returnBills = async () => {
+        const returnExpensesDefault = async () => {
             setIsFetching(true);
-            return await getDataRealTimeController('bills', paramMonth, setBillsData, setIsFetching);
+            return await getAllDataController(setExpensesDefaultData, setIsFetching, paramMonth);
         }
-        returnBills();
+        returnExpensesDefault();
     }, []);
 
     return (
@@ -56,39 +51,21 @@ const Bills = () => {
             <div>
                 <form onSubmit={fromSubmit}>
                     <div>
-                        <label htmlFor="descBills">description:</label>
+                        <label htmlFor="descExpensesDefault">description:</label>
                         <input
                             type="text"
-                            id="descBills"
+                            id="descExpensesDefault"
                             value={formDescription}
                             onChange={(e) => setFormDescription(e.target.value)}
                         />
                     </div>
                     <div>
-                        <label htmlFor="dueDateBills">Due-Date:</label>
-                        <input
-                            type="date"
-                            id="dueDateBills"
-                            value={formDueDate}
-                            onChange={(e) => setFormDueDate(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="budgetBills">Budget:</label>
+                        <label htmlFor="budgetExpensesDefault">Budget:</label>
                         <input
                             type='text'
-                            id="budgetBills"
+                            id="budgetExpensesDefault"
                             value={formBudget}
                             onChange={(e) => setFormBudget(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="actualBills">Actual:</label>
-                        <input
-                            type="text"
-                            id="actualBills"
-                            value={formActual}
-                            onChange={(e) => setFormActual(e.target.value)}
                         />
                     </div>
                     <button disabled={loading}>{loading ? 'Loading' : 'Submit'}</button>
@@ -99,12 +76,8 @@ const Bills = () => {
                 <table>
                     <thead>
                         <tr>
-                            {/* <th>#</th> */}
                             <th>Description</th>
-                            <th>Due-Date</th>
                             <th>Budget</th>
-                            <th>Actual</th>
-                            {/* <th>Date</th> */}
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -112,16 +85,13 @@ const Bills = () => {
                         {isFetching ? (
                             <tr><td colSpan={6}>Loading...</td></tr>
                         ) : (
-                            billsData.length === 0 ?
+                            expensesDefaultData.length === 0 ?
                                 <tr><td colSpan={6}>No Data Found</td></tr> :
-                                billsData.map((item, index) => (
+                                expensesDefaultData.map((item, index) => (
                                     <tr key={index + 1}>
                                         <td>{item.description}</td>
-                                        <td>{convertToDate(item.dueDate)}</td>
                                         <td>{item.budget.toFixed(2)}</td>
-                                        <td>{item.actual.toFixed(2)}</td>
-                                        {/* <td>{item.date}</td> */}
-                                        <td><button onClick={async () => { await deleteDataController('bills', item.id) }}>Delete</button></td>
+                                        <td><button onClick={async () => { await deleteDataController('expensesDefault', item.id) }}>Delete</button></td>
                                     </tr>
                                 ))
                         )}
@@ -133,11 +103,9 @@ const Bills = () => {
 
     function clearForm() {
         setFormDescription('')
-        setFormDueDate('')
         setFormBudget('')
-        setFormActual('')
         setLoading(false)
     }
 }
-export default Bills;
+export default ExpensesDefault;
 

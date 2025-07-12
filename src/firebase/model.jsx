@@ -3,7 +3,7 @@ import {
     orderBy, query, where, serverTimestamp, getDoc, doc, deleteDoc
 } from "firebase/firestore";
 import { db } from "./firebase";
-import { successMsg, errorMsg, getMonthRangeFromInput, getUserID, convertToDate } from '../firebase/utils';
+import { successMsg, errorMsg, getMonthRangeFromInput, getUserID, convertToDate,convertToTimeStamp } from '../firebase/utils';
 
 export async function getUser(user, password) {
     try {
@@ -43,6 +43,7 @@ export async function addData(table, arrayData) {
                 ...arrayData,
                 user: IdStored,
                 createdAt: serverTimestamp()
+                // createdAt: convertToTimeStamp('2025-07-09'),
             })
             return successMsg('Successfully Added.')
         }
@@ -192,7 +193,7 @@ export async function getExpensesDataRealTime(inputDate, setExpensesData, isFetc
         throw new Error("Failed to fetch expenses");
     }
 }
-export async function getDataCategoryRealTime(inputDate, setData, isFetching, table) {
+export async function getDataCategoryRealTime(table,inputDate, setData, isFetching) {
     try {
         const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
         const que = query(
@@ -308,12 +309,16 @@ export async function getData(table, inputDate) {
         return [];
     }
 }
-export async function getAllData(table) {
+export async function getAllData(table, inputDate, setData, isFetching) {
     try {
+        const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
         const usersRef = collection(db, table);
         const que = query(
             usersRef,
             where("user", "==", getUserID()),
+            where("date", ">=", startOfMonth),
+            where("date", "<=", endOfMonth),
+            orderBy("date", "desc"),
             orderBy("createdAt", "desc"),
         );
         const querySnapshot = await getDocs(que);
@@ -324,6 +329,8 @@ export async function getAllData(table) {
             };
         });
         const resolvedData = await Promise.all(promises);
+        setData(resolvedData);
+            isFetching(false);
         return resolvedData;
     } catch (error) {
         console.error("Error fetching all data: ", error);
