@@ -41,7 +41,7 @@ const ExpensesDefault = () => {
     useEffect(() => {
         const returnExpensesDefault = async () => {
             setIsFetching(true);
-            return await getAllDataController(setExpensesDefaultData, setIsFetching, paramMonth);
+            return await getAllDataController('expensesDefault',setExpensesDefaultData, setIsFetching);
         }
         returnExpensesDefault();
     }, []);

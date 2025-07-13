@@ -2,7 +2,7 @@ import { } from '../firebase/model';
 import Cookies from 'js-cookie';
 import { successMsg, errorMsg, getUserID, convertToTimeStamp } from '../firebase/utils';
 import {
-    addData, updateData, deleteData, getData, getUser, getAllData,
+    addData, updateData, deleteData, getData, getUser, getAllData, getAllDataRealtime,
     getDataRealTime,
     //  getExpensesTrackerDataRealTime, 
     getDataCategoryRealTime,
@@ -336,9 +336,9 @@ export async function expensesDefault(arrayData) {
     // await updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
-export async function getAllDataController(table, setExpensesDefaultData, isFetching, inputDate) {
+export async function getAllDataController(table, setExpensesDefaultData, isFetching) {
     try {
-        await getAllData(table, inputDate, setExpensesDefaultData, isFetching)
+        await getAllDataRealtime(table, setExpensesDefaultData, isFetching)
     } catch (error) {
         console.error("Error fetching Expenses Default in Controller:", error);
     }

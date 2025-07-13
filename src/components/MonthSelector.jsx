@@ -44,13 +44,23 @@ export default function MonthSelection({ onLogOut }) {
                     monthCollectionData.length === 0 ?
                         <h1>No Data Found ...</h1> :
                         monthCollectionData.map((item, index) => (
-                            <div key={index + 1}>
+                            <div key={index + 1} className='monthCollectionData'>
+                                {console.log(item)}
                                 <Link to={'/income/' +
                                     item.date.toDate().getFullYear()
                                     + '-' +
                                     (item.date.toDate().getMonth() + 1)
                                 }>
-                                    <button>{getMonthNames(item.date) + ' ' + item.date.toDate().getFullYear() + '    '}</button>
+                                    <div>
+                                        <div>
+                                            {getMonthNames(item.date) + ' ' + item.date.toDate().getFullYear() + '    '}
+                                        </div>
+                                        <div>
+                                            Remaining Income: {item.remainingIncome.toFixed(2)}
+                                            
+                                        </div>
+
+                                    </div>
                                 </Link>
                             </div>
                         ))

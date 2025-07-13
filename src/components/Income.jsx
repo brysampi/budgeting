@@ -43,7 +43,7 @@ const Income = () => {
     useEffect(() => {
         const returnIncome = async () => {
             setIsFetching(true);
-            return await getDataRealTimeController(paramMonth, setIncomeData, setIsFetching);
+            return await getDataRealTimeController('income',paramMonth, setIncomeData, setIsFetching);
         }
         returnIncome();
     }, []);

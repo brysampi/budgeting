@@ -15,9 +15,9 @@ export default function Logout({ onLogout }) {
             <div>
                 <button onClick={clickLogout}>Logout</button>
             </div>
-            <div>
+            {/* <div>
                 <button onClick={() => collectedData('2025-6-1')}>Collected Data</button>
-            </div>
+            </div> */}
         </>
     );
 }
