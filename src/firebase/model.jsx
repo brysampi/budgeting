@@ -42,8 +42,8 @@ export async function addData(table, arrayData) {
             await addDoc(collectionRef, {
                 ...arrayData,
                 user: IdStored,
-                // createdAt: serverTimestamp()
-                createdAt: convertToTimeStamp('2025-07-10'),
+                createdAt: serverTimestamp()
+                // createdAt: convertToTimeStamp('2025-07-10'),
             })
             return successMsg('Successfully Added.')
         }
@@ -309,31 +309,28 @@ export async function getData(table, inputDate) {
         return [];
     }
 }
-export async function getAllData(table, inputDate, setData, isFetching) {
+export async function getAllData(table, inputDate) {
     try {
         const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
+        const usersRef = collection(db, table);
         const que = query(
-            collection(db, table),
+            usersRef,
             where("user", "==", getUserID()),
-            where("date", ">=", startOfMonth),
-            where("date", "<=", endOfMonth),
-            orderBy("date", "desc"),
             orderBy("createdAt", "desc"),
         );
-        const unsubscribe = onSnapshot(que, async (snapshot) => {
-            const promises = snapshot.docs.map(async (docSnap) => ({
+        const querySnapshot = await getDocs(que);
+        // console.log(querySnapshot.docs)
+        const promises = querySnapshot.docs.map(async (docSnap) => {
+            return {
                 id: docSnap.id,
                 ...docSnap.data(),
-            }));
-            const resolvedData = await Promise.all(promises);
-            setData(resolvedData);
-            isFetching(false);
-            return resolvedData;
-        });
-        return unsubscribe;
+            };
+        })
+        const resolvedData = await Promise.all(promises);
+        return resolvedData;
     } catch (error) {
-        console.error("Error fetching data: ", error);
-        throw new Error("Failed to fetch data");
+        console.error("Error fetching: ", error);
+        return [];
     }
 }
 export async function getAllDataRealtime(table, setData, isFetching) {

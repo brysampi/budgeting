@@ -19,7 +19,7 @@ const ExpensesDefault = () => {
     const fromSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        if (!formDescription  || !formBudget )
+        if (!formDescription || !formBudget)
             return console.log('Please fill up all fields.')
         expensesDefault({
             description: formDescription,
@@ -41,7 +41,8 @@ const ExpensesDefault = () => {
     useEffect(() => {
         const returnExpensesDefault = async () => {
             setIsFetching(true);
-            return await getAllDataController('expensesDefault',setExpensesDefaultData, setIsFetching);
+            return await getAllDataController('expensesDefault', setExpensesDefaultData, setIsFetching);
+
         }
         returnExpensesDefault();
     }, []);

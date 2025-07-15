@@ -97,15 +97,24 @@ export async function creteCollectedData(inputDate) {
         const collect = await collectedData(inputDate);
         if (collect) {
             const addCollect = await addCollectedData(inputDate, collect)
-            const expensesDefault = { 'Foods': 200, 'Dirty Foods': 50, 'Fruits and Condiments': 50 };
-            Object.entries(expensesDefault).forEach(async ([key, value]) => {
+            const expensesDefault = await getAllData('expensesDefault', inputDate);
+            expensesDefault.forEach(async (exDefault) => {
                 await addData('expenses', {
-                    category: key,
-                    budget: value,
+                    category: exDefault.description,
+                    budget: exDefault.budget,
                     date: convertToTimeStamp(inputDate),
+                    defaultCreatedId: exDefault.id,
                     user: getUserID(),
                 })
             })
+            // Object.entries(expensesDefault).forEach(async ([key, value]) => {
+            //     await addData('expenses', {
+            //         category: key,
+            //         budget: value,
+            //         date: convertToTimeStamp(inputDate),
+            //         user: getUserID(),
+            //     })
+            // })
             const addReturn = await addData('expenses', data)
             return successMsg('Successfully Added.', addCollect);
         } else {
