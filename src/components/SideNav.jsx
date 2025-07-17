@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
+import Cookies from 'js-cookie';
 import { useParams, useNavigate } from 'react-router-dom';
 import { logout } from '../firebase/controller';
 

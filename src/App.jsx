@@ -1,7 +1,7 @@
 import { use, useEffect, useState } from 'react'
 import { BrowserRouter as Router, Route, Routes, Link, useSearchParams } from 'react-router-dom';
 import Login from './components/LoginPage'
-import Logout from './components/Logout'
+import Logout from './components/Logout';
 import Cookies from 'js-cookie';
 import SideNav from './components/SideNav';
 import Income from './components/Income';

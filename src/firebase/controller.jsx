@@ -115,7 +115,7 @@ export async function creteCollectedData(inputDate) {
             //         user: getUserID(),
             //     })
             // })
-            const addReturn = await addData('expenses', data)
+            // const addReturn = await addData('expenses', data)
             return successMsg('Successfully Added.', addCollect);
         } else {
             console.log('Failed to Add Data in Controller.')

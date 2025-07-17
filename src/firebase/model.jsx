@@ -132,7 +132,7 @@ export async function getSavingsDataRealTime(inputDate, setData, isFetching, dro
             isFetching(false);
             return resolvedData;
         })
-        console.log("Fetching savings data for month: ", inputDate);
+        // console.log("Fetching savings data for month: ", inputDate);
     } catch (error) {
         console.log("Error fetching savings data: ", error);
         // throw new Error("Failed to fetch savings tracker data");
@@ -316,7 +316,7 @@ export async function getAllData(table, inputDate) {
         const que = query(
             usersRef,
             where("user", "==", getUserID()),
-            orderBy("createdAt", "desc"),
+            orderBy("createdAt", "asc"),
         );
         const querySnapshot = await getDocs(que);
         // console.log(querySnapshot.docs)
