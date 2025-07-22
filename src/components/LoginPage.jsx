@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { login } from "../firebase/controller";
-
-export default function LoginPage({onLogin}) {
+import '../css/login.css';
+export default function LoginPage({ onLogin }) {
     const [user, setUser] = useState('');
     const [pass, setPass] = useState('');
     const [loading, setLoading] = useState(false)
+    const [viewPassword, setViewPassword] = useState(false)
     const loginAccount = async (event) => {
         event.preventDefault();
         setLoading(true)
@@ -20,31 +21,61 @@ export default function LoginPage({onLogin}) {
         }
         try {
             const test = await login(user, pass)
-            if (test.status === 'success' && test.boolean && test.data) 
+            if (test.status === 'success' && test.boolean && test.data)
                 onLogin();
-             else 
+            else
                 console.log('Login failed:', test.message);
-            
+
             clearForm()
         } catch (error) {
             clearForm()
             console.error('Error during login:', error);
         }
-        
+
+    }
+    const seePassword = () => {
+        // document.getElementById('pass').setAttribute('type', viewPassword === false ? 'text' : 'password')
+        setViewPassword(!viewPassword)
     }
     return (
         <>
-            <div>
-                <form onSubmit={loginAccount}>
-                    Username
-                    <input type="text" onChange={(e) => { setUser(e.target.value) }} value={user} name="" id="user" />
-                    Password
-                    <input type="password" onChange={(e) => { setPass(e.target.value) }} value={pass} name="" id="pass" />
-                    <button disabled={loading}>{loading ? 'Loading' : 'Submit'} </button>
-                </form>
-                {/* <button onClick={setCookie}>Set Cookie</button>
+            <div className='flex flex-col items-center justify-center h-screen bg-[var(--theme-one-seven)]'>
+                <div className='
+                flex flex-col justify-center rounded-lg
+                h-full w-full sm:h-auto sm:w-auto py-[50px] px-[100px]
+                bg-[var(--theme-one-five)]  shadow-[0px_0px_20px_rgba(0,0,0,0.2)]
+                '>
+                    <div className='text-center font-bold text-2xl p-10'>
+                        My Logo Here
+                    </div>
+                    <form onSubmit={loginAccount}
+                        className='
+                        flex flex-col items-center
+                        '>
+                        <div className='floating-label-wrapper'>
+                            <input id="user" type="text" onChange={(e) => setUser(e.target.value)} value={user} placeholder='Username' />
+                            <label htmlFor="user">Username</label>
+                        </div>
+                        <div className='floating-label-wrapper'>
+                            <input id="pass" type={viewPassword === false ? 'password' : 'text'} onChange={(e) => setPass(e.target.value)} value={pass} placeholder='Password' />
+                            <label htmlFor="pass">Password</label>
+                        </div>
+                        <div >
+                            <input type='checkbox' id='checkbox' onClick={seePassword} />
+                            <label htmlFor='checkbox' className='ml-2' >Show Password</label>
+                        </div>
+
+                        <button
+                            className='
+                        bg-[var(--theme-one-three)] hover:bg-[var(--theme-one-four)]
+                        py-2 px-6 rounded-lg shadow-[0px_0px_5px_rgba(0,0,0,0.3)] mt-3
+                        '
+                            disabled={loading}>{loading ? 'Loading' : 'Submit'} </button>
+                    </form>
+                    {/* <button onClick={setCookie}>Set Cookie</button>
                 <button onClick={updateCookie}>update Cookie</button>
                 <button onClick={destroyToken}>delete Cookie</button> */}
+                </div>
             </div>
         </>
     )

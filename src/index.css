@@ -1,6 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   /* line-height: 1.5;
@@ -14,4 +16,73 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; */
+  --theme-one-one: #CB9DF0;
+  --theme-one-two: #F0C1E1;
+  --theme-one-three: #ff8615;
+  --theme-one-four: #ffa653;
+  --theme-one-five: #FDDBBB;
+  --theme-one-six: #FFF9BF;
+  --theme-one-seven: #fffde7;
 }
+
+
+
+@layer components {
+  .floating-label-wrapper {
+    @apply relative my-[10px] mx-0;
+  }
+
+  .floating-label-wrapper input {
+    @apply border-gray-500 border-solid border-[1px] rounded-md p-[5px_10px] bg-transparent w-full text-black;
+  }
+
+  .floating-label-wrapper input::placeholder {
+    color: transparent;
+  }
+
+  .floating-label-wrapper label {
+    @apply absolute left-[10px] top-[5px] text-[#666] text-[0.9rem] transition-all duration-200 ease-in-out pointer-events-none;
+  }
+
+  .floating-label-wrapper input:focus {
+    @apply border-[var(--theme-one-four)] border-solid border-[2px];
+  }
+
+  .floating-label-wrapper input:focus+label,
+  .floating-label-wrapper input:not(:placeholder-shown)+label {
+    @apply top-[-10px] text-[0.9rem] font-[600] text-[var(--theme-one-three)] bg-[var(--theme-one-five)] px-[2px] py-0;
+  }
+}
+
+/* .floating-label-wrapper {
+  position: relative;
+  margin: 10px 0;
+} */
+
+/* .floating-label-wrapper input {
+  border: black 1px solid;
+  border-radius: 8px;
+  padding: 5px 10px;
+  background: transparent;
+  width: 100%;
+} */
+
+/* .floating-label-wrapper label {
+  position: absolute;
+  left: 10px;
+  top: 5px;
+  color: #666;
+  font-size: .9rem;
+  transition: 0.2s ease;
+  pointer-events: none;
+} */
+
+
+/* .floating-label-wrapper input:focus+label {
+  top: -10px;
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--theme-one-three);
+  background-color: var(--theme-one-four);
+  padding: 0px 5px;
+} */
