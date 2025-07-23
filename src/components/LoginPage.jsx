@@ -39,26 +39,21 @@ export default function LoginPage({ onLogin }) {
     }
     return (
         <>
-            <div className='flex flex-col items-center justify-center h-screen bg-[var(--theme-one-seven)]'>
-                <div className='
-                flex flex-col justify-center rounded-lg
-                h-full w-full sm:h-auto sm:w-auto 
-                py-0 px-0 sm:py-[50px] sm:px-[50px]
-                bg-[var(--theme-one-five)]  shadow-[0px_0px_20px_rgba(0,0,0,0.2)]
-                '>
-                    <div className='text-center font-bold text-2xl p-10 text-[var(--theme-one-four)]'>
+            <div className='flex flex-col items-center justify-center h-screen'>
+                <div className='card card-login'>
+                    <div className='text-center font-bold text-2xl p-10 text-[var(--theme-one-neutral-dark)]'>
                         My Logo Here
                     </div>
-                    <form onSubmit={loginAccount}
+                    <form onSubmit={loginAccount} 
                         className='
-                        flex flex-col items-center m-10
+                        flex flex-col items-center
                         '>
                         <div className='floating-label-wrapper w-full max-w-[300px]'>
-                            <input id="user" type="text" onChange={(e) => setUser(e.target.value)} value={user} placeholder='Username' />
+                            <input className='input-login' id="user" type="text" onChange={(e) => setUser(e.target.value)} value={user} placeholder='Username' />
                             <label htmlFor="user">Username</label>
                         </div>
                         <div className='floating-label-wrapper w-full max-w-[300px]'>
-                            <input id="pass" type={viewPassword === false ? 'password' : 'text'} onChange={(e) => setPass(e.target.value)} value={pass} placeholder='Password' />
+                            <input className='input-login' id="pass" type={viewPassword === false ? 'password' : 'text'} onChange={(e) => setPass(e.target.value)} value={pass} placeholder='Password' />
                             <label htmlFor="pass">Password</label>
                         </div>
                         <div className='flex items-center justify-left w-full max-w-[300px]'>
@@ -68,9 +63,7 @@ export default function LoginPage({ onLogin }) {
 
                         {/* <div> */}
                         <button
-                            className='
-                                bg-[var(--theme-one-three)]  text-white
-                                hover:bg-[var(--theme-one-four-light)] hover:text-[var(--theme-one-three-dark)] hover:font-extrabold
+                            className=' button-primary
                                 max-w-[300px] w-full sm:w-ful'
                             disabled={loading}>{loading ? 'Loading' : 'Login'}
                         </button>
