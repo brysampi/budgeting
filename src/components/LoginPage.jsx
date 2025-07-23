@@ -42,35 +42,39 @@ export default function LoginPage({ onLogin }) {
             <div className='flex flex-col items-center justify-center h-screen bg-[var(--theme-one-seven)]'>
                 <div className='
                 flex flex-col justify-center rounded-lg
-                h-full w-full sm:h-auto sm:w-auto py-[50px] px-[100px]
+                h-full w-full sm:h-auto sm:w-auto 
+                py-0 px-0 sm:py-[50px] sm:px-[50px]
                 bg-[var(--theme-one-five)]  shadow-[0px_0px_20px_rgba(0,0,0,0.2)]
                 '>
-                    <div className='text-center font-bold text-2xl p-10'>
+                    <div className='text-center font-bold text-2xl p-10 text-[var(--theme-one-four)]'>
                         My Logo Here
                     </div>
                     <form onSubmit={loginAccount}
                         className='
-                        flex flex-col items-center
+                        flex flex-col items-center m-10
                         '>
-                        <div className='floating-label-wrapper'>
+                        <div className='floating-label-wrapper w-full max-w-[300px]'>
                             <input id="user" type="text" onChange={(e) => setUser(e.target.value)} value={user} placeholder='Username' />
                             <label htmlFor="user">Username</label>
                         </div>
-                        <div className='floating-label-wrapper'>
+                        <div className='floating-label-wrapper w-full max-w-[300px]'>
                             <input id="pass" type={viewPassword === false ? 'password' : 'text'} onChange={(e) => setPass(e.target.value)} value={pass} placeholder='Password' />
                             <label htmlFor="pass">Password</label>
                         </div>
-                        <div >
+                        <div className='flex items-center justify-left w-full max-w-[300px]'>
                             <input type='checkbox' id='checkbox' onClick={seePassword} />
                             <label htmlFor='checkbox' className='ml-2' >Show Password</label>
                         </div>
 
+                        {/* <div> */}
                         <button
                             className='
-                        bg-[var(--theme-one-three)] hover:bg-[var(--theme-one-four)]
-                        py-2 px-6 rounded-lg shadow-[0px_0px_5px_rgba(0,0,0,0.3)] mt-3
-                        '
-                            disabled={loading}>{loading ? 'Loading' : 'Submit'} </button>
+                                bg-[var(--theme-one-three)]  text-white
+                                hover:bg-[var(--theme-one-four-light)] hover:text-[var(--theme-one-three-dark)] hover:font-extrabold
+                                max-w-[300px] w-full sm:w-ful'
+                            disabled={loading}>{loading ? 'Loading' : 'Login'}
+                        </button>
+                        {/* </div> */}
                     </form>
                     {/* <button onClick={setCookie}>Set Cookie</button>
                 <button onClick={updateCookie}>update Cookie</button>

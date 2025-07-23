@@ -19,17 +19,17 @@
   --theme-one-one: #CB9DF0;
   --theme-one-two: #F0C1E1;
   --theme-one-three: #ff8615;
+  --theme-one-three-dark: #ff7b00;
   --theme-one-four: #ffa653;
+  --theme-one-four-light: #ffb56f;
   --theme-one-five: #FDDBBB;
   --theme-one-six: #FFF9BF;
   --theme-one-seven: #fffde7;
 }
 
-
-
 @layer components {
   .floating-label-wrapper {
-    @apply relative my-[10px] mx-0;
+    @apply relative;
   }
 
   .floating-label-wrapper input {
@@ -41,7 +41,7 @@
   }
 
   .floating-label-wrapper label {
-    @apply absolute left-[10px] top-[5px] text-[#666] text-[0.9rem] transition-all duration-200 ease-in-out pointer-events-none;
+    @apply absolute left-[10px] top-[15px] text-[#666] text-[0.9rem] transition-all duration-200 ease-in-out pointer-events-none;
   }
 
   .floating-label-wrapper input:focus {
@@ -50,39 +50,14 @@
 
   .floating-label-wrapper input:focus+label,
   .floating-label-wrapper input:not(:placeholder-shown)+label {
-    @apply top-[-10px] text-[0.9rem] font-[600] text-[var(--theme-one-three)] bg-[var(--theme-one-five)] px-[2px] py-0;
+    @apply top-[-4px] text-[0.9rem] font-[600] text-[var(--theme-one-three)] bg-[var(--theme-one-five)] px-[2px] py-0;
+  }
+
+  form>* {
+    @apply py-[10px];
+  }
+
+  form button {
+    @apply rounded-lg py-2 px-6 shadow-[0px_0px_5px_rgba(0,0,0,0.3)];
   }
 }
-
-/* .floating-label-wrapper {
-  position: relative;
-  margin: 10px 0;
-} */
-
-/* .floating-label-wrapper input {
-  border: black 1px solid;
-  border-radius: 8px;
-  padding: 5px 10px;
-  background: transparent;
-  width: 100%;
-} */
-
-/* .floating-label-wrapper label {
-  position: absolute;
-  left: 10px;
-  top: 5px;
-  color: #666;
-  font-size: .9rem;
-  transition: 0.2s ease;
-  pointer-events: none;
-} */
-
-
-/* .floating-label-wrapper input:focus+label {
-  top: -10px;
-  font-size: .9rem;
-  font-weight: 600;
-  color: var(--theme-one-three);
-  background-color: var(--theme-one-four);
-  padding: 0px 5px;
-} */
