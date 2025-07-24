@@ -27,7 +27,7 @@ export default function MonthSelection({ onLogOut }) {
 
     return (
         <>
-            <Logout onLogout={onLogOut} />
+            {/* <Logout onLogout={onLogOut} /> */}
             <div className='card card-no-bg'>
                 <form className='flex flex-wrap justify-end'
                     onSubmit={collectData}>
@@ -41,11 +41,11 @@ export default function MonthSelection({ onLogOut }) {
                         {/* <label htmlFor="month">Select Month</label> */}
                     </div>
 
-                    <button className="button-primary w-full sm:max-w-[300px]"
+                    <button className="btn btn-primary w-full sm:max-w-[300px]"
                         disabled={addNewMonth}>{addNewMonth ? 'Loading' : 'Select Month'}</button>
                 </form>
             </div>
-            <div className="card card-one sm:flex sm:flex-row sm:flex-wrap sm:justify-center sm:items-center">
+            <div className="card card-main sm:flex sm:flex-row sm:flex-wrap sm:justify-center sm:items-center">
                 {isFetching ? (
                     <h1>Fetching Data ...</h1>
                 ) : (

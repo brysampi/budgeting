@@ -1,0 +1,67 @@
+.sidenav-container {
+    @apply fixed z-10 top-0 left-0 overflow-visible ;
+}
+
+.sidenav {
+    @apply relative top-[2.5vh] ml-[20px] bg-[var(--theme-one-light)]  h-[95vh] rounded-tr-lg  flex flex-col justify-between sm:rounded-lg transition-all duration-300;
+}
+
+.sidenav ul:not(:last-child) {
+    @apply pb-5;
+}
+
+.sidenav .sidenav-content {
+    @apply overflow-y-auto overflow-x-clip flex flex-col justify-between h-full
+}
+
+.sidenav>ul:last-child {
+    @apply bg-[var(--theme-one-tertiary)] mt-auto rounded-br-lg sm:rounded-b-lg
+}
+
+.sidenav ul li {
+    @apply p-[10px_20px] flex block cursor-pointer;
+}
+
+.sidenav ul li.active {
+    @apply bg-[var(--theme-one-primary)] text-white font-semibold;
+}
+
+.sidenav ul li a:hover,
+.sidenav ul li:hover {
+    @apply bg-[var(--theme-one-primary)] text-white font-semibold;
+}
+
+.sidenav ul li span:first-child {
+    @apply w-[30px] h-[30px] rounded-full flex items-center justify-center mr-1;
+}
+
+.sidenav .title {
+    @apply text-center text-[var(--theme-one-primary)] font-bold text-xl p-5 mb-[10px];
+}
+
+.shrink {
+    @apply relative right-0 top-[40px]
+}
+
+.shrink .shrink-icon {
+    @apply absolute right-[-20px] z-10 bg-[var(--theme-one-primary)] text-white h-[40px] w-[40px] rounded-full shadow flex items-center justify-center cursor-pointer;
+}
+
+.sidenav-link {
+    @apply hidden sm:inline
+}
+
+.sidenav-link-hide {
+    @apply hidden
+}
+
+@media (max-height: 600px),
+(max-width: 670px) {
+    .sidenav {
+        @apply h-[100vh] top-0 ml-0 rounded-r-lg;
+    }
+
+    .shrink {
+        @apply top-[20px]
+    }
+}

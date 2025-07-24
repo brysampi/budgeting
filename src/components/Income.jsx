@@ -43,47 +43,66 @@ const Income = () => {
     useEffect(() => {
         const returnIncome = async () => {
             setIsFetching(true);
-            return await getDataRealTimeController('income',paramMonth, setIncomeData, setIsFetching);
+            return await getDataRealTimeController('income', paramMonth, setIncomeData, setIsFetching);
         }
         returnIncome();
     }, []);
 
     return (
         <>
-            <div>
-                <form onSubmit={fromSubmit}>
-                    <div>
-                        <label htmlFor="descIncome">description:</label>
-                        <input
-                            type="text"
-                            id="descIncome"
-                            value={formDescription}
-                            onChange={(e) => setFormDescription(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="expectedIncome">Expected:</label>
-                        <input
-                            type='text'
-                            id="expectedIncome"
-                            value={formExpected}
-                            onChange={(e) => setFormExpected(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="amountIncome">Amount:</label>
-                        <input
-                            type="text"
-                            id="amountIncome"
-                            value={formAmount}
-                            onChange={(e) => setFormAmount(e.target.value)}
-                        />
-                    </div>
-                    <button disabled={loading}>{loading ? 'Loading' : 'Submit'}</button>
-                </form>
-                <button onClick={clearForm}>Clear Form</button>
+            <div className='flex flex-col content-start justify-between items-baseline md:flex-row'>
+ <div className='card card-main flex-1'> </div>
+                <div className='card card-main'>
+                    <form className="form-pannel"
+                        onSubmit={fromSubmit}>
+                        <div className='floating-label-wrapper'>
+                            <input
+                                type="text"
+                                id="descIncome"
+                                placeholder='Description'
+                                value={formDescription}
+                                onChange={(e) => setFormDescription(e.target.value)}
+                            />
+                            <label htmlFor="descIncome">Description</label>
+                        </div>
+                        <div className='floating-label-wrapper'>
+                            <input
+                                type='text'
+                                id="expectedIncome"
+                                placeholder='Expected'
+                                value={formExpected}
+                                onChange={(e) => setFormExpected(e.target.value)}
+                            />
+                            <label htmlFor="expectedIncome">Expected</label>
+                        </div>
+                        <div className='floating-label-wrapper'>
+                            <input
+                                type="text"
+                                id="amountIncome"
+                                placeholder='Amount'
+                                value={formAmount}
+                                onChange={(e) => setFormAmount(e.target.value)}
+                            />
+                            <label htmlFor="amountIncome">Amount</label>
+                        </div>
+                        <div className="multi-btn">
+                            <button
+                                className="btn btn-primary"
+                                type="submit"
+                                disabled={loading}>{loading ? 'Loading' : 'Add'}
+                            </button>
+                            <button
+                                className="btn btn-cancel"
+                                type="button"
+                                onClick={clearForm}>Clear Form
+                            </button>
+                        </div>
+                    </form>
+                </div>
+               
+
             </div>
-            <div>
+            <div className='card card-main'>
                 <table>
                     <thead>
                         <tr>

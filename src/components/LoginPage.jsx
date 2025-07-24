@@ -48,7 +48,7 @@ export default function LoginPage({ onLogin }) {
                         className='
                         flex flex-col items-center
                         '>
-                        <div className='floating-label-wrapper w-full max-w-[300px]'>
+                        <div className='floating-label-wrapper'>
                             <input className='input-login' id="user" type="text" onChange={(e) => setUser(e.target.value)} value={user} placeholder='Username' />
                             <label htmlFor="user">Username</label>
                         </div>
@@ -63,7 +63,7 @@ export default function LoginPage({ onLogin }) {
 
                         {/* <div> */}
                         <button
-                            className=' button-primary
+                            className='btn btn-primary
                                 max-w-[300px] w-full sm:w-ful'
                             disabled={loading}>{loading ? 'Loading' : 'Login'}
                         </button>
