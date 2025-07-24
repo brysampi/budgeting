@@ -50,6 +50,17 @@
 
 }
 
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.app-container {
+  position: relative;
+}
+
 @layer components {
   body {
     @apply bg-[var(--theme-one-bg)] text-black;

@@ -40,7 +40,7 @@
 }
 
 .shrink {
-    @apply relative right-0 top-[40px]
+    @apply relative right-0 top-[5vh]
 }
 
 .shrink .shrink-icon {

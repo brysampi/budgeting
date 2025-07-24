@@ -1,19 +1,33 @@
 import { Outlet } from 'react-router-dom';
 import SideNav from '../components/SideNav';
 import Logout from '../components/Logout';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 const MainLayout = () => {
     const [hideNav, setHideNav] = useState(false);
-
+    const mainRef = useRef();
+    const clickOutSideOfSidenav = (e) => {
+        console.log(mainRef.current)
+        if (mainRef.current && !mainRef.current.contains(e.target)) {
+            setHideNav(true);
+            console.log(mainRef.current)
+        }
+        // setHideNav(true);
+    }
+    useEffect(() => {
+        document.addEventListener('mousedown', clickOutSideOfSidenav)
+    })
     return (
-        <div className="app-container">
+        <div ref={mainRef}
+            className="app-container">
             {/* <Logout /> */}
-            <div className="">
-                <SideNav hide={[hideNav, setHideNav]} />
-            </div>
-            <div className={`main-content transition-all duration-300 ${hideNav ? 'm-[20px_20px_20px_220px] sm:m-[20px_20px_20px_60px]' : 'm-[20px_20px_20px_60px] sm:m-[20px_20px_20px_220px]'}`}>
+            <SideNav hide={[hideNav, setHideNav]} />
+            <main
+                onClick={() => setHideNav(true)}
+                className={`main-content transition-all duration-300 mt-5 mr-5 mb-5 ml-[60px] sm:ml-15`}
+            >
                 <Outlet />
-            </div>
+            </main>
+
         </div>
     );
 }
