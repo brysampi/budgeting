@@ -4,26 +4,40 @@ import Logout from '../components/Logout';
 import { useState, useRef, useEffect } from 'react';
 const MainLayout = () => {
     const [hideNav, setHideNav] = useState(false);
+    const contentRef = useRef();
     const mainRef = useRef();
     const clickOutSideOfSidenav = (e) => {
-        console.log(mainRef.current)
-        if (mainRef.current && !mainRef.current.contains(e.target)) {
-            setHideNav(true);
-            console.log(mainRef.current)
+        // console.log(mainRef.current)
+        if (window.innerWidth <= 768) {
+            if (contentRef.current && !contentRef.current.contains(e.target)) {
+                setHideNav(false);
+                // console.log(mainRef.current)
+            }
         }
         // setHideNav(true);
     }
     useEffect(() => {
         document.addEventListener('mousedown', clickOutSideOfSidenav)
-    })
+        return () => {
+            document.removeEventListener('mousedown', clickOutSideOfSidenav);
+        };
+    }, [])
     return (
         <div ref={mainRef}
             className="app-container">
             {/* <Logout /> */}
             <SideNav hide={[hideNav, setHideNav]} />
             <main
-                onClick={() => setHideNav(true)}
-                className={`main-content transition-all duration-300 mt-5 mr-5 mb-5 ml-[60px] sm:ml-15`}
+                ref={contentRef}
+                // onClick={() => setHideNav(false)}
+                className={`main-content transition-all duration-300 mt-[2.5vh] mb-[2.5vh] mr-5 
+                    ${hideNav ? 'ml-[60px]' : 'ml-[60px]  sm:ml-[220px]'}
+                    `}
+                onClick={() => {
+                    if (window.innerWidth <= 768) {
+                        setHideNav(false);
+                    }
+                }}
             >
                 <Outlet />
             </main>

@@ -1,9 +1,9 @@
 .sidenav-container {
-    @apply fixed z-10 top-0 left-0 overflow-visible ;
+    @apply fixed z-10 top-0 left-0 overflow-visible;
 }
 
 .sidenav {
-    @apply relative top-[2.5vh] ml-[20px] bg-[var(--theme-one-light)]  h-[95vh] rounded-tr-lg  flex flex-col justify-between sm:rounded-lg transition-all duration-300;
+    @apply relative top-[2.5vh] ml-[20px] bg-[var(--theme-one-light)] h-[95vh] rounded-tr-lg flex flex-col justify-between sm:rounded-lg transition-all duration-300;
 }
 
 .sidenav ul:not(:last-child) {
