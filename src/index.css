@@ -40,6 +40,7 @@
   --theme-one-secondary-low: #ffde4d31;
   --theme-one-secondary: #FFDE4D;
   --theme-one-tertiary: #FF4C4C;
+  --theme-one-tertiary-light: #ff8888;
   --theme-one-light: #ffffff;
   --theme-one-neutral-light: #e1e1e1;
   --theme-one-neutral: #7f7f7f;
@@ -67,7 +68,7 @@ body {
   }
 
   .floating-label-wrapper {
-    @apply relative w-full max-w-[300px];
+    @apply relative w-full;
   }
 
   .floating-label-wrapper input {
@@ -170,5 +171,25 @@ body {
 
   .card-no-bg {
     @apply p-3 shadow-none bg-transparent
+  }
+
+  .table {
+    @apply w-full
+  }
+
+  .table th {
+    @apply border
+  }
+
+  .table td, .table th {
+    @apply p-[10px_5px] border-b
+  }
+
+  .table thead tr th {
+    @apply bg-[var(--theme-one-tertiary-light)] text-[var(--theme-one-dark)]
+  }
+
+  .table thead tr th:hover {
+    @apply bg-[var(--theme-one-tertiary)] text-[var(--theme-one-dark)] cursor-none
   }
 }

@@ -44,15 +44,15 @@ export default function LoginPage({ onLogin }) {
                     <div className='text-center font-bold text-2xl p-10 text-[var(--theme-one-neutral-dark)]'>
                         My Logo Here
                     </div>
-                    <form onSubmit={loginAccount} 
+                    <form onSubmit={loginAccount}
                         className='
                         flex flex-col items-center
                         '>
-                        <div className='floating-label-wrapper'>
+                        <div className='floating-label-wrapper max-w-[300px]'>
                             <input className='input-login' id="user" type="text" onChange={(e) => setUser(e.target.value)} value={user} placeholder='Username' />
                             <label htmlFor="user">Username</label>
                         </div>
-                        <div className='floating-label-wrapper w-full max-w-[300px]'>
+                        <div className='floating-label-wrapper max-w-[300px]'>
                             <input className='input-login' id="pass" type={viewPassword === false ? 'password' : 'text'} onChange={(e) => setPass(e.target.value)} value={pass} placeholder='Password' />
                             <label htmlFor="pass">Password</label>
                         </div>

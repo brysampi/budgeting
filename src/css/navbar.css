@@ -1,5 +1,5 @@
 .sidenav-container {
-    @apply fixed z-10 top-0 left-0 overflow-visible;
+    @apply fixed z-10 top-0 left-0 overflow-visible h-full;
 }
 
 .sidenav {
@@ -58,7 +58,7 @@
 @media (max-height: 600px),
 (max-width: 670px) {
     .sidenav {
-        @apply h-[100vh] top-0 ml-0 rounded-r-lg;
+        @apply h-full top-0 ml-0 rounded-r-lg;
     }
 
     .shrink {

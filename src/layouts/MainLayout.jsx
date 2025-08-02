@@ -4,12 +4,12 @@ import Logout from '../components/Logout';
 import { useState, useRef, useEffect } from 'react';
 const MainLayout = () => {
     const [hideNav, setHideNav] = useState(false);
-    const contentRef = useRef();
-    const mainRef = useRef();
+    const sidenavRef = useRef();
+    // const mainRef = useRef();
     const clickOutSideOfSidenav = (e) => {
         // console.log(mainRef.current)
         if (window.innerWidth <= 768) {
-            if (contentRef.current && !contentRef.current.contains(e.target)) {
+            if (sidenavRef.current && !sidenavRef.current.contains(e.target)) {
                 setHideNav(false);
                 // console.log(mainRef.current)
             }
@@ -23,15 +23,16 @@ const MainLayout = () => {
         };
     }, [])
     return (
-        <div ref={mainRef}
+        <div
+            // ref={mainRef}
             className="app-container">
             {/* <Logout /> */}
-            <SideNav hide={[hideNav, setHideNav]} />
+            <SideNav hide={[hideNav, setHideNav]} sidenavRef={sidenavRef} />
             <main
-                ref={contentRef}
+                // ref={contentRef}
                 // onClick={() => setHideNav(false)}
                 className={`main-content transition-all duration-300 mt-[2.5vh] mb-[2.5vh] mr-5 
-                    ${hideNav ? 'ml-[60px]' : 'ml-[60px]  sm:ml-[220px]'}
+                    ${hideNav ? 'ml-[60px]  sm:ml-[60px]' : 'ml-[60px]  sm:ml-[210px]'}
                     `}
                 onClick={() => {
                     if (window.innerWidth <= 768) {

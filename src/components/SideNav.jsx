@@ -5,7 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { logout } from '../firebase/controller';
 import '../css/navbar.css';
 
-export default function SideNav({ hide }) {
+export default function SideNav({ hide, sidenavRef }) {
     const [hideNav, setHideNav] = hide;
     const { paramMonth } = useParams();
     const navigate = useNavigate();
@@ -22,7 +22,9 @@ export default function SideNav({ hide }) {
         window.location.href = '/';
     }
     return (
-        <aside className="sidenav-container">
+        <aside
+            ref={sidenavRef}
+            className="sidenav-container">
             <div className="shrink" onClick={() => setHideNav(!hideNav)}>
                 <div className="shrink-icon">
                     C

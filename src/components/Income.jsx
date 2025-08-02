@@ -51,7 +51,7 @@ const Income = () => {
     return (
         <>
             <div className='flex flex-col content-start justify-between items-baseline md:flex-row'>
- <div className='card card-main flex-1'> </div>
+                <div className='card card-no-bg flex-1'> </div>
                 <div className='card card-main'>
                     <form className="form-pannel"
                         onSubmit={fromSubmit}>
@@ -99,11 +99,11 @@ const Income = () => {
                         </div>
                     </form>
                 </div>
-               
+
 
             </div>
             <div className='card card-main'>
-                <table>
+                <table className="table">
                     <thead>
                         <tr>
                             <th>Description</th>
