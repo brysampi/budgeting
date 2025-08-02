@@ -56,57 +56,79 @@ const Savings = () => {
 
     return (
         <>
-            <div>
-                <form onSubmit={fromSubmit}>
-                    <div>
-                        <label htmlFor="categorySavings">Category:</label>
-                        <input
-                            type="text"
-                            id="categorySavings"
-                            value={formCategory}
-                            onChange={(e) => setFormCategory(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="descSavings">description:</label>
-                        <textarea
-                            type="text"
-                            id="descSavings"
-                            value={formDescription}
-                            onChange={(e) => setFormDescription(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="targetSavings">Target Amount:</label>
-                        <input
-                            type='text'
-                            id="targetSavings"
-                            value={formTarget}
-                            onChange={(e) => setFormTarget(e.target.value)}
-                        />
-                    </div>
-                    {
-                        updateDataStatus &&
-                        <div>
-                            <label htmlFor="statusSavings">Status</label>
-                            <select
-                                id="statusSavings"
-                                value={formStatus}
-                                onChange={(e) => setFormStatus(e.target.value)}
-                            >
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </select>
+            <div className='card-container'>
+                <div className='card card-no-bg flex-1'> </div>
+                <div className='card card-main'>
+                    <form
+                        className='form-pannel'
+                        onSubmit={fromSubmit}>
+                        <div className='floating-label-wrapper'>
+                            <input
+                                type="text"
+                                id="categorySavings"
+                                placeholder="Category:"
+                                value={formCategory}
+                                onChange={(e) => setFormCategory(e.target.value)}
+                            />
+                            <label htmlFor="categorySavings">Category:</label>
+                        </div>
+                        <div className='floating-label-wrapper'>
+                            <textarea
+                                className='input'
+                                type="text"
+                                id="descSavings"
+                                placeholder="Description:"
+                                value={formDescription}
+                                onChange={(e) => setFormDescription(e.target.value)}
+                            />
+                            <label htmlFor="descSavings">description:</label>
+                        </div>
+                        <div className='floating-label-wrapper'>
+                            <input
+                                type='text'
+                                id="targetSavings"
+                                placeholder="Target Amount:"
+                                value={formTarget}
+                                onChange={(e) => setFormTarget(e.target.value)}
+                            />
+                            <label htmlFor="targetSavings">Target Amount:</label>
+                        </div>
+                        {
+                            updateDataStatus &&
+                            <div className='floating-label-wrapper'>
+                                <select
+                                    id="statusSavings"
+                                    placeholder="Status:"
+                                    value={formStatus}
+                                    onChange={(e) => setFormStatus(e.target.value)}
+                                >
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                                <label htmlFor="statusSavings">Status</label>
+                            </div>
+
+                        }
+                        <div className="multi-btn">
+                            <button
+                                className="btn btn-primary"
+                                type="submit"
+                                disabled={loading}>{loading ? 'Loading' : 'Submit'}
+                            </button>
+                            <button
+                                className="btn btn-cancel"
+                                type="button"
+                                onClick={clearForm}>Clear Form
+                            </button>
                         </div>
 
-                    }
 
-                    <button disabled={loading}>{loading ? 'Loading' : 'Submit'}</button>
-                </form>
-                <button onClick={clearForm}>Clear Form</button>
+                    </form>
+
+                </div>
             </div>
-            <div>
-                <table>
+            <div className="card card-main">
+                <table className="table">
                     <thead>
                         <tr>
                             {/* <th>#</th> */}
@@ -139,6 +161,7 @@ const Savings = () => {
                     </tbody>
                 </table>
             </div>
+
         </>
     )
 

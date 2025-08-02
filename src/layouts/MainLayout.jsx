@@ -8,7 +8,7 @@ const MainLayout = () => {
     // const mainRef = useRef();
     const clickOutSideOfSidenav = (e) => {
         // console.log(mainRef.current)
-        if (window.innerWidth <= 768) {
+        if (window.innerWidth <= 670 || window.innerHeight <= 600) {
             if (sidenavRef.current && !sidenavRef.current.contains(e.target)) {
                 setHideNav(false);
                 // console.log(mainRef.current)

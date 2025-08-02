@@ -71,11 +71,13 @@ body {
     @apply relative w-full;
   }
 
-  .floating-label-wrapper input {
+  .floating-label-wrapper input,
+  .floating-label-wrapper .input {
     @apply border-[var(--theme-one-neutral)] border-solid border-[1px] rounded-md p-[10px_10px] bg-transparent w-full text-gray-600;
   }
 
-  .floating-label-wrapper input::placeholder {
+  .floating-label-wrapper input::placeholder,
+  .floating-label-wrapper .input::placeholder {
     color: transparent;
   }
 
@@ -84,12 +86,16 @@ body {
   }
 
   .floating-label-wrapper input:focus,
-  .floating-label-wrapper input:not(:placeholder-shown) {
+  .floating-label-wrapper .input:focus,
+  .floating-label-wrapper input:not(:placeholder-shown),
+  .floating-label-wrapper .input:not(:placeholder-shown) {
     @apply border-[var(--theme-one-primary)] border-solid border-[2px];
   }
 
   .floating-label-wrapper input:focus+label,
-  .floating-label-wrapper input:not(:placeholder-shown)+label {
+  .floating-label-wrapper .input:focus+label,
+  .floating-label-wrapper input:not(:placeholder-shown)+label,
+  .floating-label-wrapper .input:not(:placeholder-shown)+label {
     @apply bg-[var(--theme-one-card-main-bg)] text-[var(--theme-one-card-main-text)] top-[0px] left-[10px] text-[0.9rem] font-[600] px-[2px] py-0;
   }
 
@@ -144,7 +150,7 @@ body {
   }
 
   .card-main {
-    @apply bg-[var(--theme-one-card-main-bg)] mb-[30px] p-1 sm:p-10
+    @apply bg-[var(--theme-one-card-main-bg)] mb-[30px] p-1 sm:p-10 overflow-auto
   }
 
   .card-two {
@@ -171,6 +177,10 @@ body {
 
   .card-no-bg {
     @apply p-3 shadow-none bg-transparent
+  }
+
+  .card-container {
+    @apply flex flex-col content-start justify-between items-baseline md:flex-row
   }
 
   .table {

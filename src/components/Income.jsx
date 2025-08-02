@@ -50,10 +50,11 @@ const Income = () => {
 
     return (
         <>
-            <div className='flex flex-col content-start justify-between items-baseline md:flex-row'>
+            <div className='card-container'>
                 <div className='card card-no-bg flex-1'> </div>
                 <div className='card card-main'>
-                    <form className="form-pannel"
+                    <form
+                        className="form-pannel"
                         onSubmit={fromSubmit}>
                         <div className='floating-label-wrapper'>
                             <input
