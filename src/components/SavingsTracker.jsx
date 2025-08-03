@@ -80,61 +80,82 @@ const SavingsTracker = () => {
     }, []);
     return (
         <>
-            <button onClick={() => checkStaticData(paramMonth)}>Check Data</button>
-            <div>
-                <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
-                    <div>
-                        <label htmlFor="categorySavingsTracker">Category:</label>
-                        <select
-                            value={formCategory}
-                            onChange={(e) => { setFormCategory(e.target.value) }}
-                            name="categorySavingsTracker"
-                            id="categorySavingsTracker"
-                        >
-                            <option value="" disabled>
-                                Select a category
-                            </option>
-                            {isFetching ? (
-                                <option value="" disabled>Fetching Data Please Wait. . .</option>
-                            ) : (
-                                savingsData.length === 0 ?
-                                    <option value="" disabled>No Data Found</option> :
-                                    savingsData.map((item, index) => (
-                                        <option value={item.id} key={index + 1}>{item.category}</option>
-                                    )).reverse()
-                            )}
-                        </select>
-                    </div>
-                    <div>
-                        <label htmlFor="descriptionSavingsTracker">Description:</label>
-                        <input
-                            type="text"
-                            id="descriptionSavingsTracker"
-                            value={formDescription}
-                            onChange={(e) => setFormDescription(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="amountSavingsTracker">Amount:</label>
-                        <input
-                            type="text"
-                            id="amountSavingsTracker"
-                            value={formAmount}
-                            onChange={(e) => setFormAmount(e.target.value)}
-                        />
-                    </div>
-                    <button disabled={loading}>{
-                        loading ? 'Loading' :
-                            !updateDataStatus ? 'Add' : 'Update'
-                    }</button>
-                </form>
-                <button disabled={loading} onClick={clearForm}>{
-                    loading ? 'Loading' :
-                        !updateDataStatus ? 'Clear Form' : 'Cancel Update'
-                }</button>
-            </div >
-            <div>
-                <table>
+            <div className="card-container">
+                {/* <button onClick={() => checkStaticData(paramMonth)}>Check Data</button> */}
+                <div className="card card-no-bg flex-1"></div>
+                <div className="card card-main">
+                    <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
+                        <div className="floating-label-wrapper">
+                            <select
+                                className="input"
+                                value={formCategory}
+                                onChange={(e) => { setFormCategory(e.target.value) }}
+                                name="categorySavingsTracker"
+                                id="categorySavingsTracker"
+                                placeholder="Category"
+                            >
+                                <option value="" disabled>
+                                    Select a category
+                                </option>
+                                {isFetching ? (
+                                    <option value="" disabled>Fetching Data Please Wait. . .</option>
+                                ) : (
+                                    savingsData.length === 0 ?
+                                        <option value="" disabled>No Data Found</option> :
+                                        savingsData.map((item, index) => (
+                                            <option value={item.id} key={index + 1}>{item.category}</option>
+                                        )).reverse()
+                                )}
+                            </select>
+                            <label htmlFor="categorySavingsTracker">Category</label>
+                        </div>
+                        <div className="floating-label-wrapper">
+                            <input
+                                type="text"
+                                id="descriptionSavingsTracker"
+                                placeholder="Description"
+                                value={formDescription}
+                                onChange={(e) => setFormDescription(e.target.value)}
+                            />
+                            <label htmlFor="descriptionSavingsTracker">Description</label>
+                        </div>
+                        <div className="floating-label-wrapper">
+                            <input
+                                type="text"
+                                id="amountSavingsTracker"
+                                placeholder="Amount"
+                                value={formAmount}
+                                onChange={(e) => setFormAmount(e.target.value)}
+                            />
+                            <label htmlFor="amountSavingsTracker">Amount:</label>
+                        </div>
+                        <div className="multi-btn">
+                            <button
+                                className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
+                                type="submit"
+                                disabled={loading}>{
+                                    loading ? 'Loading' :
+                                        !updateDataStatus ? 'Add' : 'Update'
+                                }
+                            </button>
+                            <button
+                                className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
+                                type="button"
+                                disabled={loading}
+                                onClick={clearForm}>{
+                                    loading ? 'Loading' :
+                                        !updateDataStatus ? 'Clear' : 'Cancel'
+                                }
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div >
+            </div>
+
+            <div className="card card-main">
+                <table className="table">
                     <thead>
                         <tr>
                             <th>Category</th>

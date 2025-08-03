@@ -50,37 +50,37 @@ const Income = () => {
 
     return (
         <>
-            <div className='card-container'>
-                <div className='card card-no-bg flex-1'> </div>
-                <div className='card card-main'>
+            <div className="card-container">
+                <div className="card card-no-bg flex-1"> </div>
+                <div className="card card-main">
                     <form
                         className="form-pannel"
                         onSubmit={fromSubmit}>
-                        <div className='floating-label-wrapper'>
+                        <div className="floating-label-wrapper">
                             <input
                                 type="text"
                                 id="descIncome"
-                                placeholder='Description'
+                                placeholder="Description"
                                 value={formDescription}
                                 onChange={(e) => setFormDescription(e.target.value)}
                             />
                             <label htmlFor="descIncome">Description</label>
                         </div>
-                        <div className='floating-label-wrapper'>
+                        <div className="floating-label-wrapper">
                             <input
-                                type='text'
+                                type="text"
                                 id="expectedIncome"
-                                placeholder='Expected'
+                                placeholder="Expected"
                                 value={formExpected}
                                 onChange={(e) => setFormExpected(e.target.value)}
                             />
                             <label htmlFor="expectedIncome">Expected</label>
                         </div>
-                        <div className='floating-label-wrapper'>
+                        <div className="floating-label-wrapper">
                             <input
                                 type="text"
                                 id="amountIncome"
-                                placeholder='Amount'
+                                placeholder="Amount"
                                 value={formAmount}
                                 onChange={(e) => setFormAmount(e.target.value)}
                             />
@@ -88,14 +88,16 @@ const Income = () => {
                         </div>
                         <div className="multi-btn">
                             <button
-                                className="btn btn-primary"
+                                className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
                                 type="submit"
-                                disabled={loading}>{loading ? 'Loading' : 'Add'}
+                                disabled={loading}>{loading ? "Loading" : "Add"}
                             </button>
                             <button
-                                className="btn btn-cancel"
+                                className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
                                 type="button"
-                                onClick={clearForm}>Clear Form
+                                onClick={clearForm}
+                                disabled={loading}>
+                                {loading ? 'Loading' : 'Clear'}
                             </button>
                         </div>
                     </form>
@@ -103,7 +105,7 @@ const Income = () => {
 
 
             </div>
-            <div className='card card-main'>
+            <div className="card card-main">
                 <table className="table">
                     <thead>
                         <tr>

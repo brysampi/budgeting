@@ -193,6 +193,59 @@ export async function getExpensesDataRealTime(inputDate, setExpensesData, isFetc
         throw new Error("Failed to fetch expenses");
     }
 }
+export async function getExpensesDataRealTime_v2(inputDate,setExpensesData, isFetching, dropdownData) {
+    try {
+        const que = query(
+            collection(db, 'expenses'),
+            where("user", "==", getUserID()),
+            orderBy("createdAt", "desc"),
+        );
+        const unsubscribe = onSnapshot(que, async (snapshot) => {
+            const promises = snapshot.docs.map(async (docSnap) => {
+                const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
+                if (dropdownData === true)
+                    return {
+                        id: docSnap.id,
+                        ...docSnap.data(),
+                    };
+                const docData = docSnap.data();
+                if (!docSnap.exists()) {
+                    console.log("No such document!");
+                    return null;
+                } else {
+                    const expensesTrackerRef = collection(db, "expensesTracker");
+                    const que = query(
+                        expensesTrackerRef,
+                        where("category", "==", docSnap.id),
+                         where("date", ">=", startOfMonth),
+                        where("date", "<=", endOfMonth),
+                    );
+                    const querySnapshot = await getDocs(que);
+                    querySnapshot.docs.map((doc) => {
+                        if (!docData.actual)
+                            docData.actual = 0;
+                        docData.actual += doc.data().amount;
+                    });
+                    return {
+                        id: docSnap.id,
+                        ...docData,
+                    };
+                }
+            });
+            const resolvedData = await Promise.all(promises);
+            // console.log("Resolved Data: ", resolvedData);
+            setExpensesData(resolvedData)
+            isFetching(false);
+            return resolvedData
+        });
+
+
+        return unsubscribe;
+    } catch (error) {
+        console.error("Error fetching expenses: ", error);
+        throw new Error("Failed to fetch expenses");
+    }
+}
 export async function getDataCategoryRealTime(table, inputDate, setData, isFetching) {
     try {
         const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);

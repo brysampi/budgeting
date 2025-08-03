@@ -66,18 +66,18 @@ const Savings = () => {
                             <input
                                 type="text"
                                 id="categorySavings"
-                                placeholder="Category:"
+                                placeholder="Category"
                                 value={formCategory}
                                 onChange={(e) => setFormCategory(e.target.value)}
                             />
                             <label htmlFor="categorySavings">Category:</label>
                         </div>
                         <div className='floating-label-wrapper'>
-                            <textarea
+                            <input
                                 className='input'
                                 type="text"
                                 id="descSavings"
-                                placeholder="Description:"
+                                placeholder="Description"
                                 value={formDescription}
                                 onChange={(e) => setFormDescription(e.target.value)}
                             />
@@ -87,7 +87,7 @@ const Savings = () => {
                             <input
                                 type='text'
                                 id="targetSavings"
-                                placeholder="Target Amount:"
+                                placeholder="Target Amount"
                                 value={formTarget}
                                 onChange={(e) => setFormTarget(e.target.value)}
                             />
@@ -98,7 +98,7 @@ const Savings = () => {
                             <div className='floating-label-wrapper'>
                                 <select
                                     id="statusSavings"
-                                    placeholder="Status:"
+                                    placeholder="Status"
                                     value={formStatus}
                                     onChange={(e) => setFormStatus(e.target.value)}
                                 >
@@ -111,14 +111,16 @@ const Savings = () => {
                         }
                         <div className="multi-btn">
                             <button
-                                className="btn btn-primary"
+                                className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
                                 type="submit"
-                                disabled={loading}>{loading ? 'Loading' : 'Submit'}
+                                disabled={loading}>{loading ? 'Loading' : 'Add'}
                             </button>
                             <button
-                                className="btn btn-cancel"
+                                className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
                                 type="button"
-                                onClick={clearForm}>Clear Form
+                                onClick={clearForm}
+                                disabled={loading}>
+                                {loading ? 'Loading' : 'Clear'}
                             </button>
                         </div>
 

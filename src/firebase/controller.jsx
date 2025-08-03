@@ -6,7 +6,8 @@ import {
     getDataRealTime,
     //  getExpensesTrackerDataRealTime, 
     getDataCategoryRealTime,
-    getExpensesDataRealTime, getCollectedDataRealTime,
+    getExpensesDataRealTime, getExpensesDataRealTime_v2,
+    getCollectedDataRealTime,
     getSavingsDataRealTime,
 } from '../firebase/model';
 
@@ -97,16 +98,16 @@ export async function creteCollectedData(inputDate) {
         const collect = await collectedData(inputDate);
         if (collect) {
             const addCollect = await addCollectedData(inputDate, collect)
-            const expensesDefault = await getAllData('expensesDefault', inputDate);
-            expensesDefault.forEach(async (exDefault) => {
-                await addData('expenses', {
-                    category: exDefault.description,
-                    budget: exDefault.budget,
-                    date: convertToTimeStamp(inputDate),
-                    defaultCreatedId: exDefault.id,
-                    user: getUserID(),
-                })
-            })
+            // const expensesDefault = await getAllData('expensesDefault', inputDate);
+            // expensesDefault.forEach(async (exDefault) => {
+            //     await addData('expenses', {
+            //         category: exDefault.description,
+            //         budget: exDefault.budget,
+            //         date: convertToTimeStamp(inputDate),
+            //         defaultCreatedId: exDefault.id,
+            //         user: getUserID(),
+            //     })
+            // })
             // Object.entries(expensesDefault).forEach(async ([key, value]) => {
             //     await addData('expenses', {
             //         category: key,
@@ -280,7 +281,11 @@ export async function expenses(arrayData) {
 }
 export async function getExpenses(inputDate, setExpensesData, isFetching, dropdownData = false) {
     try {
-        await getExpensesDataRealTime(inputDate, setExpensesData, isFetching, dropdownData)
+        await getExpensesDataRealTime_v2(inputDate,setExpensesData, isFetching, dropdownData)
+        // if (dropdownData)
+        //     await getExpensesDataRealTime_v2(setExpensesData, isFetching)
+        // else
+        //     await getExpensesDataRealTime(inputDate, setExpensesData, isFetching)
     } catch (error) {
         console.error("Error fetching expenses in Controller:", error);
     }

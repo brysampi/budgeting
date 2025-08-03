@@ -35,6 +35,10 @@
     @apply w-[30px] h-[30px] rounded-full flex items-center justify-center mr-1;
 }
 
+.sidenav ul li span:not(:first-child) {
+    @apply flex items-center justify-center;
+}
+
 .sidenav .title {
     @apply text-center text-[var(--theme-one-primary)] font-bold text-xl p-5 mb-[10px];
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { expensesTracker, getExpensesTracker, getExpenses, expensesTrackerUpdate, checkStaticData } from '../firebase/controller';
+import { expensesTracker, getExpensesTracker, getExpenses, expensesTrackerUpdate, deleteDataController, checkStaticData } from '../firebase/controller';
 import { useParams, useNavigate } from 'react-router-dom';
 
 
@@ -9,7 +9,7 @@ const ExpensesTracker = () => {
     const navigate = useNavigate();
     useEffect(() => {
         if (!paramMonth) {
-            navigate('/monthSelect'); 
+            navigate('/monthSelect');
         }
     }, [paramMonth, navigate]);
     const [formCategory, setFormCategory] = useState('');
@@ -75,79 +75,99 @@ const ExpensesTracker = () => {
     useEffect(() => {
         const returnSavings = async () => {
             setIsFetching(true);
-            await getExpenses(paramMonth,setExpensesData, setIsFetching,true);
+            await getExpenses(paramMonth, setExpensesData, setIsFetching, true);
             // setFormCategory();
-            await getExpensesTracker(paramMonth,setExpensesTrackerData, setIsFetchingTracker);
+            await getExpensesTracker(paramMonth, setExpensesTrackerData, setIsFetchingTracker);
             clearForm();
         }
         returnSavings();
     }, []);
     return (
         <>
-            <button onClick={() => checkStaticData(paramMonth)}>Check Data</button>
-            <div>
-                <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
-                    <div>
-                        <label htmlFor="categoryExpensesTracker">Category:</label>
-                        <select
-                            value={formCategory}
-                            onChange={(e) => { setFormCategory(e.target.value) }}
-                            name="categoryExpensesTracker"
-                            id="categoryExpensesTracker"
-                        >
-                            <option value="" disabled>
-                                Select a category
-                            </option>
-                            {isFetching ? (
-                                <option value="" disabled>Fetching Data Please Wait. . .</option>
-                            ) : (
-                                expensesData.length === 0 ?
-                                    <option value="" disabled>No Data Found</option> :
-                                    expensesData.map((item, index) => (
-                                        <option value={item.id} key={index + 1}>{item.category}</option>
-                                    )).reverse()
-                            )}
-                        </select>
-                    </div>
-                    <div>
-                        <label htmlFor="descriptionExpensesTracker">Description:</label>
-                        <input
-                            type="text"
-                            id="descriptionExpensesTracker"
-                            value={formDescription}
-                            onChange={(e) => setFormDescription(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="priceExpensesTracker">Price:</label>
-                        <input
-                            type="text"
-                            id="priceExpensesTracker"
-                            value={formPrice}
-                            onChange={(e) => setFormPrice(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="discountExpensesTracker">Discount:</label>
-                        <input
-                            type="text"
-                            id="discountExpensesTracker"
-                            value={formDiscount}
-                            onChange={(e) => setFormDiscount(e.target.value)}
-                        />
-                    </div>
-                    <button disabled={loading}>{
-                        loading ? 'Loading' :
-                            !updateDataStatus ? 'Add' : 'Update'
-                    }</button>
-                </form>
-                <button disabled={loading} onClick={clearForm}>{
-                    loading ? 'Loading' :
-                        !updateDataStatus ? 'Clear Form' : 'Cancel Update'
-                }</button>
-            </div >
-            <div>
-                <table>
+            <div className="card-container">
+                <div className="card card-no-bg flex-1"></div>
+                <div className="card card-main">
+                    {/* <button onClick={() => checkStaticData(paramMonth)}>Check Data</button> */}
+                    <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
+                        <div className="floating-label-wrapper">
+                            <select
+                                className="input"
+                                value={formCategory}
+                                onChange={(e) => { setFormCategory(e.target.value) }}
+                                name="categoryExpensesTracker"
+                                id="categoryExpensesTracker"
+                                placeholder="Category"
+                            >
+                                <option value="" disabled>
+                                    Select a category
+                                </option>
+                                {isFetching ? (
+                                    <option value="" disabled>Fetching Data Please Wait. . .</option>
+                                ) : (
+                                    expensesData.length === 0 ?
+                                        <option value="" disabled>No Data Found</option> :
+                                        expensesData.map((item, index) => (
+                                            <option value={item.id} key={index + 1}>{item.category}</option>
+                                        )).reverse()
+                                )}
+                            </select>
+                            <label htmlFor="categoryExpensesTracker">Category</label>
+                        </div>
+                        <div className="floating-label-wrapper">
+                            <input
+                                type="text"
+                                id="descriptionExpensesTracker"
+                                placeholder="Description"
+                                value={formDescription}
+                                onChange={(e) => setFormDescription(e.target.value)}
+                            />
+                            <label htmlFor="descriptionExpensesTracker">Description</label>
+                        </div>
+                        <div className="floating-label-wrapper">
+                            <input
+                                type="text"
+                                id="priceExpensesTracker"
+                                placeholder="Price"
+                                value={formPrice}
+                                onChange={(e) => setFormPrice(e.target.value)}
+                            />
+                            <label htmlFor="priceExpensesTracker">Price</label>
+                        </div>
+                        <div className="floating-label-wrapper">
+                            <input
+                                type="text"
+                                id="discountExpensesTracker"
+                                placeholder="Discount"
+                                value={formDiscount}
+                                onChange={(e) => setFormDiscount(e.target.value)}
+                            />
+                            <label htmlFor="discountExpensesTracker">Discount</label>
+                        </div>
+                        <div className="multi-btn">
+                            <button
+                                className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
+                                type="submit"
+                                disabled={loading}>{
+                                    loading ? 'Loading' :
+                                        !updateDataStatus ? 'Add' : 'Update'
+                                }
+                            </button>
+                            <button
+                                className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
+                                type="button"
+                                onClick={clearForm}
+                                disabled={loading}>{
+                                    loading ? 'Loading' :
+                                        !updateDataStatus ? 'Clear' : 'Cancel'
+                                }
+                            </button>
+                        </div>
+                    </form>
+                </div >
+            </div>
+
+            <div className="card card-main">
+                <table className="table">
                     <thead>
                         <tr>
                             <th>Category</th>
@@ -166,11 +186,14 @@ const ExpensesTracker = () => {
                                     let total = 0;
                                     return (
                                         <React.Fragment key={key}>
-                                            <tr><td colSpan={6} style={{
-                                                textAlign: 'center',
-                                                fontWeight: 'bold',
-                                                backgroundColor: 'lightgray',
-                                            }}> Day: {key}</td></tr>
+                                            <tr><td colSpan={6}
+                                                // style={{
+                                                //     textAlign: 'center',
+                                                //     fontWeight: 'bold',
+                                                //     backgroundColor: 'lightgray',
+                                                // }}
+                                                className="text-center font-bold bg-[var(--theme-one-neutral-light)]"
+                                            > Day: {key}</td></tr>
                                             {
                                                 value.map((item, index) => {
                                                     // console.log(item)
@@ -200,11 +223,13 @@ const ExpensesTracker = () => {
                                                 }
                                                 ).reverse()
                                             }
-                                            <tr><td colSpan={6} style={{
-                                                textAlign: 'right',
-                                                fontWeight: 'bold',
-                                                backgroundColor: 'yellow',
-                                            }}>Total: {total.toFixed(2)}</td></tr>
+                                            <tr><td colSpan={3} ></td>
+                                                <td
+                                                    className="font-blod align-right bg-[var(--theme-one-tertiary)]"
+                                                >
+                                                    Total: {total.toFixed(2)}
+                                                </td>
+                                            </tr>
                                         </React.Fragment >
                                     )
                                 }

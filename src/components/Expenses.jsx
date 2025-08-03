@@ -49,32 +49,50 @@ const Expenses = () => {
 
     return (
         <>
-            <div>
-                <form onSubmit={fromSubmit}>
-                    <div>
-                        <label htmlFor="categoryExpenses">Category:</label>
-                        <input
-                            type="text"
-                            id="categoryExpenses"
-                            value={formCategory}
-                            onChange={(e) => setFormCategory(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="budgetExpenses">Budget:</label>
-                        <input
-                            type='text'
-                            id="budgetExpenses"
-                            value={formBudget}
-                            onChange={(e) => setFormBudget(e.target.value)}
-                        />
-                    </div>
-                    <button disabled={loading}>{loading ? 'Loading' : 'Submit'}</button>
-                </form>
-                <button onClick={clearForm}>Clear Form</button>
+            <div className="card-container">
+                <div className="card card-no-bg flex-1"> </div>
+                <div className="card card-main">
+                    <form onSubmit={fromSubmit}>
+                        <div className="floating-label-wrapper">
+                            <input
+                                type="text"
+                                id="categoryExpenses"
+                                placeholder="Category"
+                                value={formCategory}
+                                onChange={(e) => setFormCategory(e.target.value)}
+                            />
+                            <label htmlFor="categoryExpenses">Category</label>
+                        </div>
+                        <div className="floating-label-wrapper">
+                            <input
+                                type='text'
+                                id="budgetExpenses"
+                                placeholder="Budget"
+                                value={formBudget}
+                                onChange={(e) => setFormBudget(e.target.value)}
+                            />
+                            <label htmlFor="budgetExpenses">Budget:</label>
+                        </div>
+                        <div className="multi-btn">
+                            <button
+                                className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
+                                type="submit"
+                                disabled={loading}>{loading ? "Loading" : "Add"}
+                            </button>
+                            <button
+                                className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
+                                type="button"
+                                onClick={clearForm}
+                                disabled={loading}>
+                                {loading ? 'Loading' : 'Clear'}
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
             </div>
-            <div>
-                <table>
+            <div className="card card-main">
+                <table className="table">
                     <thead>
                         <tr>
                             {/* <th>#</th> */}

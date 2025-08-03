@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { useParams, useNavigate } from 'react-router-dom';
 import { logout } from '../firebase/controller';
-import '../css/navbar.css';
+import '../css/sidenav.css';
 
 export default function SideNav({ hide, sidenavRef }) {
     const [hideNav, setHideNav] = hide;
@@ -41,54 +41,70 @@ export default function SideNav({ hide, sidenavRef }) {
 
                 <div className="sidenav-content">
                     <ul>
-                        <li>
-                            <span>A</span>
-                            <span className={`${hideNav ? 'inline sm:hidden' : 'hidden sm:inline'}`}>
-                                <Link to={'/'}>Select Month</Link>
-                            </span>
-                        </li>
-                        <li>
-                            <span>A</span>
-                            <span className={`${hideNav ? 'inline sm:hidden' : 'hidden sm:inline'}`}>
-                                <Link to={`/income/${paramMonth}`}>Income</Link>
-                            </span>
-                        </li>
-                        <li>
-                            <span>A</span>
-                            <span className={`${hideNav ? 'inline sm:hidden' : 'hidden sm:inline'}`}>
-                                <Link to={`/savings/${paramMonth}`}>Savings</Link>
-                            </span>
-                        </li>
-                        <li>
-                            <span>A</span>
-                            <span className={`${hideNav ? 'inline sm:hidden' : 'hidden sm:inline'}`}>
-                                <Link to={`/savingsTracker/${paramMonth}`}>Savings Tracker</Link>
-                            </span>
-                        </li>
-                        <li>
-                            <span>A</span>
-                            <span className={`${hideNav ? 'inline sm:hidden' : 'hidden sm:inline'}`}>
-                                <Link to={`/bills/${paramMonth}`}>Bills</Link>
-                            </span>
-                        </li>
-                        <li>
-                            <span>A</span>
-                            <span className={`${hideNav ? 'inline sm:hidden' : 'hidden sm:inline'}`}>
-                                <Link to={`/expenses/${paramMonth}`}>Expenses</Link>
-                            </span>
-                        </li>
-                        <li>
-                            <span>A</span>
-                            <span className={`${hideNav ? 'inline sm:hidden' : 'hidden sm:inline'}`}>
-                                <Link to={`/expensestracker/${paramMonth}`}>Expenses Tracker</Link>
-                            </span>
-                        </li>
-                        <li>
-                            <span>A</span>
-                            <span className={`${hideNav ? 'inline sm:hidden' : 'hidden sm:inline'}`}>
-                                <Link to={`/expensesDefault/${paramMonth}`}>Expenses Default</Link>
-                            </span>
-                        </li>
+                        <Link to={'/'}>
+                            <li>
+                                <span>A</span>
+                                <span className={`${hideNav ? 'inline sm:hidden' : 'hidden sm:inline'}`}>
+                                    Select Month
+                                </span>
+                            </li>
+                        </Link>
+                        <Link to={`/income/${paramMonth}`}>
+                            <li>
+                                <span>A</span>
+                                <span className={`${hideNav ? 'inline sm:hidden' : 'hidden sm:inline'}`}>
+                                    Income
+                                </span>
+                            </li>
+                        </Link>
+                        <Link to={`/savings/${paramMonth}`}>
+                            <li>
+                                <span>A</span>
+                                <span className={`${hideNav ? 'inline sm:hidden' : 'hidden sm:inline'}`}>
+                                    Savings
+                                </span>
+                            </li>
+                        </Link>
+                        <Link to={`/savingsTracker/${paramMonth}`}>
+                            <li>
+                                <span>A</span>
+                                <span className={`${hideNav ? 'inline sm:hidden' : 'hidden sm:inline'}`}>
+                                    Savings Tracker
+                                </span>
+                            </li>
+                        </Link>
+                        <Link to={`/bills/${paramMonth}`}>
+                            <li>
+                                <span>A</span>
+                                <span className={`${hideNav ? 'inline sm:hidden' : 'hidden sm:inline'}`}>
+                                    Bills
+                                </span>
+                            </li>
+                        </Link>
+                        <Link to={`/expenses/${paramMonth}`}>
+                            <li>
+                                <span>A</span>
+                                <span className={`${hideNav ? 'inline sm:hidden' : 'hidden sm:inline'}`}>
+                                    Expenses
+                                </span>
+                            </li>
+                        </Link>
+                        <Link to={`/expensestracker/${paramMonth}`}>
+                            <li>
+                                <span>A</span>
+                                <span className={`${hideNav ? 'inline sm:hidden' : 'hidden sm:inline'}`}>
+                                    Expenses Tracker
+                                </span>
+                            </li>
+                        </Link>
+                        {/* <Link to={`/expensesDefault/${paramMonth}`}>
+                            <li>
+                                <span>A</span>
+                                <span className={`${hideNav ? 'inline sm:hidden' : 'hidden sm:inline'}`}>
+                                    Expenses Default
+                                </span>
+                            </li>
+                        </Link> */}
 
                     </ul>
                     <ul>
@@ -102,14 +118,14 @@ export default function SideNav({ hide, sidenavRef }) {
                         </li>
 
                     </ul>
-                </div>
+                </div >
                 <ul>
                     <li>
                         <span>A</span>
                         <span className={`${hideNav ? 'inline sm:hidden' : 'hidden sm:inline'}`}>Profile</span>
                     </li>
                 </ul>
-            </div>
+            </div >
 
         </aside >
     );

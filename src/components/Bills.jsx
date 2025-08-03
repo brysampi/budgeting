@@ -53,50 +53,75 @@ const Bills = () => {
 
     return (
         <>
-            <div>
-                <form onSubmit={fromSubmit}>
-                    <div>
-                        <label htmlFor="descBills">description:</label>
-                        <input
-                            type="text"
-                            id="descBills"
-                            value={formDescription}
-                            onChange={(e) => setFormDescription(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="dueDateBills">Due-Date:</label>
-                        <input
-                            type="date"
-                            id="dueDateBills"
-                            value={formDueDate}
-                            onChange={(e) => setFormDueDate(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="budgetBills">Budget:</label>
-                        <input
-                            type='text'
-                            id="budgetBills"
-                            value={formBudget}
-                            onChange={(e) => setFormBudget(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="actualBills">Actual:</label>
-                        <input
-                            type="text"
-                            id="actualBills"
-                            value={formActual}
-                            onChange={(e) => setFormActual(e.target.value)}
-                        />
-                    </div>
-                    <button disabled={loading}>{loading ? 'Loading' : 'Submit'}</button>
-                </form>
-                <button onClick={clearForm}>Clear Form</button>
+            <div className="card-container">
+                <div className="card card-no-bg flex-1"></div>
+                <div className="card card-main">
+                    <form
+                        className="form-pannel"
+                        onSubmit={fromSubmit}>
+                        <div className="floating-label-wrapper">
+                            <input
+                                type="text"
+                                id="descBills"
+                                placeholder="Description"
+                                value={formDescription}
+                                onChange={(e) => setFormDescription(e.target.value)}
+                            />
+                            <label htmlFor="descBills">description</label>
+                        </div>
+                        <div className="floating-label-wrapper">
+                            <input
+                                type="date"
+                                id="dueDateBills"
+                                placeholder="Due-Date"
+                                value={formDueDate}
+                                onChange={(e) => setFormDueDate(e.target.value)}
+                            />
+                            <label htmlFor="dueDateBills">Due-Date:</label>
+                        </div>
+                        <div className="floating-label-wrapper">
+                            <input
+                                type='text'
+                                id="budgetBills"
+                                placeholder="Budget"
+                                value={formBudget}
+                                onChange={(e) => setFormBudget(e.target.value)}
+                            />
+                            <label htmlFor="budgetBills">Budget:</label>
+                        </div>
+                        <div className="floating-label-wrapper">
+                            <input
+                                type="text"
+                                id="actualBills"
+                                placeholder="Actual"
+                                value={formActual}
+                                onChange={(e) => setFormActual(e.target.value)}
+                            />
+                            <label htmlFor="actualBills">Actual:</label>
+                        </div>
+                        <div className="multi-btn">
+                            <button
+                                className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
+                                type="submit"
+                                disabled={loading}>
+                                {loading ? 'Loading' : 'Add'}
+                            </button>
+                            <button
+                                className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
+                                type="button"
+                                onClick={clearForm}
+                                disabled={loading}>
+                                {loading ? 'Loading' : 'Clear'}
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
             </div>
-            <div>
-                <table>
+
+            <div className="card card-main">
+                <table className="table">
                     <thead>
                         <tr>
                             {/* <th>#</th> */}
