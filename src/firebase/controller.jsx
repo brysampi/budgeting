@@ -271,7 +271,7 @@ export async function expenses(arrayData) {
     const data = {
         category: arrayData.category,
         budget: arrayData.budget,
-        // actual: arrayData.actual,
+        status: "active",
         date: convertToTimeStamp(arrayData.date),
         user: getUserID(),
     }
@@ -415,14 +415,14 @@ export function logout() {
     return successMsg('Logout successful');
 }
 export async function deleteDataController(table, id) {
-    await deleteData(table, id).then((response) => {
-        if (response && response.status === 'success')
-            console.log('Data deleted successfully.');
-        else
-            console.log('Failed to delete data.');
+    // await deleteData(table, id).then((response) => {
+    //     if (response && response.status === 'success')
+    //         console.log('Data deleted successfully.');
+    //     else
+    //         console.log('Failed to delete data.');
 
-    }).catch((error) => {
-        console.error('Error deleting data:', error);
-    });
+    // }).catch((error) => {
+    //     console.error('Error deleting data:', error);
+    // });
     console.log('Delete is Working But Will Not Delete in Production.');
 }

@@ -193,11 +193,12 @@ export async function getExpensesDataRealTime(inputDate, setExpensesData, isFetc
         throw new Error("Failed to fetch expenses");
     }
 }
-export async function getExpensesDataRealTime_v2(inputDate,setExpensesData, isFetching, dropdownData) {
+export async function getExpensesDataRealTime_v2(inputDate, setExpensesData, isFetching, dropdownData) {
     try {
         const que = query(
             collection(db, 'expenses'),
             where("user", "==", getUserID()),
+            where("status", "==", "active"),
             orderBy("createdAt", "desc"),
         );
         const unsubscribe = onSnapshot(que, async (snapshot) => {
@@ -217,7 +218,7 @@ export async function getExpensesDataRealTime_v2(inputDate,setExpensesData, isFe
                     const que = query(
                         expensesTrackerRef,
                         where("category", "==", docSnap.id),
-                         where("date", ">=", startOfMonth),
+                        where("date", ">=", startOfMonth),
                         where("date", "<=", endOfMonth),
                     );
                     const querySnapshot = await getDocs(que);
