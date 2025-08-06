@@ -113,9 +113,17 @@ const Expenses = () => {
                                 expensesData.map((item, index) => (
                                     <tr key={index + 1}>
                                         <td>{item.category}</td>
-                                        <td>{item.budget.toFixed(2)}</td>
+                                        <td>{
+                                            !item.monthlyBudget || item.monthlyBudget <= 0 ?
+                                                item.budget.toFixed(2) :
+                                                item.monthlyBudget.toFixed(2)
+                                        }</td>
                                         <td>{!item.actual ? 0.00 : item.actual.toFixed(2)}</td>
-                                        <td>{!item.actual ? item.budget.toFixed(2) : (item.budget - item.actual).toFixed(2)}</td>
+                                        <td>{
+                                            !item.monthlyBudget || item.monthlyBudget <= 0 ?
+                                                !item.actual ? item.budget.toFixed(2) : (item.budget - item.actual).toFixed(2) :
+                                                !item.actual ? item.monthlyBudget.toFixed(2) : (item.monthlyBudget - item.actual).toFixed(2)
+                                        }</td>
                                         {/* <td>{item.date}</td> */}
                                         <td><button onClick={async () => { await deleteDataController('expenses', item.id) }}>Delete</button></td>
                                     </tr>

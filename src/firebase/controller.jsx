@@ -6,7 +6,7 @@ import {
     getDataRealTime,
     //  getExpensesTrackerDataRealTime, 
     getDataCategoryRealTime,
-    getExpensesDataRealTime, getExpensesDataRealTime_v2,
+    getExpensesDataRealTime, getExpensesDataRealTime_v2, getExpensesDataRealTime_extension, getExtensionByExpenses,
     getCollectedDataRealTime,
     getSavingsDataRealTime,
 } from '../firebase/model';
@@ -147,7 +147,7 @@ export async function updateCollectedData(inputDate) {
 }
 // -------------------------- Income -----------------------------------
 export async function income(arrayData) {
-    if (arrayData.description === '' || arrayData.expected === 0 || arrayData.amount === 0)
+    if (arrayData.description === '' || arrayData.expected === 0)
         return errorMsg('Please fill up all fields.')
 
     if (arrayData.amount <= 0)
@@ -235,7 +235,7 @@ export async function getSavingsTracker(inputDate, setExpensesData, isFetching) 
 
 // -------------------------- Bills -----------------------------------
 export async function addBills(arrayData) {
-    if (arrayData.description === '' || arrayData.dueDate === '' || arrayData.budget === 0 || arrayData.actual === 0 || arrayData.date === '')
+    if (arrayData.description === '' || arrayData.dueDate === '' || arrayData.budget === 0 || arrayData.date === '')
         return errorMsg('Please fill up all fields.')
 
     if (arrayData.actual <= 0)
@@ -276,12 +276,39 @@ export async function expenses(arrayData) {
         user: getUserID(),
     }
     const addReturn = await addData('expenses', data)
+    console.log(addReturn.status)
+    if (addReturn.status == 'success') {
+        // Add Extension if Monthly Budget is Provided
+        const test = await getExtensionByExpenses(addReturn.data.id, date)
+        if (!test || test.length === 0)
+            if (arrayData.monthlyBudget) {
+                const subData = {
+                    expensesId: addReturn.data.id,
+                    monthlyBudget: arrayData.monthlyBudget,
+                    date: convertToTimeStamp(arrayData.date),
+                    user: getUserID(),
+                }
+                const subReturn = await addData('expensesExtension', subData)
+                console.log(successMsg('Successfully Added Extension.', subReturn))
+            }
+    }
     await updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
 export async function getExpenses(inputDate, setExpensesData, isFetching, dropdownData = false) {
     try {
-        await getExpensesDataRealTime_v2(inputDate,setExpensesData, isFetching, dropdownData)
+        await getExpensesDataRealTime_v2(inputDate, setExpensesData, isFetching, dropdownData)
+        // if (dropdownData)
+        //     await getExpensesDataRealTime_v2(setExpensesData, isFetching)
+        // else
+        //     await getExpensesDataRealTime(inputDate, setExpensesData, isFetching)
+    } catch (error) {
+        console.error("Error fetching expenses in Controller:", error);
+    }
+}
+export async function getExpenses_v2(inputDate, setExpensesData, isFetching, dropdownData = false) {
+    try {
+        await getExpensesDataRealTime_extension(inputDate, setExpensesData, isFetching, dropdownData)
         // if (dropdownData)
         //     await getExpensesDataRealTime_v2(setExpensesData, isFetching)
         // else
@@ -363,16 +390,15 @@ export async function getDataRealTimeController(table, inputDate, setData, isFet
     } catch (error) {
         console.error(`Error fetching data from ${table} in Controller:`, error);
     }
-
 }
 // --------------------------------------------------------------------
 export async function allUpdate(table, id, arrayData) {
     const { date, ...removeDate } = arrayData;
-    await updateData(table, id, removeDate).then((response) => {
+    return await updateData(table, id, removeDate).then((response) => {
         if (response && response.status === 'success') {
             console.log('Data updated successfully.');
             updateCollectedData(arrayData.date)
-            return successMsg('Successfully Updated.')
+            return response
         }
         else {
             console.log('Failed to update data.');
@@ -382,6 +408,61 @@ export async function allUpdate(table, id, arrayData) {
         console.error('Error updating data:', error);
         return errorMsg('Failed to update data. Check console for error.')
     });
+}
+export async function updateExpenses_extension(expensesId, arrayData) {
+    const { date, monthlyBudget, ...removeDate } = arrayData;
+    const extensionData = await getExtensionByExpenses(expensesId, date)
+    // dito na ko
+    // console.log('testing to ', monthlyBudget)
+    // console.log('testing to ', removeDate)
+    updateData('expenses', expensesId, removeDate).then(async (response) => {
+        if (response && response.status === 'success') {
+            console.log('Expenses updated successfully.');
+
+            if (!extensionData || extensionData.length === 0) {
+                const addExtension = {
+                    expensesId: expensesId,
+                    monthlyBudget: arrayData.monthlyBudget,
+                    date: convertToTimeStamp(arrayData.date),
+                    user: getUserID(),
+                }
+                const returnData = await addData('expensesExtension', addExtension)
+                console.log(successMsg('Successfully Added Monthly Budget.', returnData))
+                updateCollectedData(arrayData.date)
+                return successMsg('Successfully Added Monthly Budget. ID: ', { id: returnData.data.id })
+            } else {
+                updateData('expensesExtension', extensionData[0].id, { monthlyBudget: monthlyBudget, }).then((response) => {
+                    // console.log('Extension updated successfully. with data', response);
+                    if (response && response.status === 'success') {
+                        console.log('Data updated successfully.');
+                        updateCollectedData(arrayData.date)
+                        return successMsg('Successfully Updated Monthly Budget. ID: ', { id: response.data.id })
+                    }
+                    else {
+                        console.log('Failed to update Monthly Budget.');
+                        updateCollectedData(arrayData.date)
+                        return errorMsg('Failed to update Monthly Budget. Check console for error.')
+                    }
+                }).catch((error) => {
+                    console.error('Error updating Monthly Budget:', error);
+                    return errorMsg('Failed to update Monthly Budget. Check console for error.')
+                })
+            }
+        }
+        else {
+            console.log('Failed to update Expenses.');
+            return errorMsg('Failed to update Expenses. Check console for error.')
+        }
+    }).catch((error) => {
+        console.error('Error updating Expenses:', error);
+        return errorMsg('Failed to update Expenses. Check console for error.')
+    });
+
+
+
+}
+export async function getExpensesExtension(expensesId, inputDate) {
+    await getExtensionByExpenses(expensesId, inputDate)
 }
 export async function expensesTrackerUpdate(id, arrayData) {
     const discountPrice = !arrayData.discount || arrayData.discount === '' ? 0 : arrayData.discount;

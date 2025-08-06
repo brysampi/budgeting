@@ -39,13 +39,13 @@ export async function addData(table, arrayData) {
         const IdStored = arrayData.user;
         if (IdStored) {
             const collectionRef = collection(db, table)
-            await addDoc(collectionRef, {
+            const returnData = await addDoc(collectionRef, {
                 ...arrayData,
                 user: IdStored,
                 createdAt: serverTimestamp()
-                // createdAt: convertToTimeStamp('2025-07-10'),
+                // createdAt: convertToTimeStamp('2025-08-04'),
             })
-            return successMsg('Successfully Added.')
+            return successMsg('Successfully Added. ID: ', { id: returnData.id })
         }
         else
             return errorMsg('No LoggedIn User Found.')
@@ -227,6 +227,73 @@ export async function getExpensesDataRealTime_v2(inputDate, setExpensesData, isF
                             docData.actual = 0;
                         docData.actual += doc.data().amount;
                     });
+
+                    const extensionRef = collection(db, "expensesExtension");
+                    const extensionQue = query(
+                        extensionRef,
+                        where("expensesId", "==", docSnap.id),
+                        where("date", ">=", startOfMonth),
+                        where("date", "<=", endOfMonth),
+                    );
+                    const monthlyBudgetSnapshot = await getDocs(extensionQue);
+                    if (!monthlyBudgetSnapshot.empty)
+                        monthlyBudgetSnapshot.docs.map((doc) => {
+                            docData.monthlyBudget = doc.data().monthlyBudget;
+                        });
+                    return {
+                        id: docSnap.id,
+                        ...docData,
+                    };
+                }
+            });
+            const resolvedData = await Promise.all(promises);
+            // console.log("Resolved Data: ", resolvedData);
+            setExpensesData(resolvedData)
+            isFetching(false);
+            return resolvedData
+        });
+
+
+        return unsubscribe;
+    } catch (error) {
+        console.error("Error fetching expenses: ", error);
+        throw new Error("Failed to fetch expenses");
+    }
+}
+export async function getExpensesDataRealTime_extension(inputDate, setExpensesData, isFetching) {
+    try {
+        const que = query(
+            collection(db, 'expenses'),
+            where("user", "==", getUserID()),
+            orderBy("createdAt", "desc"),
+        );
+        const unsubscribe = onSnapshot(que, async (snapshot) => {
+            const promises = snapshot.docs.map(async (docSnap) => {
+                const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
+                const docData = docSnap.data();
+                if (!docSnap.exists()) {
+                    console.log("No such document!");
+                    return null;
+                } else {
+                    const expensesTrackerRef = collection(db, "expensesExtension");
+                    const que = query(
+                        expensesTrackerRef,
+                        where("expensesId", "==", docSnap.id),
+                        where("date", ">=", startOfMonth),
+                        where("date", "<=", endOfMonth),
+                    );
+                    const querySnapshot = await getDocs(que);
+                    if (!querySnapshot.empty)
+                        // if (querySnapshot.empty)
+                        //     console.log('walang laman')
+                        // else
+                        //     console.log('may laman')
+                        querySnapshot.docs.map((doc) => {
+                            // console.log(doc.data())
+                            // if (!docData.monthlyBudget)
+                            //     docData.monthlyBudget = 0;
+                            docData.monthlyBudget = doc.data().monthlyBudget;
+                        });
                     return {
                         id: docSnap.id,
                         ...docData,
@@ -363,6 +430,34 @@ export async function getData(table, inputDate) {
         return [];
     }
 }
+export async function getExtensionByExpenses(expensesId, inputDate) {
+    try {
+        const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
+        const usersRef = collection(db, 'expensesExtension');
+        const que = query(
+            usersRef,
+            where("user", "==", getUserID()),
+            where("date", ">=", startOfMonth),
+            where("date", "<=", endOfMonth),
+            where("expensesId", "==", expensesId),
+            orderBy("date", "desc"),
+            orderBy("createdAt", "desc"),
+        );
+        const querySnapshot = await getDocs(que);
+        // console.log(querySnapshot.docs)
+        const promises = querySnapshot.docs.map(async (docSnap) => {
+            return {
+                id: docSnap.id,
+                ...docSnap.data(),
+            };
+        })
+        const resolvedData = await Promise.all(promises);
+        return resolvedData;
+    } catch (error) {
+        console.error("Error fetching: ", error);
+        return [];
+    }
+}
 export async function getAllData(table, inputDate) {
     try {
         const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
@@ -420,7 +515,8 @@ export async function updateData(table, id, arrayData) {
             ...arrayData,
             updatedAt: serverTimestamp()
         });
-        return successMsg('Successfully Updated.')
+        // console.log("Data updated successfully:", docRef.id);
+        return successMsg('Successfully Updated. ID: ', { id: docRef.id });
     } catch (error) {
         console.log("Error updating data:", error)
         return errorMsg('Failed to update data. Check console for error.')

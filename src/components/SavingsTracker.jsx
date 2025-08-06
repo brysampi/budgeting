@@ -195,7 +195,7 @@ const SavingsTracker = () => {
                                                             </td> */}
                                                             <td><button onClick={() => updateSetData(item.id,
                                                                 {
-                                                                    id: item.id,
+                                                                    // id: item.id,
                                                                     category: item.category,
                                                                     description: item.description,
                                                                     amount: item.amount,

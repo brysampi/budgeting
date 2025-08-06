@@ -10,6 +10,7 @@ import Bills from '../components/Bills';
 import Expenses from '../components/Expenses';
 import ExpensesTracker from '../components/ExpensesTracker';
 import ExpensesDefault from '../components/ExpensesDefault';
+import ExpensesSettings from '../components/ExpensesSettings';
 import LoginPage from '../components/LoginPage';
 
 
@@ -39,6 +40,7 @@ const AppRoutes = () => {
                         <Route path="expenses/:paramMonth" element={<Expenses />} />
                         <Route path="expensestracker/:paramMonth" element={<ExpensesTracker />} />
                         <Route path="expensesdefault/:paramMonth" element={<ExpensesDefault />} />
+                        <Route path="expensesSettings/:paramMonth" element={<ExpensesSettings />} />
                     </Route>
                 </>
             )}

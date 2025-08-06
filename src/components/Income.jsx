@@ -20,12 +20,16 @@ const Income = () => {
     const fromSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        if (!formDescription || !formExpected || !formAmount)
-            return console.log('Please fill up all fields.')
+        if (!formDescription || !formExpected) {
+            setLoading(false);
+            alert('Please fill up all fields.')
+            console.log('Please fill up all fields.')
+            return
+        }
         income({
             description: formDescription,
-            expected: parseFloat(formExpected),
-            amount: parseFloat(formAmount),
+            expected: !formExpected ? 0 : parseFloat(formExpected),
+            amount: !formAmount ? 0 : parseFloat(formAmount),
             date: paramMonth,
         }).then((response) => {
             if (response && response.status == 'success')

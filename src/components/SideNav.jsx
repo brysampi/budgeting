@@ -105,6 +105,14 @@ export default function SideNav({ hide, sidenavRef }) {
                                 </span>
                             </li>
                         </Link> */}
+                        <Link to={`/expensesSettings/${paramMonth}`}>
+                            <li>
+                                <span>X</span>
+                                <span className={`${hideNav ? 'inline sm:hidden' : 'hidden sm:inline'}`}>
+                                    Expenses Settings
+                                </span>
+                            </li>
+                        </Link>
 
                     </ul>
                     <ul>

@@ -22,13 +22,17 @@ const Bills = () => {
     const fromSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        if (!formDescription || !formDueDate || !formBudget || !formActual)
-            return console.log('Please fill up all fields.')
+        if (!formDescription || !formDueDate || !formBudget) {
+            setLoading(false);
+            alert('Please fill up all fields.')
+            console.log('Please fill up all fields.')
+            return
+        }
         addBills({
             description: formDescription,
             dueDate: formDueDate,
-            budget: parseFloat(formBudget),
-            actual: parseFloat(formActual),
+            budget: !formBudget ? 0 : parseFloat(formBudget),
+            actual: !formActual ? 0 : parseFloat(formActual),
             date: paramMonth,
         }).then((response) => {
             if (response && response.status == 'success')

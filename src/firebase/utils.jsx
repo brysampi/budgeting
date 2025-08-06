@@ -68,3 +68,10 @@ export function getMonthNames(inputDate) {
     ];
     return monthNames[inputDate.toDate().getMonth()];
 }
+export function getMonthNamesSingleDigit(monthNo) {
+    const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    return monthNames[monthNo - 1];
+}
