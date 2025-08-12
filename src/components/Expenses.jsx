@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { expenses, getExpenses, deleteDataController } from '../firebase/controller';
+import { expenses, getExpenses, deleteDataController, updateExpenses_extension } from '../firebase/controller';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const Expenses = () => {
@@ -15,28 +15,46 @@ const Expenses = () => {
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [expensesData, setExpensesData] = useState([]);
+    const [updateDataStatus, setUpdateStatus] = useState(false);
+    const [updateId, setUpdateId] = useState('');
 
     const fromSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        if (!formCategory || !formBudget)
+        if (!formCategory || !formBudget) {
+            setLoading(false);
             return console.log('Please fill up all fields.')
-        expenses({
+        }
+
+        // expenses({
+        //     category: formCategory,
+        //     budget: parseInt(formBudget),
+        //     date: paramMonth,
+        // }).then((response) => {
+        //     if (response && response.status == 'success') {
+        //         console.log('Expense Added.')
+        //     } else {
+        //         console.log('Failed to Add Expense.')
+        //     }
+        // }).catch((error) => {
+        //     console.log(error)
+        // }).finally(() => {
+        //     clearForm()
+        //     setLoading(false)
+        // })
+        const addData = await expenses({
             category: formCategory,
             budget: parseInt(formBudget),
             date: paramMonth,
-        }).then((response) => {
-            if (response && response.status == 'success') {
-                console.log('Expense Added.')
-            } else {
-                console.log('Failed to Add Expense.')
-            }
-        }).catch((error) => {
-            console.log(error)
-        }).finally(() => {
-            clearForm()
-            setLoading(false)
         })
+
+        if (addData.status === 'success') {
+            console.log(addData.message);
+            setLoading(false);
+            clearForm();
+        } else
+            setLoading(false);
+
     }
     useEffect(() => {
         const returnExpenses = async () => {
@@ -47,12 +65,42 @@ const Expenses = () => {
         returnExpenses();
     }, []);
 
+    const updateSetData = (id, arrayData) => {
+        setUpdateStatus(true);
+        setUpdateId(id)
+        setFormCategory(arrayData.category)
+        setFormBudget(arrayData.budget)
+    }
+    const updateFormSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        if (formBudget === '' || formCategory === '' || formCategory === 0 || formCategory === '0') {
+            setLoading(false);
+            return console.log('Please fill up all fields.')
+        }
+        let data = {
+            category: formCategory,
+            monthlyBudget: parseInt(formBudget),
+            date: paramMonth,
+        }
+        const updateExpenses = await updateExpenses_extension(updateId, data);
+
+        if (updateExpenses.status === 'success') {
+            setLoading(false);
+            clearForm();
+            setUpdateStatus(false);
+        } else {
+            setLoading(false);
+        }
+        console.log(updateExpenses.message);
+    }
+
     return (
         <>
             <div className="card-container">
                 <div className="card card-no-bg flex-1"> </div>
                 <div className="card card-main">
-                    <form onSubmit={fromSubmit}>
+                    <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
                         <div className="floating-label-wrapper">
                             <input
                                 type="text"
@@ -77,14 +125,18 @@ const Expenses = () => {
                             <button
                                 className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
                                 type="submit"
-                                disabled={loading}>{loading ? "Loading" : "Add"}
+                                disabled={loading}>{
+                                    loading ? "Loading" :
+                                        !updateDataStatus ? 'Add' : 'Update'
+                                }
                             </button>
                             <button
                                 className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
                                 type="button"
                                 onClick={clearForm}
-                                disabled={loading}>
-                                {loading ? 'Loading' : 'Clear'}
+                                disabled={loading}>{
+                                    loading ? 'Loading' :
+                                        !updateDataStatus ? 'Clear' : 'Cancel'}
                             </button>
                         </div>
                     </form>
@@ -125,7 +177,17 @@ const Expenses = () => {
                                                 !item.actual ? item.monthlyBudget.toFixed(2) : (item.monthlyBudget - item.actual).toFixed(2)
                                         }</td>
                                         {/* <td>{item.date}</td> */}
-                                        <td><button onClick={async () => { await deleteDataController('expenses', item.id) }}>Delete</button></td>
+                                        <td>
+                                            {/* <button onClick={async () => { await deleteDataController('expenses', item.id) }}>Delete</button> */}
+                                            <button onClick={() => updateSetData(item.id,
+                                                {
+                                                    // id: item.id,
+                                                    category: item.category,
+                                                    budget: !item.monthlyBudget ? item.budget : item.monthlyBudget,
+                                                }
+                                            )
+                                            }>Update</button>
+                                        </td>
                                     </tr>
                                 ))
                         )}
@@ -138,7 +200,6 @@ const Expenses = () => {
     function clearForm() {
         setFormCategory('')
         setFormBudget('')
-        setFormActual('')
         setLoading(false)
     }
 }

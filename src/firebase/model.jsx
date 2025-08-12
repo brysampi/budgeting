@@ -45,7 +45,7 @@ export async function addData(table, arrayData) {
                 createdAt: serverTimestamp()
                 // createdAt: convertToTimeStamp('2025-08-04'),
             })
-            return successMsg('Successfully Added. ID: ', { id: returnData.id })
+            return successMsg('Successfully Added.', { id: returnData.id })
         }
         else
             return errorMsg('No LoggedIn User Found.')
@@ -430,11 +430,11 @@ export async function getData(table, inputDate) {
         return [];
     }
 }
-export async function getExtensionByExpenses(expensesId, inputDate) {
+export async function getExtensionByExpenses(expensesId, inputDate, debug = false) {
     try {
         const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
         const usersRef = collection(db, 'expensesExtension');
-        const que = query(
+        const expensesQuery = query(
             usersRef,
             where("user", "==", getUserID()),
             where("date", ">=", startOfMonth),
@@ -442,19 +442,43 @@ export async function getExtensionByExpenses(expensesId, inputDate) {
             where("expensesId", "==", expensesId),
             orderBy("date", "desc"),
             orderBy("createdAt", "desc"),
+            limit(1)
         );
-        const querySnapshot = await getDocs(que);
-        // console.log(querySnapshot.docs)
-        const promises = querySnapshot.docs.map(async (docSnap) => {
-            return {
-                id: docSnap.id,
-                ...docSnap.data(),
-            };
-        })
-        const resolvedData = await Promise.all(promises);
-        return resolvedData;
+        const querySnapshot = await getDocs(expensesQuery);
+
+        if (debug) {
+            console.log(`Fetched ${querySnapshot.size} documents for expensesId: ${expensesId}`);
+        }
+        
+        if (querySnapshot.empty) {
+            return null;
+        }
+
+        const docSnap = querySnapshot.docs[0];
+        return {
+            id: docSnap.id,
+            ...docSnap.data(),
+        };
     } catch (error) {
-        console.error("Error fetching: ", error);
+        console.error(`Error fetching expenses extensions for ID ${expensesId}:`, error);
+        return [];
+    }
+}
+export async function getDataById(table, data) {
+    try {
+        const docRef = doc(db, table, data);
+        // "users" is the collection name, "USER_ID" is the document ID
+
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            return docSnap.data()
+            console.log("Document data:", docSnap.data());
+        } else {
+            console.log("No such document!");
+        }
+    } catch (error) {
+        console.error("Error fetching Expenses:", error);
         return [];
     }
 }
@@ -516,7 +540,7 @@ export async function updateData(table, id, arrayData) {
             updatedAt: serverTimestamp()
         });
         // console.log("Data updated successfully:", docRef.id);
-        return successMsg('Successfully Updated. ID: ', { id: docRef.id });
+        return successMsg('Successfully Updated.', { id: docRef.id });
     } catch (error) {
         console.log("Error updating data:", error)
         return errorMsg('Failed to update data. Check console for error.')

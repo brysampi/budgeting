@@ -73,29 +73,14 @@ const ExpensesSettings = () => {
             date: paramMonth,
         }
         const updateExpenses = await updateExpenses_extension(updateId, data);
-        // if (updateExpenses && updateExpenses.status == 'success') {
-        //     if (!formMonthlyBudget || formMonthlyBudget === '') {
-        //         clearForm();
-        //     } else {
-        //         let data2 = {
-        //             monthlyBudget: formMonthlyBudget,
-        //             date: paramMonth,
-        //         }
-        //         const updateExtension = await expensesExtensionUpdate(updateExpenses.data.id, data2);
-        //         if (updateExtension && updateExtension.status == 'success') {
-        //             console.log('Expense Updated.')
-        //             clearForm();
-        //         } else {
-        //             console.log('Failed to Update Expense Extension.')
-        //         }
-        //     }
-        // } else {
-        //     console.log('Failed to Update Expense.')
-        // }
-
-        // Object.entries(test).forEach(([key, value]) => {
-        //     console.log(key, value)
-        // })
+        if (updateExpenses.status === 'success') {
+            setLoading(false);
+            clearForm();
+            setUpdateStatus(false);
+        } else {
+            setLoading(false);
+        }
+        console.log(updateExpenses.message);
     }
     return (
         <>

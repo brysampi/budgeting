@@ -30,13 +30,17 @@
 .sidenav ul li:hover {
     @apply bg-[var(--theme-one-primary)] text-white font-semibold;
 }
-
+/* .sidenav ul li span {
+    @apply 
+} */
 .sidenav ul li span:first-child {
-    @apply w-[30px] h-[30px] rounded-full flex items-center justify-center mr-1;
+    @apply w-[30px] h-[30px] rounded-full flex 
+    /* items-center justify-center mr-1; */
 }
 
 .sidenav ul li span:not(:first-child) {
-    @apply flex items-center justify-center;
+    /* @apply transition-all duration-1000 */
+    /* @apply flex items-center justify-center; */
 }
 
 .sidenav .title {
