@@ -21,9 +21,9 @@ const Expenses = () => {
     const fromSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        if (!formCategory || !formBudget) {
+        if (!formCategory) {
             setLoading(false);
-            return console.log('Please fill up all fields.')
+            return console.log('Please fill up Category.')
         }
 
         // expenses({
@@ -74,13 +74,13 @@ const Expenses = () => {
     const updateFormSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        if (formBudget === '' || formCategory === '' || formCategory === 0 || formCategory === '0') {
+        if (formCategory === '') {
             setLoading(false);
             return console.log('Please fill up all fields.')
         }
         let data = {
             category: formCategory,
-            monthlyBudget: parseInt(formBudget),
+            monthlyBudget: !formBudget ? null : parseInt(formBudget),
             date: paramMonth,
         }
         const updateExpenses = await updateExpenses_extension(updateId, data);

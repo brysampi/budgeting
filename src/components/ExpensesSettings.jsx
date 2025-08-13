@@ -64,11 +64,11 @@ const ExpensesSettings = () => {
     }
     const updateFormSubmit = async (e) => {
         e.preventDefault();
-        // setLoading(true);
+        setLoading(true);
         let data = {
             category: formCategory,
             budget: parseInt(formBudget),
-            monthlyBudget: !formMonthlyBudget ? 0 : parseInt(formMonthlyBudget),
+            monthlyBudget: !formMonthlyBudget ? null : parseInt(formMonthlyBudget),
             status: formStatus,
             date: paramMonth,
         }
