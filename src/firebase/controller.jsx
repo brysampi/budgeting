@@ -18,19 +18,6 @@ export async function checkStaticData(inputDate) {
 }
 
 export async function login(user, password) {
-    // return await getUser(user, password).then((response) => {
-    //     Object.entries(response).forEach(([key, value]) => {
-    //         Cookies.set(key, value);
-    //     });
-    //     Cookies.set('logged_status', true);
-    //     if (response && response.id)
-    //         return successMsg('Login successful', response);
-    //     else
-    //         return errorMsg('Login failed. Please check your username and password.');
-
-    // }).catch((error) => {
-    //     return errorMsg('An error occurred during login');
-    // })
     try {
         const response = await getUser(user, password);
         if (response && response.id) {
@@ -134,32 +121,27 @@ export async function creteCollectedData(inputDate) {
             // })
             // const addReturn = await addData('expenses', data)
             return successMsg('Successfully Added.', addCollect);
-        } else {
-            console.log('Failed to Add Data in Controller.')
-            return errorMsg('check console for error.')
         }
+        console.log('Failed to Add Data in Controller.')
+        return errorMsg('check console for error.')
     }
-    else {
-        console.log('Already Have Data.')
-        return errorMsg('Already Have Data.')
-    }
+    console.log('Already Have Data.')
+    return errorMsg('Already Have Data.')
 }
 export async function updateCollectedData(inputDate) {
     const getDataCollected = await getData('collectedData', inputDate)
     if (getDataCollected.length === 0 || getDataCollected.length < 1 || !getDataCollected) {
         console.log('No Data Found.')
-        return false
+        return errorMsg('No Data Found.')
     }
-    else {
-        const collect = await collectedData(inputDate);
-        if (collect) {
-            const updateReturn = await updateData('collectedData', getDataCollected[0].id, collect);
-            return successMsg('Successfully Updated.', updateReturn);
-        } else {
-            console.log('Failed to Add Data in Controller.')
-            return errorMsg('check console for error.')
-        }
+
+    const collect = await collectedData(inputDate);
+    if (collect) {
+        const updateReturn = await updateData('collectedData', getDataCollected[0].id, collect);
+        return successMsg('Successfully Updated.', updateReturn);
     }
+    console.log('Failed to Add Data in Controller.')
+    return errorMsg('check console for error.')
 }
 // -------------------------- Income -----------------------------------
 export async function income(arrayData) {
@@ -197,6 +179,7 @@ export async function savings(arrayData) {
 
     if (!getUserID())
         return errorMsg('No LoggedIn User Found.')
+
     const data = {
         category: arrayData.category,
         description: !arrayData.description ? '' : arrayData.description,
@@ -409,26 +392,24 @@ export async function getDataRealTimeController(table, inputDate, setData, isFet
 // --------------------------------------------------------------------
 export async function allUpdate(table, id, arrayData) {
     const { date, ...removeDate } = arrayData;
-    return await updateData(table, id, removeDate).then((response) => {
-        if (response && response.status === 'success') {
-            console.log('Data updated successfully.');
-            updateCollectedData(arrayData.date)
-            return response
-        }
-        else {
-            console.log('Failed to update data.');
-            return errorMsg('Failed to update data. Check console for error.')
-        }
-    }).catch((error) => {
-        console.error('Error updating data:', error);
-        return errorMsg('Failed to update data. Check console for error.')
-    });
+    const updateResult = await updateData(table, id, removeDate)
+    if (updateResult.status === 'success') {
+        console.log('Data updated successfully.');
+        updateCollectedData(arrayData.date);
+        return successMsg('Successfully Updated.', updateResult);
+    }
+    console.log('Failed to update data.');
+    return errorMsg('Failed to update data. Check console for error.');
 }
 export async function updateExpenses_extension(expensesId, arrayData) {
     try {
         let { date, monthlyBudget, ...removeDate } = arrayData;
         // console.log('updateExpenses_extension', monthlyBudget)
         const expensesData = await getDataById('expenses', expensesId)
+        if (expensesData.status !== 'success') {
+            console.error('Failed to fetch Expenses data:', expensesData);
+            return errorMsg('Failed to fetch Expenses data. Check console for error.');
+        }
         const extensionData = await getExtensionByExpenses(expensesId, date)
 
 
@@ -436,7 +417,8 @@ export async function updateExpenses_extension(expensesId, arrayData) {
         if (expensesUpdateResult.status !== 'success') {
             return errorMsg('Failed to update Expenses. Check console for error.');
         }
-
+        // Used For Expenses Settings Only
+        // Only Expenses Settings will Have Budget Data
         if (arrayData.budget !== undefined && arrayData.budget !== null) {
             if (!extensionData) {
                 if (monthlyBudget === null) {
@@ -447,7 +429,7 @@ export async function updateExpenses_extension(expensesId, arrayData) {
                         message: 'Monthly Budget is null'
                     });
                 }
-                if (expensesData.budget == monthlyBudget) {
+                if (expensesData.data.budget == monthlyBudget) {
                     console.log('Budget is same as Monthly Budget, skipping extension update.');
                     return successMsg('Updated Successfully', {
                         description: 'Extension Update',
@@ -464,7 +446,7 @@ export async function updateExpenses_extension(expensesId, arrayData) {
                     });
                 }
             }
-            if (expensesData.budget == monthlyBudget) {
+            if (expensesData.data.budget == monthlyBudget) {
                 console.log('Budget is same as Monthly Budget, skipping extension update.');
                 return successMsg('Updated Successfully', {
                     description: 'Extension Update',
@@ -475,7 +457,7 @@ export async function updateExpenses_extension(expensesId, arrayData) {
 
         }
         if (!extensionData) {
-            if (expensesData.budget == monthlyBudget) {
+            if (expensesData.data.budget == monthlyBudget) {
                 console.log('Budget is same as Monthly Budget, skipping extension update.');
                 return successMsg('Updated Successfully', {
                     description: 'Extension Update',
@@ -492,7 +474,7 @@ export async function updateExpenses_extension(expensesId, arrayData) {
                 });
             }
         } else {
-            if (monthlyBudget === null || expensesData.budget == monthlyBudget) {
+            if (monthlyBudget === null || expensesData.data.budget == monthlyBudget) {
                 monthlyBudget = 0;
                 console.log('Set Monthly Budget to 0 as it is null or same as existing budget. aaaaa');
             }
@@ -516,7 +498,6 @@ export async function updateExpenses_extension(expensesId, arrayData) {
             const addResult = await addData('expensesExtension', addExtension);
             updateCollectedData(date);
             return successMsg('Successfully Added Monthly Budget.', { id: addResult.data.id });
-            // }
         }
 
         const extensionUpdateResult = await updateData('expensesExtension', extensionData.id, { monthlyBudget });
@@ -529,55 +510,6 @@ export async function updateExpenses_extension(expensesId, arrayData) {
         console.error('Error in updateExpensesExtension:', error);
         return errorMsg('Unexpected error occurred. Check console for details.');
     }
-
-
-
-    // updateData('expenses', expensesId, removeDate).then(async (response) => {
-    //     if (response && response.status === 'success') {
-    //         console.log('Expenses updated successfully.');
-
-    //         if (!extensionData || extensionData.length === 0) {
-    //             const addExtension = {
-    //                 expensesId: expensesId,
-    //                 monthlyBudget: arrayData.monthlyBudget,
-    //                 date: convertToTimeStamp(arrayData.date),
-    //                 user: getUserID(),
-    //             }
-    //             const returnData = await addData('expensesExtension', addExtension)
-    //             console.log(successMsg('Successfully Added Monthly Budget.', returnData))
-    //             updateCollectedData(arrayData.date)
-    //             return successMsg('Successfully Added Monthly Budget. ID: ', { id: returnData.data.id })
-    //         } else {
-    //             if (expensesData.budget == monthlyBudget) {
-    //                 console.log(errorMsg('Failed to update Monthly Budget. Same Budget and Monthly Budget Data'))
-    //                 return errorMsg('Failed to update Monthly Budget. Same Budget and Monthly Budget')
-    //             } else if (monthlyBudget)
-    //                 updateData('expensesExtension', extensionData.id, { monthlyBudget: monthlyBudget, }).then((response) => {
-    //                     // console.log('Extension updated successfully. with data', response);
-    //                     if (response && response.status === 'success') {
-    //                         console.log('Data updated successfully.');
-    //                         updateCollectedData(arrayData.date)
-    //                         return successMsg('Successfully Updated Monthly Budget. ID: ', { id: response.data.id })
-    //                     }
-    //                     else {
-    //                         console.log('Failed to update Monthly Budget.');
-    //                         updateCollectedData(arrayData.date)
-    //                         return errorMsg('Failed to update Monthly Budget. Check console for error.')
-    //                     }
-    //                 }).catch((error) => {
-    //                     console.error('Error updating Monthly Budget:', error);
-    //                     return errorMsg('Failed to update Monthly Budget. Check console for error.')
-    //                 })
-    //         }
-    //     }
-    //     else {
-    //         console.log('Failed to update Expenses.');
-    //         return errorMsg('Failed to update Expenses. Check console for error.')
-    //     }
-    // }).catch((error) => {
-    //     console.error('Error updating Expenses:', error);
-    //     return errorMsg('Failed to update Expenses. Check console for error.')
-    // });
 }
 export async function updateExpenses_extension_1(extensionId, monthlyBudget) {
     const extensionUpdateResult = await updateData('expensesExtension', extensionId, { monthlyBudget });

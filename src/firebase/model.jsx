@@ -128,14 +128,16 @@ export async function getSavingsDataRealTime(inputDate, setData, isFetching, dro
             })
             const resolvedData = await Promise.all(promises);
             // console.log("Resolved Data: ", resolvedData);
+            // console.log("Promises: ", promises);
             setData(resolvedData);
             isFetching(false);
-            return resolvedData;
+            return promises;
         })
         // console.log("Fetching savings data for month: ", inputDate);
     } catch (error) {
         console.log("Error fetching savings data: ", error);
         // throw new Error("Failed to fetch savings tracker data");
+        return errorMsg('Failed to fetch savings tracker data. Check console for error.')
     }
 }
 // ------------------------------- Expenses -------------------------------------
@@ -183,14 +185,15 @@ export async function getExpensesDataRealTime(inputDate, setExpensesData, isFetc
             // console.log("Resolved Data: ", resolvedData);
             setExpensesData(resolvedData)
             isFetching(false);
-            return resolvedData
+            return promises
         });
 
 
         return unsubscribe;
     } catch (error) {
         console.error("Error fetching expenses: ", error);
-        throw new Error("Failed to fetch expenses");
+        // throw new Error("Failed to fetch expenses");
+        return errorMsg('Failed to fetch expenses. Check console for error.')
     }
 }
 export async function getExpensesDataRealTime_v2(inputDate, setExpensesData, isFetching, dropdownData) {
@@ -250,14 +253,13 @@ export async function getExpensesDataRealTime_v2(inputDate, setExpensesData, isF
             // console.log("Resolved Data: ", resolvedData);
             setExpensesData(resolvedData)
             isFetching(false);
-            return resolvedData
+            return promises
         });
-
-
         return unsubscribe;
     } catch (error) {
         console.error("Error fetching expenses: ", error);
-        throw new Error("Failed to fetch expenses");
+        // throw new Error("Failed to fetch expenses");
+        return errorMsg('Failed to fetch expenses. Check console for error.')
     }
 }
 export async function getExpensesDataRealTime_extension(inputDate, setExpensesData, isFetching) {
@@ -304,14 +306,13 @@ export async function getExpensesDataRealTime_extension(inputDate, setExpensesDa
             // console.log("Resolved Data: ", resolvedData);
             setExpensesData(resolvedData)
             isFetching(false);
-            return resolvedData
+            return promises;
         });
-
-
         return unsubscribe;
     } catch (error) {
         console.error("Error fetching expenses: ", error);
-        throw new Error("Failed to fetch expenses");
+        // throw new Error("Failed to fetch expenses");
+        return errorMsg('Failed to fetch expenses. Check console for error.')
     }
 }
 export async function getDataCategoryRealTime(table, inputDate, setData, isFetching) {
@@ -373,11 +374,11 @@ export async function getDataCategoryRealTime(table, inputDate, setData, isFetch
             isFetching(false);
             return groupedByDay;
         });
-
         return unsubscribe;
     } catch (error) {
         console.error("Error fetching data: ", error);
-        throw new Error("Failed to fetch data");
+        // throw new Error("Failed to fetch data");
+        return errorMsg('Failed to fetch data. Check console for error.');
     }
 }
 export async function getCollectedDataRealTime(table, setData, isFetching) {
@@ -395,12 +396,13 @@ export async function getCollectedDataRealTime(table, setData, isFetching) {
             const resolvedData = await Promise.all(promises);
             setData(resolvedData);
             isFetching(false);
-            return resolvedData;
+            return promises;
         });
         return unsubscribe;
     } catch (error) {
         console.error("Error fetching data: ", error);
-        throw new Error("Failed to fetch data");
+        // throw new Error("Failed to fetch data");
+        return errorMsg('Failed to fetch data. Check console for error.');
     }
 }
 export async function getData(table, inputDate) {
@@ -427,7 +429,8 @@ export async function getData(table, inputDate) {
         return resolvedData;
     } catch (error) {
         console.error("Error fetching: ", error);
-        return [];
+        // return [];
+        return errorMsg('Failed to fetch data. Check console for error.');
     }
 }
 export async function getExtensionByExpenses(expensesId, inputDate, debug = false) {
@@ -449,7 +452,7 @@ export async function getExtensionByExpenses(expensesId, inputDate, debug = fals
         if (debug) {
             console.log(`Fetched ${querySnapshot.size} documents for expensesId: ${expensesId}`);
         }
-        
+
         if (querySnapshot.empty) {
             return null;
         }
@@ -472,14 +475,14 @@ export async function getDataById(table, data) {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
+            return successMsg('Successfully Fetched.', { id: docSnap.id, ...docSnap.data() });
             return docSnap.data()
             console.log("Document data:", docSnap.data());
-        } else {
-            console.log("No such document!");
         }
+        return errorMsg('No data found for the given ID.')
     } catch (error) {
         console.error("Error fetching Expenses:", error);
-        return [];
+        return errorMsg('Failed to fetch data. Check console for error.');
     }
 }
 export async function getAllData(table, inputDate) {
