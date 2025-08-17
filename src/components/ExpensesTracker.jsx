@@ -29,48 +29,23 @@ const ExpensesTracker = () => {
         setLoading(true);
         if (!formDescription || !formCategory || !formPrice)
             return console.log('Please fill up all fields.')
-        expensesTracker({
-            category: formCategory,
-            description: formDescription,
-            price: parseFloat(formPrice),
-            discount: parseFloat(formDiscount),
-            date: paramMonth,
-        }).then((response) => {
-            if (response && response.status == 'success')
-                console.log('Expenses Tracker Added.')
-            else
-                console.log('Failed to Add Expenses Tracker.')
 
-        }).catch((error) => {
-            console.log(error)
-        }).finally(() => {
-            clearForm()
-            setLoading(false)
-        })
-    }
-    const updateSetData = (id, arrayData) => {
-        setUpdateStatus(true);
-        // console.log(arrayData.category)
-        setUpdateId(id)
-        setFormCategory(arrayData.category)
-        setFormDescription(arrayData.description)
-        setFormPrice(arrayData.price)
-        setFormDiscount(arrayData.discount)
-    }
-    const updateFormSubmit = async (e) => {
-        e.preventDefault();
-        // setLoading(true);
-        let data = {
+        const addData = expensesTracker({
             category: formCategory,
             description: formDescription,
             price: parseFloat(formPrice),
             discount: parseFloat(formDiscount),
             date: paramMonth,
-        }
-        const test = await expensesTrackerUpdate(updateId, data);
-        // Object.entries(test).forEach(([key, value]) => {
-        //     console.log(key, value)
-        // })
+        })
+        // if (addData.status === 'success') {
+        //     console.log(addData.message);
+        //     setLoading(false);
+        //     clearForm();
+        // } else
+        //     setLoading(false);
+        console.log(addData.message);
+        setLoading(false);
+        clearForm();
     }
     useEffect(() => {
         const returnSavings = async () => {
@@ -82,6 +57,34 @@ const ExpensesTracker = () => {
         }
         returnSavings();
     }, []);
+    const updateSetData = (id, arrayData) => {
+        setUpdateStatus(true);
+        // console.log(arrayData.category)
+        setUpdateId(id)
+        setFormCategory(arrayData.category)
+        setFormDescription(arrayData.description)
+        setFormPrice(arrayData.price)
+        setFormDiscount(arrayData.discount)
+    }
+    const updateFormSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        let data = {
+            category: formCategory,
+            description: formDescription,
+            price: parseFloat(formPrice),
+            discount: parseFloat(formDiscount),
+            date: paramMonth,
+        }
+        const updateResult = await expensesTrackerUpdate(updateId, data);
+        if (updateResult.status === 'success') {
+            setLoading(false);
+            clearForm();
+            setUpdateStatus(false);
+        } else
+            setLoading(false);
+        console.log(updateResult.message);
+    }
     return (
         <>
             <div className="card-container">

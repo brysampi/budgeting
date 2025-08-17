@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { income, getDataRealTimeController, deleteDataController } from '../firebase/controller';
+import { income, getDataRealTimeController, deleteDataController, updateDataController } from '../firebase/controller';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const Income = () => {
@@ -16,6 +16,8 @@ const Income = () => {
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [incomeData, setIncomeData] = useState([]);
+    const [updateDataStatus, setUpdateStatus] = useState(false);
+    const [updateId, setUpdateId] = useState('');
 
     const fromSubmit = async (e) => {
         e.preventDefault();
@@ -26,23 +28,19 @@ const Income = () => {
             console.log('Please fill up all fields.')
             return
         }
-        income({
+        const addData = await income({
             description: formDescription,
             expected: !formExpected ? 0 : parseFloat(formExpected),
             amount: !formAmount ? 0 : parseFloat(formAmount),
             date: paramMonth,
-        }).then((response) => {
-            if (response && response.status == 'success')
-                console.log('Income Added.')
-            else
-                console.log('Failed to Add Income.')
-
-        }).catch((error) => {
-            console.log(error)
-        }).finally(() => {
-            clearForm()
-            setLoading(false)
         })
+        if (addData.status === 'success') {
+            console.log(addData.message);
+            setLoading(false);
+            clearForm();
+        } else
+            setLoading(false);
+        console.log(addData.message);
     }
     useEffect(() => {
         const returnIncome = async () => {
@@ -51,15 +49,44 @@ const Income = () => {
         }
         returnIncome();
     }, []);
+    const updateSetData = (id, arrayData) => {
+        setUpdateStatus(true);
+        setUpdateId(id)
+        setFormDescription(arrayData.description)
+        setFormExpected(arrayData.expected)
+        setFormAmount(arrayData.amount)
+    }
+    const updateFormSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
 
+        if (formDescription === '') {
+            setLoading(false);
+            return console.log('Please fill up all fields.')
+        }
+
+        let data = {
+            description: formDescription,
+            expected: !formExpected ? 0 : parseFloat(formExpected),
+            amount: !formAmount ? 0 : parseFloat(formAmount),
+            date: paramMonth,
+        }
+        const updateExpenses = await updateDataController('income', updateId, data);
+
+        if (updateExpenses.status === 'success') {
+            setLoading(false);
+            clearForm();
+            setUpdateStatus(false);
+        } else
+            setLoading(false);
+        console.log(updateExpenses.message);
+    }
     return (
         <>
             <div className="card-container">
                 <div className="card card-no-bg flex-1"> </div>
                 <div className="card card-main">
-                    <form
-                        className="form-pannel"
-                        onSubmit={fromSubmit}>
+                    <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
                         <div className="floating-label-wrapper">
                             <input
                                 type="text"
@@ -94,14 +121,18 @@ const Income = () => {
                             <button
                                 className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
                                 type="submit"
-                                disabled={loading}>{loading ? "Loading" : "Add"}
+                                disabled={loading}>{
+                                    loading ? "Loading" :
+                                        !updateDataStatus ? 'Add' : 'Update'
+                                }
                             </button>
                             <button
                                 className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
                                 type="button"
                                 onClick={clearForm}
-                                disabled={loading}>
-                                {loading ? 'Loading' : 'Clear'}
+                                disabled={loading}>{
+                                    loading ? 'Loading' :
+                                        !updateDataStatus ? 'Clear' : 'Cancel'}
                             </button>
                         </div>
                     </form>
@@ -130,7 +161,17 @@ const Income = () => {
                                         <td>{item.description}</td>
                                         <td>{item.expected.toFixed(2)}</td>
                                         <td>{item.amount.toFixed(2)}</td>
-                                        <td><button onClick={async () => { await deleteDataController('income', item.id) }}>Delete</button></td>
+                                        <td>
+                                            {/* <button onClick={async () => { await deleteDataController('income', item.id) }}>Delete</button> */}
+                                            <button onClick={() => updateSetData(item.id,
+                                                {
+                                                    description: item.description,
+                                                    expected: item.expected,
+                                                    amount: item.amount,
+                                                }
+                                            )
+                                            }>Update</button>
+                                        </td>
                                     </tr>
                                 ))
                         )}
@@ -144,6 +185,8 @@ const Income = () => {
         setFormDescription('')
         setFormExpected('')
         setFormAmount('')
+        setUpdateStatus(false)
+        setUpdateId('')
         setLoading(false)
     }
 }

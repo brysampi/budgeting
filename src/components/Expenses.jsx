@@ -21,27 +21,12 @@ const Expenses = () => {
     const fromSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+
         if (!formCategory) {
             setLoading(false);
             return console.log('Please fill up Category.')
         }
 
-        // expenses({
-        //     category: formCategory,
-        //     budget: parseInt(formBudget),
-        //     date: paramMonth,
-        // }).then((response) => {
-        //     if (response && response.status == 'success') {
-        //         console.log('Expense Added.')
-        //     } else {
-        //         console.log('Failed to Add Expense.')
-        //     }
-        // }).catch((error) => {
-        //     console.log(error)
-        // }).finally(() => {
-        //     clearForm()
-        //     setLoading(false)
-        // })
         const addData = await expenses({
             category: formCategory,
             budget: parseInt(formBudget),
@@ -54,7 +39,7 @@ const Expenses = () => {
             clearForm();
         } else
             setLoading(false);
-
+        console.log(addData.message);
     }
     useEffect(() => {
         const returnExpenses = async () => {
@@ -74,13 +59,15 @@ const Expenses = () => {
     const updateFormSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+
         if (formCategory === '') {
             setLoading(false);
             return console.log('Please fill up all fields.')
         }
+
         let data = {
             category: formCategory,
-            monthlyBudget: !formBudget ? null : parseInt(formBudget),
+            monthlyBudget: !formBudget ? null : parseFloat(formBudget),
             date: paramMonth,
         }
         const updateExpenses = await updateExpenses_extension(updateId, data);
@@ -89,9 +76,8 @@ const Expenses = () => {
             setLoading(false);
             clearForm();
             setUpdateStatus(false);
-        } else {
+        } else
             setLoading(false);
-        }
         console.log(updateExpenses.message);
     }
 
@@ -178,7 +164,7 @@ const Expenses = () => {
                                         }</td>
                                         {/* <td>{item.date}</td> */}
                                         <td>
-                                            {/* <button onClick={async () => { await deleteDataController('expenses', item.id) }}>Delete</button> */}
+                                            <button onClick={async () => { await deleteDataController('expenses', item.id) }}>Delete</button>
                                             <button onClick={() => updateSetData(item.id,
                                                 {
                                                     // id: item.id,
@@ -200,6 +186,8 @@ const Expenses = () => {
     function clearForm() {
         setFormCategory('')
         setFormBudget('')
+        setUpdateStatus(false)
+        setUpdateId('')
         setLoading(false)
     }
 }

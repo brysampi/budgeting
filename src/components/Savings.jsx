@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { savings, getSavings, deleteDataController } from '../firebase/controller';
+import { savings, getSavings, deleteDataController,updateDataController } from '../firebase/controller';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const Savings = () => {
@@ -53,15 +53,47 @@ const Savings = () => {
 
         returnSavings();
     }, []);
+    const updateSetData = (id, arrayData) => {
+        setUpdateStatus(true);
+        setUpdateId(id)
+        setFormCategory(arrayData.category)
+        setFormDescription(arrayData.description)
+        setFormTarget(arrayData.target)
+        setFormStatus(arrayData.status)
+    }
+    const updateFormSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+
+        if (formCategory === '' || formTarget === '') {
+            setLoading(false);
+            return console.log('Please fill up all fields.')
+        }
+
+        let data = {
+            category: formCategory,
+            description: formDescription,
+            target: parseInt(formTarget),
+            status: formStatus,
+            date: paramMonth,
+        }
+        const updateExpenses = await updateDataController('savings', updateId, data);
+
+        if (updateExpenses.status === 'success') {
+            setLoading(false);
+            clearForm();
+            setUpdateStatus(false);
+        } else
+            setLoading(false);
+        console.log(updateExpenses.message);
+    }
 
     return (
         <>
             <div className='card-container'>
                 <div className='card card-no-bg flex-1'> </div>
                 <div className='card card-main'>
-                    <form
-                        className='form-pannel'
-                        onSubmit={fromSubmit}>
+                    <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
                         <div className='floating-label-wrapper'>
                             <input
                                 type="text"
@@ -99,6 +131,7 @@ const Savings = () => {
                                 <select
                                     id="statusSavings"
                                     placeholder="Status"
+                                    className='input'
                                     value={formStatus}
                                     onChange={(e) => setFormStatus(e.target.value)}
                                 >
@@ -113,20 +146,21 @@ const Savings = () => {
                             <button
                                 className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
                                 type="submit"
-                                disabled={loading}>{loading ? 'Loading' : 'Add'}
+                                disabled={loading}>{
+                                    loading ? "Loading" :
+                                        !updateDataStatus ? 'Add' : 'Update'
+                                }
                             </button>
                             <button
                                 className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
                                 type="button"
                                 onClick={clearForm}
-                                disabled={loading}>
-                                {loading ? 'Loading' : 'Clear'}
+                                disabled={loading}>{
+                                    loading ? 'Loading' :
+                                        !updateDataStatus ? 'Clear' : 'Cancel'}
                             </button>
                         </div>
-
-
                     </form>
-
                 </div>
             </div>
             <div className="card card-main">
@@ -156,7 +190,18 @@ const Savings = () => {
                                         <td>{!item.actual ? 0.00 : item.actual.toFixed(2)}</td>
                                         <td>{!item.actual ? item.target.toFixed(2) : (item.target - item.actual).toFixed(2)}</td>
                                         <td>{item.status}</td>
-                                        <td><button onClick={async () => { await deleteDataController('savings', item.id) }}>Delete</button></td>
+                                        <td>
+                                            <button onClick={async () => { await deleteDataController('savings', item.id) }}>Delete</button>
+                                            <button onClick={() => updateSetData(item.id,
+                                                {
+                                                    category: item.category,
+                                                    description: item.description,
+                                                    target: item.target,
+                                                    status: item.status,
+                                                }
+                                            )
+                                            }>Update</button>
+                                        </td>
                                     </tr>
                                 ))
                         )}
@@ -171,7 +216,9 @@ const Savings = () => {
         setFormCategory('')
         setFormDescription('')
         setFormTarget('')
-        // setFormActual('')
+        setFormStatus('')
+        setUpdateStatus(false)
+        setUpdateId('')
         setLoading(false)
     }
 }

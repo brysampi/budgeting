@@ -1,10 +1,19 @@
 import { useState, useEffect } from 'react';
-import { addBills, getDataRealTimeController, deleteDataController } from '../firebase/controller';
+import { addBills, getDataRealTimeController, deleteDataController, updateDataController } from '../firebase/controller';
 import { convertToDate } from '../firebase/utils';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const Bills = () => {
     const { paramMonth } = useParams();
+    // Set the last day of the month based on paramMonth for the default due date
+    const [yearStr, monthStr] = paramMonth.split("-");
+    // Ensure year and month are parsed as integers and add "10" to month for zero-padding [ex. 8 will be 08]
+    const year = parseInt(yearStr, 10);
+    const month = parseInt(monthStr, 10);
+    // Calculate the last day of the month [the 0th day will give the last day of the month]
+    // Note: month is 1-indexed in the input, so we use it directly 
+    const lastDayDate = new Date(year, month, 0).toISOString().split('T')[0];
+    
     const navigate = useNavigate();
     useEffect(() => {
         if (!paramMonth) {
@@ -12,13 +21,14 @@ const Bills = () => {
         }
     }, [paramMonth, navigate]);
     const [formDescription, setFormDescription] = useState('');
-    const [formDueDate, setFormDueDate] = useState('');
+    const [formDueDate, setFormDueDate] = useState(lastDayDate); // Default to today's date
     const [formBudget, setFormBudget] = useState('');
     const [formActual, setFormActual] = useState('');
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [billsData, setBillsData] = useState([]);
-
+    const [updateDataStatus, setUpdateStatus] = useState(false);
+    const [updateId, setUpdateId] = useState('');
     const fromSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -28,24 +38,20 @@ const Bills = () => {
             console.log('Please fill up all fields.')
             return
         }
-        addBills({
+        const addReturn = await addBills({
             description: formDescription,
             dueDate: formDueDate,
             budget: !formBudget ? 0 : parseFloat(formBudget),
             actual: !formActual ? 0 : parseFloat(formActual),
             date: paramMonth,
-        }).then((response) => {
-            if (response && response.status == 'success')
-                console.log('Bill Added.')
-            else
-                console.log('Failed to Add Bill.')
-
-        }).catch((error) => {
-            console.log(error)
-        }).finally(() => {
-            clearForm()
-            setLoading(false)
         })
+        if (addReturn.status === 'success') {
+            console.log(addReturn.message);
+            setLoading(false);
+            clearForm();
+        } else
+            setLoading(false);
+        console.log(addReturn.message);
     }
     useEffect(() => {
         const returnBills = async () => {
@@ -54,6 +60,43 @@ const Bills = () => {
         }
         returnBills();
     }, []);
+    const updateSetData = (id, arrayData) => {
+        setUpdateStatus(true);
+        setUpdateId(id)
+        setFormDescription(arrayData.description)
+        setFormDueDate(convertToDate(arrayData.dueDate))
+        setFormBudget(arrayData.budget)
+        setFormActual(arrayData.actual)
+    }
+    const updateFormSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+
+        if (!formDescription || !formDueDate || !formBudget) {
+            setLoading(false);
+            alert('Please fill up all fields.')
+            console.log('Please fill up all fields.')
+            return
+        }
+
+        const updateReturn = await updateDataController('bills', updateId, {
+            description: formDescription,
+            dueDate: formDueDate,
+            budget: !formBudget ? 0 : parseFloat(formBudget),
+            actual: !formActual ? 0 : parseFloat(formActual),
+            date: paramMonth,
+        });
+
+        if (updateReturn.status === 'success') {
+            console.log(updateReturn.message);
+            setLoading(false);
+            clearForm();
+            setUpdateStatus(false);
+        } else {
+            setLoading(false);
+            console.log(updateReturn.message);
+        }
+    }
 
     return (
         <>

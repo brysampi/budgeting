@@ -6,6 +6,7 @@ import {
     getDataRealTime,
     //  getExpensesTrackerDataRealTime, 
     getDataCategoryRealTime,
+    getBillsDataRealTime,
     getExpensesDataRealTime, getExpensesDataRealTime_v2, getExpensesDataRealTime_extension, getExtensionByExpenses,
     getCollectedDataRealTime,
     getSavingsDataRealTime,
@@ -148,9 +149,6 @@ export async function income(arrayData) {
     if (arrayData.description === '' || arrayData.expected === 0)
         return errorMsg('Please fill up all fields.')
 
-    if (arrayData.amount <= 0)
-        return errorMsg("Amount Can't be negative.")
-
     if (arrayData.expected <= 0)
         return errorMsg("expected can't be negative.")
 
@@ -164,8 +162,8 @@ export async function income(arrayData) {
         user: getUserID(),
     }
     const addReturn = await addData('income', data)
-    await updateCollectedData(arrayData.date)
-    return successMsg('Successfully Added.', addReturn)
+    updateCollectedData(arrayData.date)
+    return addReturn
 }
 // -------------------------- Savings -----------------------------------
 
@@ -189,7 +187,7 @@ export async function savings(arrayData) {
         user: getUserID(),
     }
     const addReturn = await addData('savings', data)
-    await updateCollectedData(arrayData.date)
+    updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
 export async function getSavings(inputDate, setSavingsData, isFetching, dropdownData = false) {
@@ -217,7 +215,7 @@ export async function savingsTracker(arrayData) {
         user: getUserID(),
     }
     const addReturn = await addData('savingsTracker', data)
-    await updateCollectedData(arrayData.date)
+    updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
 export async function getSavingsTracker(inputDate, setExpensesData, isFetching) {
@@ -254,7 +252,7 @@ export async function addBills(arrayData) {
         user: getUserID().toString(),
     }
     const addReturn = await addData('bills', data)
-    await updateCollectedData(arrayData.date)
+    updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
 // -------------------------- Expenses -----------------------------------
@@ -290,7 +288,7 @@ export async function expenses(arrayData) {
         console.log(subReturn.message, subReturn)
         // }
     }
-    await updateCollectedData(arrayData.date)
+    updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
 export async function getExpenses(inputDate, setExpensesData, isFetching, dropdownData = false) {
@@ -339,8 +337,8 @@ export async function expensesTracker(arrayData) {
         date: convertToTimeStamp(arrayData.date),
         user: getUserID(),
     }
-    const addReturn = await addData('expensesTracker', data)
-    await updateCollectedData(arrayData.date)
+    const addReturn =  addData('expensesTracker', data)
+     updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
 export async function getExpensesTracker(inputDate, setExpensesData, isFetching) {
@@ -372,7 +370,7 @@ export async function expensesDefault(arrayData) {
         user: getUserID(),
     }
     const addReturn = await addData('expensesDefault', data)
-    // await updateCollectedData(arrayData.date)
+    // updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
 export async function getAllDataController(table, setExpensesDefaultData, isFetching) {
@@ -384,26 +382,27 @@ export async function getAllDataController(table, setExpensesDefaultData, isFetc
 }
 export async function getDataRealTimeController(table, inputDate, setData, isFetching) {
     try {
-        await getDataRealTime(table, inputDate, setData, isFetching);
+        await getBillsDataRealTime(table, inputDate, setData, isFetching);
     } catch (error) {
         console.error(`Error fetching data from ${table} in Controller:`, error);
     }
 }
 // --------------------------------------------------------------------
 export async function allUpdate(table, id, arrayData) {
-    const { date, ...removeDate } = arrayData;
-    const updateResult = await updateData(table, id, removeDate)
-    if (updateResult.status === 'success') {
-        console.log('Data updated successfully.');
-        updateCollectedData(arrayData.date);
-        return successMsg('Successfully Updated.', updateResult);
+    const { date, ...removeDateData } = arrayData;
+    const updateResult = await updateData(table, id, removeDateData)
+    if (updateResult.status !== 'success') {
+        console.log('Failed to update data.');
+        return errorMsg('Failed to update data. Check console for error.');
     }
-    console.log('Failed to update data.');
-    return errorMsg('Failed to update data. Check console for error.');
+    console.log('Data updated successfully.');
+    updateCollectedData(arrayData.date);
+    return successMsg('Successfully Updated.', updateResult);
+
 }
 export async function updateExpenses_extension(expensesId, arrayData) {
     try {
-        let { date, monthlyBudget, ...removeDate } = arrayData;
+        let { date, monthlyBudget, ...removeDateData } = arrayData;
         // console.log('updateExpenses_extension', monthlyBudget)
         const expensesData = await getDataById('expenses', expensesId)
         if (expensesData.status !== 'success') {
@@ -413,7 +412,7 @@ export async function updateExpenses_extension(expensesId, arrayData) {
         const extensionData = await getExtensionByExpenses(expensesId, date)
 
 
-        const expensesUpdateResult = await updateData('expenses', expensesId, removeDate);
+        const expensesUpdateResult = await updateData('expenses', expensesId, removeDateData);
         if (expensesUpdateResult.status !== 'success') {
             return errorMsg('Failed to update Expenses. Check console for error.');
         }
@@ -531,20 +530,29 @@ export async function expensesTrackerUpdate(id, arrayData) {
         discount: discountPrice,
         amount: arrayData.price - discountPrice,
     }
-    await updateData('expensesTracker', id, data).then((response) => {
-        if (response && response.status === 'success') {
-            console.log('Data updated successfully.');
-            updateCollectedData(arrayData.date)
-            return successMsg('Successfully Updated.')
-        }
-        else {
-            console.log('Failed to update data.');
-            return errorMsg('Failed to update data. Check console for error.')
-        }
-    }).catch((error) => {
-        console.error('Error updating data:', error);
-        return errorMsg('Failed to update data. Check console for error.')
-    });
+    const updateResult = await updateData('expensesTracker', id, data)
+    if (updateResult.status !== 'success') {
+        console.log('Failed to update data.');
+        return errorMsg('Failed to update data. Check console for error.');
+    }
+    console.log('Data updated successfully.');
+    updateCollectedData(arrayData.date);
+    return successMsg('Successfully Updated.', updateResult);
+}
+export async function updateDataController(table, updateId, arrayData) {
+    let { date, ...removeDateData } = arrayData;
+    if (!getUserID())
+        return errorMsg('No LoggedIn User Found.')
+
+    const updateResult = await updateData(table, updateId, removeDateData);
+    if (updateResult.status !== 'success') {
+        console.log('Failed to update data.');
+        return updateResult
+    }
+    console.log('Data updated successfully.');
+    updateCollectedData(date);
+    return updateResult
+
 }
 // --------------------------------------------------------------------
 export async function logout() {
@@ -554,14 +562,14 @@ export async function logout() {
     return successMsg('Logout successful');
 }
 export async function deleteDataController(table, id) {
-    // await deleteData(table, id).then((response) => {
-    //     if (response && response.status === 'success')
-    //         console.log('Data deleted successfully.');
-    //     else
-    //         console.log('Failed to delete data.');
+    await deleteData(table, id).then((response) => {
+        if (response && response.status === 'success')
+            console.log('Data deleted successfully.');
+        else
+            console.log('Failed to delete data.');
 
-    // }).catch((error) => {
-    //     console.error('Error deleting data:', error);
-    // });
+    }).catch((error) => {
+        console.error('Error deleting data:', error);
+    });
     console.log('Delete is Working But Will Not Delete in Production.');
 }
