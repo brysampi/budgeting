@@ -191,7 +191,7 @@ const Savings = () => {
                                         <td>{!item.actual ? item.target.toFixed(2) : (item.target - item.actual).toFixed(2)}</td>
                                         <td>{item.status}</td>
                                         <td>
-                                            <button onClick={async () => { await deleteDataController('savings', item.id) }}>Delete</button>
+                                            {/* <button onClick={async () => { await deleteDataController('savings', item.id) }}>Delete</button> */}
                                             <button onClick={() => updateSetData(item.id,
                                                 {
                                                     category: item.category,

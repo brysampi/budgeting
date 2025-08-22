@@ -326,6 +326,7 @@ export async function getSavingsDataRealTime(inputDate, setData, isFetching, dro
 }
 
 // -------------------------------- Bills -------------------------------------
+// NOT Used Anymore
 export async function getBillsDataRealTime(table, inputDate, setData, isFetching) {
     try {
         const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);

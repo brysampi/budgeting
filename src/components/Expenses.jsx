@@ -164,7 +164,7 @@ const Expenses = () => {
                                         }</td>
                                         {/* <td>{item.date}</td> */}
                                         <td>
-                                            <button onClick={async () => { await deleteDataController('expenses', item.id) }}>Delete</button>
+                                            {/* <button onClick={async () => { await deleteDataController('expenses', item.id) }}>Delete</button> */}
                                             <button onClick={() => updateSetData(item.id,
                                                 {
                                                     // id: item.id,

@@ -1,4 +1,5 @@
 import { } from '../firebase/model';
+import { serverTimestamp } from 'firebase/firestore';
 import Cookies from 'js-cookie';
 import { successMsg, errorMsg, getUserID, convertToTimeStamp } from '../firebase/utils';
 import {
@@ -235,8 +236,8 @@ export async function addBills(arrayData) {
     if (arrayData.description === '' || arrayData.dueDate === '' || arrayData.budget === 0 || arrayData.date === '')
         return errorMsg('Please fill up all fields.')
 
-    if (arrayData.actual <= 0)
-        return errorMsg("Actual Can't be negative.")
+    // if (arrayData.actual <= 0)
+    //     return errorMsg("Actual Can't be negative.")
 
     if (arrayData.budget <= 0)
         return errorMsg("Budget can't be negative.")
@@ -248,12 +249,39 @@ export async function addBills(arrayData) {
         dueDate: convertToTimeStamp(arrayData.dueDate),
         budget: arrayData.budget,
         actual: arrayData.actual,
+        status: arrayData.actual !== 0 && arrayData.actual >= arrayData.budget ? 'paid' : 'not_paid',
         date: convertToTimeStamp(arrayData.date),
         user: getUserID().toString(),
     }
+    if (data.status === 'paid')
+        data.paidAt = convertToTimeStamp(arrayData.date);
+
     const addReturn = await addData('bills', data)
     updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
+}
+export async function updateBills(updateId, arrayData) {
+    let { date, paymentStatus, ...removeDateData } = arrayData;
+    if (!getUserID())
+        return errorMsg('No LoggedIn User Found.')
+
+    if ((!paymentStatus || paymentStatus == 'not_paid') && arrayData.actual !== 0 && arrayData.actual >= arrayData.budget) {
+        removeDateData.status = 'paid';
+        removeDateData.paidAt = serverTimestamp();
+    }
+    // removeDateData.paidAt = serverTimestamp();
+    removeDateData.paidAt = convertToTimeStamp('2025-07-31');
+
+    const updateResult = await updateData('bills', updateId, removeDateData);
+    if (updateResult.status !== 'success') {
+        console.log('Failed to update data.');
+        return updateResult
+    }
+    console.log('Data updated successfully.', removeDateData);
+    updateCollectedData(date);
+    // return console.log('Removed Data Successfully.', removeDateData);
+    return updateResult
+
 }
 // -------------------------- Expenses -----------------------------------
 export async function expenses(arrayData) {
@@ -337,8 +365,8 @@ export async function expensesTracker(arrayData) {
         date: convertToTimeStamp(arrayData.date),
         user: getUserID(),
     }
-    const addReturn =  addData('expensesTracker', data)
-     updateCollectedData(arrayData.date)
+    const addReturn = addData('expensesTracker', data)
+    updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
 export async function getExpensesTracker(inputDate, setExpensesData, isFetching) {
@@ -382,7 +410,7 @@ export async function getAllDataController(table, setExpensesDefaultData, isFetc
 }
 export async function getDataRealTimeController(table, inputDate, setData, isFetching) {
     try {
-        await getBillsDataRealTime(table, inputDate, setData, isFetching);
+        await getDataRealTime(table, inputDate, setData, isFetching);
     } catch (error) {
         console.error(`Error fetching data from ${table} in Controller:`, error);
     }
@@ -539,6 +567,7 @@ export async function expensesTrackerUpdate(id, arrayData) {
     updateCollectedData(arrayData.date);
     return successMsg('Successfully Updated.', updateResult);
 }
+
 export async function updateDataController(table, updateId, arrayData) {
     let { date, ...removeDateData } = arrayData;
     if (!getUserID())
@@ -549,8 +578,9 @@ export async function updateDataController(table, updateId, arrayData) {
         console.log('Failed to update data.');
         return updateResult
     }
-    console.log('Data updated successfully.');
+    console.log('Data updated successfully.', removeDateData);
     updateCollectedData(date);
+    // return console.log('Removed Data Successfully.', removeDateData);
     return updateResult
 
 }
@@ -562,14 +592,14 @@ export async function logout() {
     return successMsg('Logout successful');
 }
 export async function deleteDataController(table, id) {
-    await deleteData(table, id).then((response) => {
-        if (response && response.status === 'success')
-            console.log('Data deleted successfully.');
-        else
-            console.log('Failed to delete data.');
+    // await deleteData(table, id).then((response) => {
+    //     if (response && response.status === 'success')
+    //         console.log('Data deleted successfully.');
+    //     else
+    //         console.log('Failed to delete data.');
 
-    }).catch((error) => {
-        console.error('Error deleting data:', error);
-    });
+    // }).catch((error) => {
+    //     console.error('Error deleting data:', error);
+    // });
     console.log('Delete is Working But Will Not Delete in Production.');
 }

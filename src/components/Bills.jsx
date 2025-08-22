@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { addBills, getDataRealTimeController, deleteDataController, updateDataController } from '../firebase/controller';
-import { convertToDate } from '../firebase/utils';
+import { addBills, getDataRealTimeController, deleteDataController, updateBills } from '../firebase/controller';
+import { convertToDate, convertToTimeStamp } from '../firebase/utils';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const Bills = () => {
@@ -13,7 +13,7 @@ const Bills = () => {
     // Calculate the last day of the month [the 0th day will give the last day of the month]
     // Note: month is 1-indexed in the input, so we use it directly 
     const lastDayDate = new Date(year, month, 0).toISOString().split('T')[0];
-    
+
     const navigate = useNavigate();
     useEffect(() => {
         if (!paramMonth) {
@@ -29,6 +29,7 @@ const Bills = () => {
     const [billsData, setBillsData] = useState([]);
     const [updateDataStatus, setUpdateStatus] = useState(false);
     const [updateId, setUpdateId] = useState('');
+    const [paymentStatus, setPaymentStatus] = useState('')
     const fromSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -67,6 +68,7 @@ const Bills = () => {
         setFormDueDate(convertToDate(arrayData.dueDate))
         setFormBudget(arrayData.budget)
         setFormActual(arrayData.actual)
+        setPaymentStatus(arrayData.paymentStatus)
     }
     const updateFormSubmit = async (e) => {
         e.preventDefault();
@@ -79,12 +81,13 @@ const Bills = () => {
             return
         }
 
-        const updateReturn = await updateDataController('bills', updateId, {
+        const updateReturn = await updateBills(updateId, {
             description: formDescription,
-            dueDate: formDueDate,
+            dueDate: convertToTimeStamp(formDueDate),
             budget: !formBudget ? 0 : parseFloat(formBudget),
             actual: !formActual ? 0 : parseFloat(formActual),
             date: paramMonth,
+            paymentStatus: paymentStatus
         });
 
         if (updateReturn.status === 'success') {
@@ -103,9 +106,7 @@ const Bills = () => {
             <div className="card-container">
                 <div className="card card-no-bg flex-1"></div>
                 <div className="card card-main">
-                    <form
-                        className="form-pannel"
-                        onSubmit={fromSubmit}>
+                    <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
                         <div className="floating-label-wrapper">
                             <input
                                 type="text"
@@ -150,20 +151,21 @@ const Bills = () => {
                             <button
                                 className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
                                 type="submit"
-                                disabled={loading}>
-                                {loading ? 'Loading' : 'Add'}
+                                disabled={loading}>{
+                                    loading ? "Loading" :
+                                        !updateDataStatus ? 'Add' : 'Update'
+                                }
                             </button>
                             <button
                                 className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
                                 type="button"
                                 onClick={clearForm}
-                                disabled={loading}>
-                                {loading ? 'Loading' : 'Clear'}
+                                disabled={loading}>{
+                                    loading ? 'Loading' :
+                                        !updateDataStatus ? 'Clear' : 'Cancel'}
                             </button>
                         </div>
-
                     </form>
-
                 </div>
             </div>
 
@@ -177,6 +179,7 @@ const Bills = () => {
                             <th>Budget</th>
                             <th>Actual</th>
                             {/* <th>Date</th> */}
+                            {/* <th>Status</th> */}
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -191,9 +194,22 @@ const Bills = () => {
                                         <td>{item.description}</td>
                                         <td>{convertToDate(item.dueDate)}</td>
                                         <td>{item.budget.toFixed(2)}</td>
-                                        <td>{item.actual.toFixed(2)}</td>
-                                        {/* <td>{item.date}</td> */}
-                                        <td><button onClick={async () => { await deleteDataController('bills', item.id) }}>Delete</button></td>
+                                        <td className={`${item.status == 'paid' ? 'text-[var(--color-success)] font-bold' : ''}`}>{item.actual.toFixed(2)}</td>
+                                        {/* <td>{item.status}</td> */}
+                                        {/* <td>{convertToDate(item.paidAt)}</td> */}
+                                        <td>
+                                            {/* <button onClick={async () => { await deleteDataController('bills', item.id) }}>Delete</button> */}
+                                            <button onClick={() => updateSetData(item.id,
+                                                {
+                                                    description: item.description,
+                                                    dueDate: convertToDate(item.dueDate),
+                                                    budget: item.budget,
+                                                    actual: item.actual,
+                                                    paymentStatus: !item.status ? '' : item.status,
+                                                }
+                                            )
+                                            }>Update</button>
+                                        </td>
                                     </tr>
                                 ))
                         )}
@@ -209,6 +225,9 @@ const Bills = () => {
         setFormBudget('')
         setFormActual('')
         setLoading(false)
+        setUpdateStatus(false)
+        setUpdateId('')
+        setPaymentStatus('')
     }
 }
 export default Bills;
