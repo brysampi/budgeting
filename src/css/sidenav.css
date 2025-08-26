@@ -19,7 +19,7 @@
 }
 
 .sidenav ul li {
-    @apply p-[10px_20px] flex block cursor-pointer;
+    @apply p-[10px_18px] flex block cursor-pointer;
 }
 
 .sidenav ul li.active {
@@ -34,7 +34,7 @@
     @apply 
 } */
 .sidenav ul li span:first-child {
-    @apply w-[30px] h-[30px] rounded-full flex 
+    @apply w-[30px]  rounded-full flex items-center
     /* items-center justify-center mr-1; */
 }
 

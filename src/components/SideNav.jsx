@@ -4,6 +4,9 @@ import Cookies from 'js-cookie';
 import { useParams, useNavigate } from 'react-router-dom';
 import { logout } from '../firebase/controller';
 import '../css/sidenav.css';
+import { LuIndentDecrease, LuIndentIncrease, LuCalendarDays, LuCoins, LuHandCoins, LuClipboardList, LuNewspaper, LuShoppingBag, LuSettings, LuLogOut, LuCircleUserRound } from "react-icons/lu";
+import { FaRegCalendarAlt } from "react-icons/fa";
+import { LiaCalendar, LiaCoinsSolid, LiaUserCogSolid } from "react-icons/lia";
 
 export default function SideNav({ hide, sidenavRef }) {
     const [hideNav, setHideNav] = hide;
@@ -24,14 +27,14 @@ export default function SideNav({ hide, sidenavRef }) {
     }
     const hideText = hideNav ? 'inline sm:hidden' : 'hidden sm:inline';
     const menuItems = [
-        { to: '/', label: 'Select Month', icon: 'A' },
-        { to: `/income/${paramMonth}`, label: 'Income', icon: 'A' },
-        { to: `/savings/${paramMonth}`, label: 'Savings', icon: 'A' },
-        { to: `/savingsTracker/${paramMonth}`, label: 'Savings Tracker', icon: 'A' },
-        { to: `/bills/${paramMonth}`, label: 'Bills', icon: 'A' },
-        { to: `/expenses/${paramMonth}`, label: 'Expenses', icon: 'A' },
-        { to: `/expensestracker/${paramMonth}`, label: 'Expenses Tracker', icon: 'A' },
-        { to: `/expensesSettings/${paramMonth}`, label: 'Expenses Settings', icon: 'X' },
+        { to: '/', label: 'Select Month', icon: <LuCalendarDays /> },
+        { to: `/income/${paramMonth}`, label: 'Income', icon: <LiaCoinsSolid /> },
+        { to: `/savings/${paramMonth}`, label: 'Savings', icon: <LuHandCoins /> },
+        { to: `/savingsTracker/${paramMonth}`, label: 'Savings Tracker', icon: <LuClipboardList /> },
+        { to: `/bills/${paramMonth}`, label: 'Bills', icon: <LuNewspaper /> },
+        { to: `/expenses/${paramMonth}`, label: 'Expenses', icon: <LuShoppingBag /> },
+        { to: `/expensestracker/${paramMonth}`, label: 'Expenses Tracker', icon: <LuClipboardList /> },
+        { to: `/expensesSettings/${paramMonth}`, label: 'Expenses Settings', icon: <LuSettings /> },
     ];
     return (
         <aside
@@ -39,7 +42,7 @@ export default function SideNav({ hide, sidenavRef }) {
             className="sidenav-container">
             <div className="shrink" onClick={() => setHideNav(!hideNav)}>
                 <div className="shrink-icon">
-                    C
+                    {hideNav ? < LuIndentIncrease /> : <LuIndentDecrease />}
                 </div>
             </div>
             <div className={`sidenav ${hideNav ? 'w-[200px] sm:w-[50px]' : 'w-[50px] sm:w-[200px]'}`}>
@@ -64,19 +67,19 @@ export default function SideNav({ hide, sidenavRef }) {
                     </ul>
                     <ul>
                         <li onClick={onLogout}>
-                            <span>A</span>
+                            <span><LuLogOut /></span>
                             <span className={hideText}>Logout</span>
                         </li>
                         <li>
-                            <span>A</span>
+                            <span><LiaUserCogSolid /></span>
                             <span className={hideText}>Settings</span>
                         </li>
 
                     </ul>
                 </div >
                 <ul>
-                    <li>
-                        <span>A</span>
+                    <li className="text-white rounded-b-lg">
+                        <span><LuCircleUserRound /></span>
                         <span className={hideText}>Profile</span>
                     </li>
                 </ul>
