@@ -1,18 +1,19 @@
-import { Link } from 'react-router-dom';
+import { Link,useLocation  } from 'react-router-dom';
 import { useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { useParams, useNavigate } from 'react-router-dom';
 import { logout } from '../firebase/controller';
 import '../css/sidenav.css';
 import { LuIndentDecrease, LuIndentIncrease, LuCalendarDays, LuCoins, LuHandCoins, LuClipboardList, LuNewspaper, LuShoppingBag, LuSettings, LuLogOut, LuCircleUserRound } from "react-icons/lu";
-import { FaRegCalendarAlt } from "react-icons/fa";
 import { LiaCalendar, LiaCoinsSolid, LiaUserCogSolid } from "react-icons/lia";
 
 export default function SideNav({ hide, sidenavRef }) {
     const [hideNav, setHideNav] = hide;
     const { paramMonth } = useParams();
     const navigate = useNavigate();
+    const location = useLocation(); // Get the current location
     // console.log(paramMonth)
+    const isActive = (path) => location.pathname === path;
     useEffect(() => {
         if (!paramMonth) {
             navigate('/'); // Redirect to home if paramMonth is missing
@@ -29,12 +30,14 @@ export default function SideNav({ hide, sidenavRef }) {
     const menuItems = [
         { to: '/', label: 'Select Month', icon: <LuCalendarDays /> },
         { to: `/income/${paramMonth}`, label: 'Income', icon: <LiaCoinsSolid /> },
-        { to: `/savings/${paramMonth}`, label: 'Savings', icon: <LuHandCoins /> },
-        { to: `/savingsTracker/${paramMonth}`, label: 'Savings Tracker', icon: <LuClipboardList /> },
+        // { to: `/savings/${paramMonth}`, label: 'Savings', icon: <LuHandCoins /> },
+        // { to: `/savingsTracker/${paramMonth}`, label: 'Savings Tracker', icon: <LuClipboardList /> },
+        { to: `/savingsTracker/${paramMonth}`, label: 'Savings', icon: <LuHandCoins /> },
         { to: `/bills/${paramMonth}`, label: 'Bills', icon: <LuNewspaper /> },
-        { to: `/expenses/${paramMonth}`, label: 'Expenses', icon: <LuShoppingBag /> },
-        { to: `/expensestracker/${paramMonth}`, label: 'Expenses Tracker', icon: <LuClipboardList /> },
-        { to: `/expensesSettings/${paramMonth}`, label: 'Expenses Settings', icon: <LuSettings /> },
+        // { to: `/expenses/${paramMonth}`, label: 'Expenses', icon: <LuShoppingBag /> },
+        // { to: `/expensestracker/${paramMonth}`, label: 'Expenses Tracker', icon: <LuClipboardList /> },
+        // { to: `/expensesSettings/${paramMonth}`, label: 'Expenses Settings', icon: <LuSettings /> },
+        { to: `/expensestracker/${paramMonth}`, label: 'Expenses', icon: <LuShoppingBag /> },
     ];
     return (
         <aside
@@ -58,7 +61,7 @@ export default function SideNav({ hide, sidenavRef }) {
                     <ul>
                         {menuItems.map((item, idx) => (
                             <Link key={idx} to={item.to}>
-                                <li>
+                                <li className={isActive(item.to) ? 'active' : ''}>
                                     <span>{item.icon}</span>
                                     <span className={hideText}>{item.label}</span>
                                 </li>

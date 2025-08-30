@@ -123,7 +123,7 @@ body {
   }
 
   .multi-btn {
-    @apply flex flex-col sm:flex-row gap-2 justify-between items-center;
+    @apply flex flex-col sm:flex-row gap-2 justify-between;
   }
 
   .btn-primary {
@@ -183,9 +183,18 @@ body {
   .card-container {
     @apply flex flex-col content-start justify-between items-baseline md:flex-row
   }
+  .table-header{
+    @apply flex flex-row justify-between items-center mb-5
+  }
+  .table-header button{
+    @apply flex items-center
+  }
+  .table-header button span:first-child{
+    @apply pr-3
+  }
 
   .table {
-    @apply w-full
+    @apply w-full overflow-auto
   }
 
   .table th {

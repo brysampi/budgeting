@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { expensesTracker, getExpensesTracker, getExpenses, expensesTrackerUpdate, deleteDataController, checkStaticData } from '../firebase/controller';
-import { useParams, useNavigate } from 'react-router-dom';
-
+import { useParams, useNavigate,Link } from 'react-router-dom';
+import Modal from '../layouts/Modal';
+import { LuPlus,LuClipboardList,LuSettings } from "react-icons/lu";
 
 
 const ExpensesTracker = () => {
@@ -23,6 +24,7 @@ const ExpensesTracker = () => {
     const [expensesData, setExpensesData] = useState([]);
     const [updateDataStatus, setUpdateStatus] = useState(false);
     const [updateId, setUpdateId] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const fromSubmit = async (e) => {
         e.preventDefault();
@@ -65,6 +67,7 @@ const ExpensesTracker = () => {
         setFormDescription(arrayData.description)
         setFormPrice(arrayData.price)
         setFormDiscount(arrayData.discount)
+        setIsModalOpen(true)
     }
     const updateFormSubmit = async (e) => {
         e.preventDefault();
@@ -85,91 +88,125 @@ const ExpensesTracker = () => {
             setLoading(false);
         console.log(updateResult.message);
     }
+    const closeModal = () => {
+        clearForm();
+        setIsModalOpen(false)
+    }
     return (
         <>
+            <Modal title={!updateDataStatus ? 'Add Savings' : 'Update Savings'} isOpen={isModalOpen} onClose={closeModal}>
+                <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
+                    <div className="floating-label-wrapper">
+                        <select
+                            className="input"
+                            value={formCategory}
+                            onChange={(e) => { setFormCategory(e.target.value) }}
+                            name="categoryExpensesTracker"
+                            id="categoryExpensesTracker"
+                            placeholder="Category"
+                        >
+                            <option value="" disabled>
+                                Select a category
+                            </option>
+                            {isFetching ? (
+                                <option value="" disabled>Fetching Data Please Wait. . .</option>
+                            ) : (
+                                expensesData.length === 0 ?
+                                    <option value="" disabled>No Data Found</option> :
+                                    expensesData.map((item, index) => (
+                                        <option value={item.id} key={index + 1}>{item.category}</option>
+                                    )).reverse()
+                            )}
+                        </select>
+                        <label htmlFor="categoryExpensesTracker">Category</label>
+                    </div>
+                    <div className="floating-label-wrapper">
+                        <input
+                            type="text"
+                            id="descriptionExpensesTracker"
+                            placeholder="Description"
+                            value={formDescription}
+                            onChange={(e) => setFormDescription(e.target.value)}
+                        />
+                        <label htmlFor="descriptionExpensesTracker">Description</label>
+                    </div>
+                    <div className="floating-label-wrapper">
+                        <input
+                            type="text"
+                            id="priceExpensesTracker"
+                            placeholder="Price"
+                            value={formPrice}
+                            onChange={(e) => setFormPrice(e.target.value)}
+                        />
+                        <label htmlFor="priceExpensesTracker">Price</label>
+                    </div>
+                    <div className="floating-label-wrapper">
+                        <input
+                            type="text"
+                            id="discountExpensesTracker"
+                            placeholder="Discount"
+                            value={formDiscount}
+                            onChange={(e) => setFormDiscount(e.target.value)}
+                        />
+                        <label htmlFor="discountExpensesTracker">Discount</label>
+                    </div>
+                    <div className="multi-btn">
+                        <button
+                            className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
+                            type="submit"
+                            disabled={loading}>{
+                                loading ? 'Loading' :
+                                    !updateDataStatus ? 'Add' : 'Update'
+                            }
+                        </button>
+                        <button
+                            className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
+                            type="button"
+                            onClick={clearForm}
+                            disabled={loading}>{
+                                loading ? 'Loading' :
+                                    !updateDataStatus ? 'Clear' : 'Cancel'
+                            }
+                        </button>
+                    </div>
+                </form>
+            </Modal >
             <div className="card-container">
                 <div className="card card-no-bg flex-1"></div>
                 <div className="card card-main">
                     {/* <button onClick={() => checkStaticData(paramMonth)}>Check Data</button> */}
-                    <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
-                        <div className="floating-label-wrapper">
-                            <select
-                                className="input"
-                                value={formCategory}
-                                onChange={(e) => { setFormCategory(e.target.value) }}
-                                name="categoryExpensesTracker"
-                                id="categoryExpensesTracker"
-                                placeholder="Category"
-                            >
-                                <option value="" disabled>
-                                    Select a category
-                                </option>
-                                {isFetching ? (
-                                    <option value="" disabled>Fetching Data Please Wait. . .</option>
-                                ) : (
-                                    expensesData.length === 0 ?
-                                        <option value="" disabled>No Data Found</option> :
-                                        expensesData.map((item, index) => (
-                                            <option value={item.id} key={index + 1}>{item.category}</option>
-                                        )).reverse()
-                                )}
-                            </select>
-                            <label htmlFor="categoryExpensesTracker">Category</label>
-                        </div>
-                        <div className="floating-label-wrapper">
-                            <input
-                                type="text"
-                                id="descriptionExpensesTracker"
-                                placeholder="Description"
-                                value={formDescription}
-                                onChange={(e) => setFormDescription(e.target.value)}
-                            />
-                            <label htmlFor="descriptionExpensesTracker">Description</label>
-                        </div>
-                        <div className="floating-label-wrapper">
-                            <input
-                                type="text"
-                                id="priceExpensesTracker"
-                                placeholder="Price"
-                                value={formPrice}
-                                onChange={(e) => setFormPrice(e.target.value)}
-                            />
-                            <label htmlFor="priceExpensesTracker">Price</label>
-                        </div>
-                        <div className="floating-label-wrapper">
-                            <input
-                                type="text"
-                                id="discountExpensesTracker"
-                                placeholder="Discount"
-                                value={formDiscount}
-                                onChange={(e) => setFormDiscount(e.target.value)}
-                            />
-                            <label htmlFor="discountExpensesTracker">Discount</label>
-                        </div>
-                        <div className="multi-btn">
-                            <button
-                                className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
-                                type="submit"
-                                disabled={loading}>{
-                                    loading ? 'Loading' :
-                                        !updateDataStatus ? 'Add' : 'Update'
-                                }
-                            </button>
-                            <button
-                                className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
-                                type="button"
-                                onClick={clearForm}
-                                disabled={loading}>{
-                                    loading ? 'Loading' :
-                                        !updateDataStatus ? 'Clear' : 'Cancel'
-                                }
-                            </button>
-                        </div>
-                    </form>
+
                 </div >
             </div>
 
             <div className="card card-main">
+                <div className='table-header'>
+                    <div>
+                        {/* Table Title Here */}
+                    </div>
+                    <div className='multi-btn'>
+                        <button
+                            className='btn btn-primary'
+                            onClick={() => setIsModalOpen(true)}>
+                            <span><LuPlus /></span>
+                            <span>Add</span>
+                        </button>
+                        <Link to={`/expenses/${paramMonth}`}>
+                            <button
+                                className='btn btn-primary'>
+                                <span><LuClipboardList /></span>
+                                <span>Add Catergory</span>
+                            </button>
+                        </Link>
+                        <Link to={`/savings/${paramMonth}`}>
+                            <button
+                                className='btn btn-primary'>
+                                <span><LuSettings /></span>
+                                <span>Settings</span>
+                            </button>
+                        </Link>
+                    </div>
+                </div>
                 <table className="table">
                     <thead>
                         <tr>

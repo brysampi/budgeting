@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { savingsTracker, getSavingsTracker, getSavings, allUpdate, checkStaticData } from '../firebase/controller';
-import { useParams, useNavigate } from 'react-router-dom';
-
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import Modal from '../layouts/Modal';
+import { LuPlus, LuClipboardList } from "react-icons/lu";
 
 
 const SavingsTracker = () => {
@@ -22,6 +23,7 @@ const SavingsTracker = () => {
     const [savingsData, setSavingsData] = useState([]);
     const [updateDataStatus, setUpdateStatus] = useState(false);
     const [updateId, setUpdateId] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const fromSubmit = async (e) => {
         e.preventDefault();
@@ -46,6 +48,16 @@ const SavingsTracker = () => {
             setLoading(false)
         })
     }
+    useEffect(() => {
+        const returnSavings = async () => {
+            setIsFetching(true);
+            await getSavings(paramMonth, setSavingsData, setIsFetching, true);
+            // setFormCategory();
+            await getSavingsTracker(paramMonth, setSavingsTrackerData, setIsFetchingTracker);
+            clearForm();
+        }
+        returnSavings();
+    }, []);
     const updateSetData = (id, arrayData) => {
         setUpdateStatus(true);
         // console.log(arrayData.category)
@@ -53,6 +65,7 @@ const SavingsTracker = () => {
         setFormCategory(arrayData.category)
         setFormDescription(arrayData.description)
         setFormAmount(arrayData.amount)
+        setIsModalOpen(true)
     }
     const updateFormSubmit = async (e) => {
         e.preventDefault();
@@ -68,93 +81,109 @@ const SavingsTracker = () => {
         //     console.log(key, value)
         // })
     }
-    useEffect(() => {
-        const returnSavings = async () => {
-            setIsFetching(true);
-            await getSavings(paramMonth, setSavingsData, setIsFetching, true);
-            // setFormCategory();
-            await getSavingsTracker(paramMonth, setSavingsTrackerData, setIsFetchingTracker);
-            clearForm();
-        }
-        returnSavings();
-    }, []);
+    const closeModal = () => {
+        clearForm();
+        setIsModalOpen(false)
+    }
     return (
         <>
+            <Modal title={!updateDataStatus ? 'Add Savings' : 'Update Savings'} isOpen={isModalOpen} onClose={closeModal}>
+                <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
+                    <div className="floating-label-wrapper">
+                        <select
+                            className="input"
+                            value={formCategory}
+                            onChange={(e) => { setFormCategory(e.target.value) }}
+                            name="categorySavingsTracker"
+                            id="categorySavingsTracker"
+                            placeholder="Category"
+                        >
+                            <option value="" disabled>
+                                Select a category
+                            </option>
+                            {isFetching ? (
+                                <option value="" disabled>Fetching Data Please Wait. . .</option>
+                            ) : (
+                                savingsData.length === 0 ?
+                                    <option value="" disabled>No Data Found</option> :
+                                    savingsData.map((item, index) => (
+                                        <option value={item.id} key={index + 1}>{item.category}</option>
+                                    )).reverse()
+                            )}
+                        </select>
+                        <label htmlFor="categorySavingsTracker">Category</label>
+                    </div>
+                    <div className="floating-label-wrapper">
+                        <input
+                            type="text"
+                            id="descriptionSavingsTracker"
+                            placeholder="Description"
+                            value={formDescription}
+                            onChange={(e) => setFormDescription(e.target.value)}
+                        />
+                        <label htmlFor="descriptionSavingsTracker">Description</label>
+                    </div>
+                    <div className="floating-label-wrapper">
+                        <input
+                            type="text"
+                            id="amountSavingsTracker"
+                            placeholder="Amount"
+                            value={formAmount}
+                            onChange={(e) => setFormAmount(e.target.value)}
+                        />
+                        <label htmlFor="amountSavingsTracker">Amount:</label>
+                    </div>
+                    <div className="multi-btn">
+                        <button
+                            className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
+                            type="submit"
+                            disabled={loading}>{
+                                loading ? 'Loading' :
+                                    !updateDataStatus ? 'Add' : 'Update'
+                            }
+                        </button>
+                        <button
+                            className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
+                            type="button"
+                            disabled={loading}
+                            onClick={clearForm}>{
+                                loading ? 'Loading' :
+                                    !updateDataStatus ? 'Close' : 'Cancel'
+                            }
+                        </button>
+                    </div>
+
+                </form>
+            </Modal >
             <div className="card-container">
                 {/* <button onClick={() => checkStaticData(paramMonth)}>Check Data</button> */}
                 <div className="card card-no-bg flex-1"></div>
                 <div className="card card-main">
-                    <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
-                        <div className="floating-label-wrapper">
-                            <select
-                                className="input"
-                                value={formCategory}
-                                onChange={(e) => { setFormCategory(e.target.value) }}
-                                name="categorySavingsTracker"
-                                id="categorySavingsTracker"
-                                placeholder="Category"
-                            >
-                                <option value="" disabled>
-                                    Select a category
-                                </option>
-                                {isFetching ? (
-                                    <option value="" disabled>Fetching Data Please Wait. . .</option>
-                                ) : (
-                                    savingsData.length === 0 ?
-                                        <option value="" disabled>No Data Found</option> :
-                                        savingsData.map((item, index) => (
-                                            <option value={item.id} key={index + 1}>{item.category}</option>
-                                        )).reverse()
-                                )}
-                            </select>
-                            <label htmlFor="categorySavingsTracker">Category</label>
-                        </div>
-                        <div className="floating-label-wrapper">
-                            <input
-                                type="text"
-                                id="descriptionSavingsTracker"
-                                placeholder="Description"
-                                value={formDescription}
-                                onChange={(e) => setFormDescription(e.target.value)}
-                            />
-                            <label htmlFor="descriptionSavingsTracker">Description</label>
-                        </div>
-                        <div className="floating-label-wrapper">
-                            <input
-                                type="text"
-                                id="amountSavingsTracker"
-                                placeholder="Amount"
-                                value={formAmount}
-                                onChange={(e) => setFormAmount(e.target.value)}
-                            />
-                            <label htmlFor="amountSavingsTracker">Amount:</label>
-                        </div>
-                        <div className="multi-btn">
-                            <button
-                                className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
-                                type="submit"
-                                disabled={loading}>{
-                                    loading ? 'Loading' :
-                                        !updateDataStatus ? 'Add' : 'Update'
-                                }
-                            </button>
-                            <button
-                                className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
-                                type="button"
-                                disabled={loading}
-                                onClick={clearForm}>{
-                                    loading ? 'Loading' :
-                                        !updateDataStatus ? 'Clear' : 'Cancel'
-                                }
-                            </button>
-                        </div>
-
-                    </form>
 
                 </div >
             </div>
 
             <div className="card card-main">
+                <div className='table-header'>
+                    <div>
+                        {/* Table Title Here */}
+                    </div>
+                    <div className='multi-btn'>
+                        <button
+                            className='btn btn-primary'
+                            onClick={() => setIsModalOpen(true)}>
+                            <span><LuPlus /></span>
+                            <span>Add</span>
+                        </button>
+                        <Link to={`/expensesSettings/${paramMonth}`}>
+                            <button
+                                className='btn btn-primary'>
+                                <span><LuClipboardList /></span>
+                                <span>Add Catergory</span>
+                            </button>
+                        </Link>
+                    </div>
+                </div>
                 <table className="table">
                     <thead>
                         <tr>

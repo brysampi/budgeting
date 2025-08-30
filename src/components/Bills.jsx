@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { addBills, getDataRealTimeController, deleteDataController, updateBills } from '../firebase/controller';
 import { convertToDate, convertToTimeStamp } from '../firebase/utils';
 import { useParams, useNavigate } from 'react-router-dom';
+import Modal from '../layouts/Modal';
+import { LuPlus } from "react-icons/lu";
 
 const Bills = () => {
     const { paramMonth } = useParams();
@@ -30,6 +32,8 @@ const Bills = () => {
     const [updateDataStatus, setUpdateStatus] = useState(false);
     const [updateId, setUpdateId] = useState('');
     const [paymentStatus, setPaymentStatus] = useState('')
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
     const fromSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -69,6 +73,7 @@ const Bills = () => {
         setFormBudget(arrayData.budget)
         setFormActual(arrayData.actual)
         setPaymentStatus(arrayData.paymentStatus)
+        setIsModalOpen(true)
     }
     const updateFormSubmit = async (e) => {
         e.preventDefault();
@@ -100,76 +105,99 @@ const Bills = () => {
             console.log(updateReturn.message);
         }
     }
-
+    const openModal = () => {
+        setFormDueDate(lastDayDate)
+        setIsModalOpen(true)
+    }
+    const closeModal = () => {
+        clearForm();
+        setIsModalOpen(false)
+    }
     return (
         <>
+            <Modal title={!updateDataStatus ? 'Add Income' : 'Update Income'} isOpen={isModalOpen} onClose={closeModal}>
+                <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
+                    <div className="floating-label-wrapper">
+                        <input
+                            type="text"
+                            id="descBills"
+                            placeholder="Description"
+                            value={formDescription}
+                            onChange={(e) => setFormDescription(e.target.value)}
+                        />
+                        <label htmlFor="descBills">description</label>
+                    </div>
+                    <div className="floating-label-wrapper">
+                        <input
+                            type="date"
+                            id="dueDateBills"
+                            placeholder="Due-Date"
+                            value={formDueDate}
+                            onChange={(e) => setFormDueDate(e.target.value)}
+                        />
+                        <label htmlFor="dueDateBills">Due-Date:</label>
+                    </div>
+                    <div className="floating-label-wrapper">
+                        <input
+                            type='text'
+                            id="budgetBills"
+                            placeholder="Budget"
+                            value={formBudget}
+                            onChange={(e) => setFormBudget(e.target.value)}
+                        />
+                        <label htmlFor="budgetBills">Budget:</label>
+                    </div>
+                    <div className="floating-label-wrapper">
+                        <input
+                            type="text"
+                            id="actualBills"
+                            placeholder="Actual"
+                            value={formActual}
+                            onChange={(e) => setFormActual(e.target.value)}
+                        />
+                        <label htmlFor="actualBills">Actual:</label>
+                    </div>
+                    <div className="multi-btn">
+                        <button
+                            className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
+                            type="submit"
+                            disabled={loading}>{
+                                loading ? "Loading" :
+                                    !updateDataStatus ? 'Add' : 'Update'
+                            }
+                        </button>
+                        <button
+                            className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
+                            type="button"
+                            onClick={clearForm}
+                            disabled={loading}>{
+                                loading ? 'Loading' :
+                                    !updateDataStatus ? 'Clear' : 'Cancel'}
+                        </button>
+                    </div>
+                </form>
+            </Modal >
             <div className="card-container">
                 <div className="card card-no-bg flex-1"></div>
                 <div className="card card-main">
-                    <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
-                        <div className="floating-label-wrapper">
-                            <input
-                                type="text"
-                                id="descBills"
-                                placeholder="Description"
-                                value={formDescription}
-                                onChange={(e) => setFormDescription(e.target.value)}
-                            />
-                            <label htmlFor="descBills">description</label>
-                        </div>
-                        <div className="floating-label-wrapper">
-                            <input
-                                type="date"
-                                id="dueDateBills"
-                                placeholder="Due-Date"
-                                value={formDueDate}
-                                onChange={(e) => setFormDueDate(e.target.value)}
-                            />
-                            <label htmlFor="dueDateBills">Due-Date:</label>
-                        </div>
-                        <div className="floating-label-wrapper">
-                            <input
-                                type='text'
-                                id="budgetBills"
-                                placeholder="Budget"
-                                value={formBudget}
-                                onChange={(e) => setFormBudget(e.target.value)}
-                            />
-                            <label htmlFor="budgetBills">Budget:</label>
-                        </div>
-                        <div className="floating-label-wrapper">
-                            <input
-                                type="text"
-                                id="actualBills"
-                                placeholder="Actual"
-                                value={formActual}
-                                onChange={(e) => setFormActual(e.target.value)}
-                            />
-                            <label htmlFor="actualBills">Actual:</label>
-                        </div>
-                        <div className="multi-btn">
-                            <button
-                                className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
-                                type="submit"
-                                disabled={loading}>{
-                                    loading ? "Loading" :
-                                        !updateDataStatus ? 'Add' : 'Update'
-                                }
-                            </button>
-                            <button
-                                className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
-                                type="button"
-                                onClick={clearForm}
-                                disabled={loading}>{
-                                    loading ? 'Loading' :
-                                        !updateDataStatus ? 'Clear' : 'Cancel'}
-                            </button>
-                        </div>
-                    </form>
+
                 </div>
             </div>
 
             <div className="card card-main">
+                <div className='table-header'>
+                    <div>
+                        {/* Table Title Here */}
+                    </div>
+                    <div>
+                        <button
+                            className='btn btn-primary'
+                            onClick={openModal}>
+                            <span><LuPlus /></span>
+                            <span>Add</span>
+                        </button>
+                    </div>
+                </div>
                 <table className="table">
                     <thead>
                         <tr>

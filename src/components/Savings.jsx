@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
-import { savings, getSavings, deleteDataController,updateDataController } from '../firebase/controller';
+import { savings, getSavings, deleteDataController, updateDataController } from '../firebase/controller';
 import { useParams, useNavigate } from 'react-router-dom';
+import Modal from '../layouts/Modal';
+import { LuPlus } from "react-icons/lu";
 
 const Savings = () => {
     const { paramMonth } = useParams();
@@ -19,6 +21,7 @@ const Savings = () => {
     const [savingsData, setSavingsData] = useState([]);
     const [updateDataStatus, setUpdateStatus] = useState(false);
     const [updateId, setUpdateId] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const fromSubmit = async (e) => {
         e.preventDefault();
@@ -60,6 +63,7 @@ const Savings = () => {
         setFormDescription(arrayData.description)
         setFormTarget(arrayData.target)
         setFormStatus(arrayData.status)
+        setIsModalOpen(true)
     }
     const updateFormSubmit = async (e) => {
         e.preventDefault();
@@ -87,83 +91,102 @@ const Savings = () => {
             setLoading(false);
         console.log(updateExpenses.message);
     }
-
+    const closeModal = () => {
+        clearForm();
+        setIsModalOpen(false)
+    }
     return (
         <>
+            <Modal title={!updateDataStatus ? 'Add Savings' : 'Update Savings'} isOpen={isModalOpen} onClose={closeModal}>
+                <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
+                    <div className='floating-label-wrapper'>
+                        <input
+                            type="text"
+                            id="categorySavings"
+                            placeholder="Category"
+                            value={formCategory}
+                            onChange={(e) => setFormCategory(e.target.value)}
+                        />
+                        <label htmlFor="categorySavings">Category:</label>
+                    </div>
+                    <div className='floating-label-wrapper'>
+                        <input
+                            className='input'
+                            type="text"
+                            id="descSavings"
+                            placeholder="Description"
+                            value={formDescription}
+                            onChange={(e) => setFormDescription(e.target.value)}
+                        />
+                        <label htmlFor="descSavings">description:</label>
+                    </div>
+                    <div className='floating-label-wrapper'>
+                        <input
+                            type='text'
+                            id="targetSavings"
+                            placeholder="Target Amount"
+                            value={formTarget}
+                            onChange={(e) => setFormTarget(e.target.value)}
+                        />
+                        <label htmlFor="targetSavings">Target Amount:</label>
+                    </div>
+                    {
+                        updateDataStatus &&
+                        <div className='floating-label-wrapper'>
+                            <select
+                                id="statusSavings"
+                                placeholder="Status"
+                                className='input'
+                                value={formStatus}
+                                onChange={(e) => setFormStatus(e.target.value)}
+                            >
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                            <label htmlFor="statusSavings">Status</label>
+                        </div>
+
+                    }
+                    <div className="multi-btn">
+                        <button
+                            className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
+                            type="submit"
+                            disabled={loading}>{
+                                loading ? "Loading" :
+                                    !updateDataStatus ? 'Add' : 'Update'
+                            }
+                        </button>
+                        <button
+                            className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
+                            type="button"
+                            onClick={closeModal}
+                            disabled={loading}>{
+                                loading ? 'Loading' :
+                                    !updateDataStatus ? 'Close' : 'Cancel'}
+                        </button>
+                    </div>
+                </form>
+            </Modal >
             <div className='card-container'>
                 <div className='card card-no-bg flex-1'> </div>
                 <div className='card card-main'>
-                    <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
-                        <div className='floating-label-wrapper'>
-                            <input
-                                type="text"
-                                id="categorySavings"
-                                placeholder="Category"
-                                value={formCategory}
-                                onChange={(e) => setFormCategory(e.target.value)}
-                            />
-                            <label htmlFor="categorySavings">Category:</label>
-                        </div>
-                        <div className='floating-label-wrapper'>
-                            <input
-                                className='input'
-                                type="text"
-                                id="descSavings"
-                                placeholder="Description"
-                                value={formDescription}
-                                onChange={(e) => setFormDescription(e.target.value)}
-                            />
-                            <label htmlFor="descSavings">description:</label>
-                        </div>
-                        <div className='floating-label-wrapper'>
-                            <input
-                                type='text'
-                                id="targetSavings"
-                                placeholder="Target Amount"
-                                value={formTarget}
-                                onChange={(e) => setFormTarget(e.target.value)}
-                            />
-                            <label htmlFor="targetSavings">Target Amount:</label>
-                        </div>
-                        {
-                            updateDataStatus &&
-                            <div className='floating-label-wrapper'>
-                                <select
-                                    id="statusSavings"
-                                    placeholder="Status"
-                                    className='input'
-                                    value={formStatus}
-                                    onChange={(e) => setFormStatus(e.target.value)}
-                                >
-                                    <option value="active">Active</option>
-                                    <option value="inactive">Inactive</option>
-                                </select>
-                                <label htmlFor="statusSavings">Status</label>
-                            </div>
 
-                        }
-                        <div className="multi-btn">
-                            <button
-                                className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
-                                type="submit"
-                                disabled={loading}>{
-                                    loading ? "Loading" :
-                                        !updateDataStatus ? 'Add' : 'Update'
-                                }
-                            </button>
-                            <button
-                                className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
-                                type="button"
-                                onClick={clearForm}
-                                disabled={loading}>{
-                                    loading ? 'Loading' :
-                                        !updateDataStatus ? 'Clear' : 'Cancel'}
-                            </button>
-                        </div>
-                    </form>
                 </div>
             </div>
             <div className="card card-main">
+                <div className='table-header'>
+                    <div>
+                        {/* Table Title Here */}
+                    </div>
+                    <div>
+                        <button
+                            className='btn btn-primary'
+                            onClick={() => setIsModalOpen(true)}>
+                            <span><LuPlus /></span>
+                            <span>Add</span>
+                        </button>
+                    </div>
+                </div>
                 <table className="table">
                     <thead>
                         <tr>
