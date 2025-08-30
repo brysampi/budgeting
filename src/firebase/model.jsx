@@ -326,12 +326,12 @@ export async function getSavingsDataRealTime(inputDate, setData, isFetching, dro
 }
 
 // -------------------------------- Bills -------------------------------------
-// NOT Used Anymore
-export async function getBillsDataRealTime(table, inputDate, setData, isFetching) {
+// Not Used Anymore
+export async function getBillsDataRealTime(inputDate, setData, isFetching) {
     try {
         const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
         const que = query(
-            collection(db, table),
+            collection(db, 'bills'),
             where("user", "==", getUserID()),
             where("date", "<=", endOfMonth),
             where("dueDate", ">=", startOfMonth),
@@ -573,6 +573,8 @@ export async function updateData(table, id, arrayData) {
         const docRef = doc(db, table, id);
         await updateDoc(docRef, {
             ...arrayData,
+            // date: convertToTimeStamp('2025-08-26'),
+            // createdAt: convertToTimeStamp('2025-08-26'),
             updatedAt: serverTimestamp()
         });
         console.log("Data updated successfully:", docRef.id);

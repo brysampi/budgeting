@@ -1,4 +1,3 @@
-import { } from '../firebase/model';
 import { serverTimestamp } from 'firebase/firestore';
 import Cookies from 'js-cookie';
 import { successMsg, errorMsg, getUserID, convertToTimeStamp } from '../firebase/utils';
@@ -260,6 +259,14 @@ export async function addBills(arrayData) {
     updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
+// Not Used Anymore
+export async function getBillsDataRealTimeController(inputDate, setData, isFetching) {
+    try {
+        await getBillsDataRealTime(inputDate, setData, isFetching);
+    } catch (error) {
+        console.error(`Error fetching data from ${table} in Controller:`, error);
+    }
+}
 export async function updateBills(updateId, arrayData) {
     let { date, paymentStatus, ...removeDateData } = arrayData;
     if (!getUserID())
@@ -270,8 +277,11 @@ export async function updateBills(updateId, arrayData) {
         removeDateData.paidAt = serverTimestamp();
     }
     // removeDateData.paidAt = serverTimestamp();
-    removeDateData.paidAt = convertToTimeStamp('2025-07-31');
-
+    // removeDateData.paidAt = convertToTimeStamp('2025-07-31');
+    if (arrayData.budget > arrayData.actual) {
+        removeDateData.status = 'not_paid';
+        // removeDateData.paidAt = serverTimestamp();
+    }
     const updateResult = await updateData('bills', updateId, removeDateData);
     if (updateResult.status !== 'success') {
         console.log('Failed to update data.');
@@ -592,14 +602,14 @@ export async function logout() {
     return successMsg('Logout successful');
 }
 export async function deleteDataController(table, id) {
-    // await deleteData(table, id).then((response) => {
-    //     if (response && response.status === 'success')
-    //         console.log('Data deleted successfully.');
-    //     else
-    //         console.log('Failed to delete data.');
+    await deleteData(table, id).then((response) => {
+        if (response && response.status === 'success')
+            console.log('Data deleted successfully.');
+        else
+            console.log('Failed to delete data.');
 
-    // }).catch((error) => {
-    //     console.error('Error deleting data:', error);
-    // });
+    }).catch((error) => {
+        console.error('Error deleting data:', error);
+    });
     console.log('Delete is Working But Will Not Delete in Production.');
 }
