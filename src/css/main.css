@@ -1,80 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  /* line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale; */
-  /* --theme-one-one: #CB9DF0;
-  --theme-one-two: #F0C1E1;
-  --theme-one-three: #ff8615;
-  --theme-one-three-dark: #ff7b00;
-  --theme-one-four: #ffa653;
-  --theme-one-four-light: #ffb56f;
-  --theme-one-five: #FDDBBB;
-  --theme-one-five-dark: #fccda1;
-  --theme-one-six: #FFF9BF;
-  --theme-one-seven: #fffde7; */
-
-
-
-  /* --theme-one-primary: #B980F0;
-  --theme-one-secondary: #FE9898;
-  --theme-one-tertiary: #E5FBB8;
-  --theme-one-neutral-light: #fff5c5;
-  --theme-one-neutral-dark: #2b2b2b; */
-
-  --theme-one-bg: #fff2b9;
-  --theme-one-primary: #FFB22C;
-  --theme-one-secondary-low: #ffde4d31;
-  --theme-one-secondary: #FFDE4D;
-  --theme-one-tertiary: #FF4C4C;
-  --theme-one-tertiary-light: #ff8888;
-  --theme-one-light: #ffffff;
-  --theme-one-neutral-light: #e1e1e1;
-  --theme-one-neutral: #7f7f7f;
-  --theme-one-dark: #2b2b2b;
-  --color-success: #11d304;
-  --color-semi-transparent-black: rgba(0, 0, 0, 0.5);
-
-
-  --theme-one-card-main-bg: #ffffff;
-  --theme-one-card-main-text: #2b2b2b;
-
-}
-
-html,
-body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-.app-container {
-  position: relative;
-}
-
-@layer components {
-
-  html,
-  body {
-    @apply bg-[var(--theme-one-bg)] text-black;
-  }
-  .app-container{
-    @apply relative
-  }
-  .app-container {
+/* @layer components { */
+    .app-container {
         @apply relative
     }
 
@@ -236,4 +161,4 @@ body {
     .table tbody tr:hover {
         background-color: var(--theme-one-secondary);
     }
-}
+/* } */

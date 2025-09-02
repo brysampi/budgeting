@@ -1,20 +1,12 @@
 import { useState, useEffect } from 'react';
 import { addBills, getDataRealTimeController, deleteDataController, updateBills } from '../firebase/controller';
-import { convertToDate, convertToTimeStamp } from '../firebase/utils';
+import { convertToDate, convertToTimeStamp, getLastDayOfTheMonth } from '../firebase/utils';
 import { useParams, useNavigate } from 'react-router-dom';
 import Modal from '../layouts/Modal';
 import { LuPlus } from "react-icons/lu";
 
 const Bills = () => {
     const { paramMonth } = useParams();
-    // Set the last day of the month based on paramMonth for the default due date
-    const [yearStr, monthStr] = paramMonth.split("-");
-    // Ensure year and month are parsed as integers and add "10" to month for zero-padding [ex. 8 will be 08]
-    const year = parseInt(yearStr, 10);
-    const month = parseInt(monthStr, 10);
-    // Calculate the last day of the month [the 0th day will give the last day of the month]
-    // Note: month is 1-indexed in the input, so we use it directly 
-    const lastDayDate = new Date(year, month, 0).toISOString().split('T')[0];
 
     const navigate = useNavigate();
     useEffect(() => {
@@ -23,7 +15,7 @@ const Bills = () => {
         }
     }, [paramMonth, navigate]);
     const [formDescription, setFormDescription] = useState('');
-    const [formDueDate, setFormDueDate] = useState(lastDayDate); // Default to today's date
+    const [formDueDate, setFormDueDate] = useState(getLastDayOfTheMonth(paramMonth)); // Default to today's date
     const [formBudget, setFormBudget] = useState('');
     const [formActual, setFormActual] = useState('');
     const [loading, setLoading] = useState(false);
@@ -106,7 +98,7 @@ const Bills = () => {
         }
     }
     const openModal = () => {
-        setFormDueDate(lastDayDate)
+        setFormDueDate(getLastDayOfTheMonth(paramMonth))
         setIsModalOpen(true)
     }
     const closeModal = () => {
@@ -249,7 +241,7 @@ const Bills = () => {
 
     function clearForm() {
         setFormDescription('')
-        setFormDueDate('')
+        setFormDueDate(getLastDayOfTheMonth(paramMonth))
         setFormBudget('')
         setFormActual('')
         setLoading(false)

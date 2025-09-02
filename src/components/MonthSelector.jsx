@@ -53,7 +53,7 @@ export default function MonthSelection({ onLogOut }) {
                         <h1>No Data Found ...</h1> :
                         monthCollectionData.map((item, index) => (
                             <div key={index + 1} className=''>
-                                {console.log(item)}
+                                {console.log('items to',item)}
                                 <Link to={'/income/' +
                                     item.date.toDate().getFullYear()
                                     + '-' +

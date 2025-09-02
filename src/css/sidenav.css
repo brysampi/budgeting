@@ -30,11 +30,12 @@
 .sidenav ul li:hover {
     @apply bg-[var(--theme-one-primary)] text-white font-semibold;
 }
+
 /* .sidenav ul li span {
     @apply 
 } */
 .sidenav ul li span:first-child {
-    @apply w-[30px]  rounded-full flex items-center
+    @apply w-[30px] rounded-full flex items-center
     /* items-center justify-center mr-1; */
 }
 
@@ -64,16 +65,7 @@
 }
 
 /* Backdrop CSS - covers the entire screen */
-.backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
-  z-index: 1; /* Behind the sidenav */
-  pointer-events: all; /* Allow interaction with the backdrop to close sidenav */
-}
+
 @media (max-height: 600px),
 (max-width: 670px) {
     .sidenav {
@@ -82,5 +74,9 @@
 
     .shrink {
         @apply top-[20px]
+    }
+
+    .backdrop-sidenav {
+        @apply fixed top-0 left-0 w-full h-full bg-[var(--color-semi-transparent-black)] z-[1] pointer-events-auto;
     }
 }

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { expenses, getExpenses, deleteDataController, updateExpenses_extension } from '../firebase/controller';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate,Link } from 'react-router-dom';
 import Modal from '../layouts/Modal';
-import { LuPlus } from "react-icons/lu";
+import { LuPlus,LuArrowLeft  } from "react-icons/lu";
 
 const Expenses = () => {
     const { paramMonth } = useParams();
@@ -143,6 +143,13 @@ const Expenses = () => {
                 <div className='table-header'>
                     <div>
                         {/* Table Title Here */}
+                        <Link to={`/expensesTracker/${paramMonth}`}>
+                            <button
+                                className='btn btn-secondary'>
+                                <span><LuArrowLeft  /></span>
+                                <span>Back</span>
+                            </button>
+                        </Link>
                     </div>
                     <div>
                         <button

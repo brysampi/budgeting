@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { expenses, getExpenses, deleteDataController, getExpenses_v2, allUpdate, updateExpenses_extension } from '../firebase/controller';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate,Link } from 'react-router-dom';
 import { getMonthNamesSingleDigit } from '../firebase/utils';
 import Modal from '../layouts/Modal';
-import { LuPlus } from "react-icons/lu";
+import { LuPlus,LuArrowLeft } from "react-icons/lu";
 
 const ExpensesSettings = () => {
     const { paramMonth } = useParams();
@@ -122,7 +122,7 @@ const ExpensesSettings = () => {
                             value={formMonthlyBudget}
                             onChange={(e) => setFormMonthlyBudget(e.target.value)}
                         />
-                        <label htmlFor="monthlyBudgetExpenses">{getMonthNamesSingleDigit(paramMonth.split("-")[1])} Budget</label>
+                        <label htmlFor="monthlyBudgetExpenses">{getMonthNamesSingleDigit(paramMonth)} Budget</label>
                     </div>
                     {
 
@@ -178,6 +178,13 @@ const ExpensesSettings = () => {
                 <div className='table-header'>
                     <div>
                         {/* Table Title Here */}
+                        <Link to={`/expensesTracker/${paramMonth}`}>
+                            <button
+                                className='btn btn-secondary'>
+                                <span><LuArrowLeft  /></span>
+                                <span>Back</span>
+                            </button>
+                        </Link>
                     </div>
                     <div>
                         <button
@@ -194,7 +201,7 @@ const ExpensesSettings = () => {
                             {/* <th>#</th> */}
                             <th>Category</th>
                             <th>Default Budget</th>
-                            <th>{getMonthNamesSingleDigit(paramMonth.split("-")[1])} Budget</th>
+                            <th>{getMonthNamesSingleDigit(paramMonth)} Budget</th>
                             <th>Status</th>
                             {/* <th>Date</th> */}
                             <th>Action</th>

@@ -61,6 +61,7 @@ export function getMonthRangeFromInput(inputDateString) {
 
     return { startOfMonth, endOfMonth };
 }
+// TimeStamp Date (Date by Firebase)
 export function getMonthNames(inputDate) {
     const monthNames = [
         'January', 'February', 'March', 'April', 'May', 'June',
@@ -68,10 +69,23 @@ export function getMonthNames(inputDate) {
     ];
     return monthNames[inputDate.toDate().getMonth()];
 }
-export function getMonthNamesSingleDigit(monthNo) {
+// ParaMonth Date (Ex. 2025-08)
+export function getMonthNamesSingleDigit(paramMonth) {
+    const monthNo = paramMonth.split("-")[1] - 1
     const monthNames = [
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'
     ];
-    return monthNames[monthNo - 1];
+    return monthNames[monthNo];
+}
+export function getLastDayOfTheMonth(paramMonth) {
+    // Set the last day of the month based on paramMonth for the default due date
+    const [yearStr, monthStr] = paramMonth.split("-");
+    // Ensure year and month are parsed as integers and add "10" to month for zero-padding [ex. 8 will be 08]
+    const year = parseInt(yearStr, 10);
+    const month = parseInt(monthStr, 10);
+    // Calculate the last day of the month [the 0th day will give the last day of the month]
+    // Note: month is 1-indexed in the input, so we use it directly 
+    const lastDayDate = new Date(year, month, 1).toISOString().split('T')[0];
+    return lastDayDate;
 }

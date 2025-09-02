@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 // import { BrowserRouter } from 'react-router-dom'
 import { HashRouter as Router } from 'react-router-dom'
 import './index.css'
+// import './css/main.css'
 // import App from './App.jsx'
 import AppRoutes from './routes/AppRoutes.jsx'
 

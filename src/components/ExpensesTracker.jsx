@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { expensesTracker, getExpensesTracker, getExpenses, expensesTrackerUpdate, deleteDataController, checkStaticData } from '../firebase/controller';
-import { useParams, useNavigate,Link } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import Modal from '../layouts/Modal';
-import { LuPlus,LuClipboardList,LuSettings } from "react-icons/lu";
-
+import { LuPlus, LuClipboardList, LuSettings } from "react-icons/lu";
+import { convertToDate, getLastDayOfTheMonth } from '../firebase/utils';
 
 const ExpensesTracker = () => {
     const { paramMonth } = useParams();
@@ -25,7 +25,9 @@ const ExpensesTracker = () => {
     const [updateDataStatus, setUpdateStatus] = useState(false);
     const [updateId, setUpdateId] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
-
+    const [changeDate, setChangeDate] = useState(getLastDayOfTheMonth(paramMonth));
+    const [changeDateIsChecked, setChangeDateIsChecked] = useState(false);
+    console.log('ano ang laman', changeDate)
     const fromSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -37,7 +39,7 @@ const ExpensesTracker = () => {
             description: formDescription,
             price: parseFloat(formPrice),
             discount: parseFloat(formDiscount),
-            date: paramMonth,
+            date: changeDateIsChecked ? changeDate : null,
         })
         // if (addData.status === 'success') {
         //     console.log(addData.message);
@@ -47,7 +49,7 @@ const ExpensesTracker = () => {
         //     setLoading(false);
         console.log(addData.message);
         setLoading(false);
-        clearForm();
+        // clearForm();
     }
     useEffect(() => {
         const returnSavings = async () => {
@@ -59,15 +61,29 @@ const ExpensesTracker = () => {
         }
         returnSavings();
     }, []);
+    // Compute all total after expenses data is fetched
+    useEffect(() => {
+        console.log(expensesTrackerData)
+        // const total = expensesTrackerData.reduce((acc, dayData) => {
+        //     const dayTotal = dayData.reduce((dayAcc, item) => dayAcc + item.amount, 0);
+        //     return acc + dayTotal;
+        // }, 0);
+        // setAllTotal(total);
+        const total = expensesData.reduce((acc, dayData) => {
+            console.log('dayData ', dayData)
+            // return dayData
+        }, 0)
+    }, [expensesTrackerData]); // Recalculate when expensesTrackerData changes
+
     const updateSetData = (id, arrayData) => {
         setUpdateStatus(true);
-        // console.log(arrayData.category)
         setUpdateId(id)
         setFormCategory(arrayData.category)
         setFormDescription(arrayData.description)
         setFormPrice(arrayData.price)
         setFormDiscount(arrayData.discount)
         setIsModalOpen(true)
+        setChangeDate(arrayData.date)
     }
     const updateFormSubmit = async (e) => {
         e.preventDefault();
@@ -77,13 +93,14 @@ const ExpensesTracker = () => {
             description: formDescription,
             price: parseFloat(formPrice),
             discount: parseFloat(formDiscount),
-            date: paramMonth,
         }
+        if (changeDateIsChecked)
+            data.date = changeDate;
+
         const updateResult = await expensesTrackerUpdate(updateId, data);
         if (updateResult.status === 'success') {
-            setLoading(false);
             clearForm();
-            setUpdateStatus(false);
+            setIsModalOpen(false)
         } else
             setLoading(false);
         console.log(updateResult.message);
@@ -150,6 +167,20 @@ const ExpensesTracker = () => {
                         />
                         <label htmlFor="discountExpensesTracker">Discount</label>
                     </div>
+                    <input type="checkBox" name="changeDate" id="changeDate" value={changeDateIsChecked} onChange={(e) => setChangeDateIsChecked(e.target.checked)} />
+                    <label htmlFor="changeDate">Change Date</label>
+                    {changeDateIsChecked && (
+                        <div className="floating-label-wrapper">
+                            <input
+                                type="date"
+                                id="dateExpensesTracker"
+                                placeholder="Date"
+                                value={changeDate}
+                                onChange={(e) => setChangeDate(e.target.value)}
+                            />
+                            <label htmlFor="dateExpensesTracker">Date</label>
+                        </div>
+                    )}
                     <div className="multi-btn">
                         <button
                             className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
@@ -162,17 +193,19 @@ const ExpensesTracker = () => {
                         <button
                             className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
                             type="button"
-                            onClick={clearForm}
+                            onClick={closeModal}
                             disabled={loading}>{
                                 loading ? 'Loading' :
-                                    !updateDataStatus ? 'Clear' : 'Cancel'
+                                    !updateDataStatus ? 'Close' : 'Cancel'
                             }
                         </button>
                     </div>
                 </form>
             </Modal >
             <div className="card-container">
-                <div className="card card-no-bg flex-1"></div>
+                <div className="card card-no-bg flex-1">
+                    {/* {allTotal} */}
+                </div>
                 <div className="card card-main">
                     {/* <button onClick={() => checkStaticData(paramMonth)}>Check Data</button> */}
 
@@ -198,7 +231,7 @@ const ExpensesTracker = () => {
                                 <span>Add Catergory</span>
                             </button>
                         </Link>
-                        <Link to={`/savings/${paramMonth}`}>
+                        <Link to={`/expensesSettings/${paramMonth}`}>
                             <button
                                 className='btn btn-primary'>
                                 <span><LuSettings /></span>
@@ -243,6 +276,8 @@ const ExpensesTracker = () => {
                                                             <td>{item.categoryName}</td>
                                                             <td>{item.description}</td>
                                                             <td>{item.amount.toFixed(2)}</td>
+                                                            {/* <td>{convertToDate(item.date)}</td>
+                                                            <td>{convertToDate(item.createdAt)}</td> */}
                                                             {/* <td>
                                                                 <button onClick={async () => {
                                                                     await deleteDataController('expensesTracker', item.id)
@@ -254,7 +289,8 @@ const ExpensesTracker = () => {
                                                                     category: item.category,
                                                                     description: item.description,
                                                                     price: item.price,
-                                                                    discount: item.discount
+                                                                    discount: item.discount,
+                                                                    date: convertToDate(item.date)
                                                                 }
                                                             )
                                                             }>Update</button></td>
@@ -268,13 +304,16 @@ const ExpensesTracker = () => {
                                                     className="font-blod align-right bg-[var(--theme-one-tertiary)]"
                                                 >
                                                     Total: {total.toFixed(2)}
+                                                    {/* {setAllTotal(allTotal + total)} */}
                                                 </td>
                                             </tr>
                                         </React.Fragment >
                                     )
+
                                 }
                                 ).reverse()
-                        )}
+                        )
+                        }
                     </tbody>
                 </table>
             </div >
@@ -289,7 +328,8 @@ const ExpensesTracker = () => {
         setUpdateStatus(false)
         setUpdateId('')
         setLoading(false)
+        setChangeDate(getLastDayOfTheMonth(paramMonth))
+        setChangeDateIsChecked(false)
     }
 }
-export default ExpensesTracker;
-
+export default ExpensesTracker; 

@@ -34,7 +34,7 @@ export async function getUser(user, password) {
     }
 }
 
-export async function addData(table, arrayData) {
+export async function addData(table, arrayData, created = serverTimestamp()) {
     try {
         const IdStored = arrayData.user;
         if (IdStored) {
@@ -44,6 +44,7 @@ export async function addData(table, arrayData) {
                 user: IdStored,
                 createdAt: serverTimestamp()
                 // createdAt: convertToTimeStamp('2025-08-08'),
+                // createdAt: created,
             })
             return successMsg('Successfully Added.', { id: returnData.id })
         }
@@ -195,7 +196,7 @@ export async function getDataCategoryRealTime(table, inputDate, setData, isFetch
                     console.log("No such document!");
                     return null;
                 } else {
-                    const dayCreated = !docData.createdAt ? null : (docData.createdAt).toDate().getDate()
+                    const day = !docData.date ? null : (docData.date).toDate().getDate()
                     // console.log(dayCreated)
 
                     if (docData.category) {
@@ -219,10 +220,10 @@ export async function getDataCategoryRealTime(table, inputDate, setData, isFetch
                     };
 
 
-                    if (!groupedByDay[dayCreated]) {
-                        groupedByDay[dayCreated] = [];
+                    if (!groupedByDay[day]) {
+                        groupedByDay[day] = [];
                     }
-                    groupedByDay[dayCreated].push(datas);
+                    groupedByDay[day].push(datas);
                     return datas;
                 }
             });

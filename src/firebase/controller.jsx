@@ -1,6 +1,6 @@
 import { serverTimestamp } from 'firebase/firestore';
 import Cookies from 'js-cookie';
-import { successMsg, errorMsg, getUserID, convertToTimeStamp } from '../firebase/utils';
+import { successMsg, errorMsg, getUserID, convertToTimeStamp, convertToDate } from '../firebase/utils';
 import {
     addData, updateData, deleteData, getData, getUser, getAllData, getAllDataRealtime, getDataById,
     getDataRealTime,
@@ -372,9 +372,12 @@ export async function expensesTracker(arrayData) {
         price: arrayData.price,
         discount: discountPrice,
         amount: arrayData.price - discountPrice,
-        date: convertToTimeStamp(arrayData.date),
+        date: arrayData.date === null ? serverTimestamp() : convertToTimeStamp(arrayData.date),
         user: getUserID(),
     }
+    // console.log('date to ano ba asdsadasd : ', arrayData.date)
+    // console.log(data)
+    // console.log(convertToDate(data.date))
     const addReturn = addData('expensesTracker', data)
     updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
@@ -568,6 +571,9 @@ export async function expensesTrackerUpdate(id, arrayData) {
         discount: discountPrice,
         amount: arrayData.price - discountPrice,
     }
+    if (arrayData.date)
+        data.date = convertToTimeStamp(arrayData.date)
+    // data.date = convertToTimeStamp('2025-07-10')
     const updateResult = await updateData('expensesTracker', id, data)
     if (updateResult.status !== 'success') {
         console.log('Failed to update data.');

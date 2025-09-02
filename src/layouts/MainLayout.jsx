@@ -29,7 +29,7 @@ const MainLayout = () => {
             // ref={mainRef}
             className="app-container">
             {/* <Logout /> */}
-            {hideNav && <div ref={backdropRef} className="backdrop" onClick={() => setHideNav(false)} />}
+            {hideNav && <div ref={backdropRef} className="backdrop-sidenav" onClick={() => setHideNav(false)} />}
 
             <SideNav hide={[hideNav, setHideNav]} sidenavRef={sidenavRef} />
             <main
