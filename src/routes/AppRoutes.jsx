@@ -39,7 +39,7 @@ const AppRoutes = () => {
                         <Route path="bills/:paramMonth" element={<Bills />} />
                         <Route path="expenses/:paramMonth" element={<Expenses />} />
                         <Route path="expensestracker/:paramMonth" element={<ExpensesTracker />} />
-                        <Route path="expensesdefault/:paramMonth" element={<ExpensesDefault />} />
+                        {/* <Route path="expensesdefault/:paramMonth" element={<ExpensesDefault />} /> */}
                         <Route path="expenses/expensesSettings/:paramMonth" element={<ExpensesSettings />} />
                     </Route>
                 </>

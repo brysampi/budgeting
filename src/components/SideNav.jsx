@@ -12,7 +12,11 @@ export default function SideNav({ hide, sidenavRef }) {
     const navigate = useNavigate();
     const location = useLocation(); // Get the current location
     // console.log(paramMonth)
-    const isActive = (path) => location.hash.startsWith(`#${path}`);
+    const isActive = (path, exact = false) => {
+        return exact
+            ? location.pathname === path
+            : location.pathname.startsWith(path);
+    }
     useEffect(() => {
         if (!paramMonth) {
             navigate('/'); // Redirect to home if paramMonth is missing
@@ -27,13 +31,13 @@ export default function SideNav({ hide, sidenavRef }) {
     }
     const hideText = hideNav ? 'inline sm:hidden' : 'hidden sm:inline';
     const menuItems = [
-        { to: '/', label: 'Select Month', icon: <LuCalendarDays /> },
+        { to: '/', label: 'Select Month', icon: <LuCalendarDays />, exact: true },
         { to: `/income/${paramMonth}`, label: 'Income', icon: <LiaCoinsSolid /> },
         // { to: `/savings/${paramMonth}`, label: 'Savings', icon: <LuHandCoins /> },
         // { to: `/savingsTracker/${paramMonth}`, label: 'Savings Tracker', icon: <LuClipboardList /> },
         { to: `/savingsTracker/${paramMonth}`, label: 'Savings', icon: <LuHandCoins /> },
         { to: `/bills/${paramMonth}`, label: 'Bills', icon: <LuNewspaper /> },
-        { to: `/expenses/expensesSettings/${paramMonth}`, label: 'Expenses', icon: <LuShoppingBag /> },
+        { to: `/expenses/${paramMonth}`, label: 'Expenses', icon: <LuShoppingBag /> },
         { to: `/expensestracker/${paramMonth}`, label: 'Expenses Tracker', icon: <LuClipboardList /> },
         // { to: `/expensesSettings/${paramMonth}`, label: 'Expenses Settings', icon: <LuSettings /> },
         // { to: `/expensestracker/${paramMonth}`, label: 'Expenses', icon: <LuShoppingBag /> },
@@ -60,7 +64,7 @@ export default function SideNav({ hide, sidenavRef }) {
                     <ul>
                         {menuItems.map((item, idx) => (
                             <Link key={idx} to={item.to}>
-                                <li className={isActive(item.to) ? 'active' : ''}>
+                                <li className={isActive(item.to, item.exact) ? 'active' : ''}>
                                     <span>{item.icon}</span>
                                     <span className={hideText}>{item.label}</span>
                                 </li>
