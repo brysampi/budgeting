@@ -130,6 +130,7 @@ const ExpensesTracker = () => {
                 <div className='table-header'>
                     <div>
                         {/* Table Title Here */}
+                        OverAll Total: {allTotal.toFixed(2)}
                     </div>
                     <div className='multi-btn'>
                         <button
