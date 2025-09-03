@@ -178,7 +178,7 @@ const ExpensesSettings = () => {
                 <div className='table-header'>
                     <div>
                         {/* Table Title Here */}
-                        <Link to={`/expensesTracker/${paramMonth}`}>
+                        <Link to={`/expenses/${paramMonth}`}>
                             <button
                                 className='btn btn-secondary'>
                                 <span><LuArrowLeft  /></span>

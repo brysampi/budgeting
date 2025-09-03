@@ -562,7 +562,7 @@ export async function updateExpenses_extension_1(extensionId, monthlyBudget) {
 export async function getExpensesExtension(expensesId, inputDate) {
     await getExtensionByExpenses(expensesId, inputDate)
 }
-export async function expensesTrackerUpdate(id, arrayData) {
+export async function expensesTrackerUpdate(id, arrayData,paramMonth) {
     const discountPrice = !arrayData.discount || arrayData.discount === '' ? 0 : arrayData.discount;
     const data = {
         category: arrayData.category,
@@ -580,7 +580,7 @@ export async function expensesTrackerUpdate(id, arrayData) {
         return errorMsg('Failed to update data. Check console for error.');
     }
     console.log('Data updated successfully.');
-    updateCollectedData(arrayData.date);
+    updateCollectedData(paramMonth);
     return successMsg('Successfully Updated.', updateResult);
 }
 

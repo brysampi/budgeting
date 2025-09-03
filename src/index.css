@@ -4,8 +4,8 @@
 
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  /* line-height: 1.5;
+    font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+    /* line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
@@ -16,7 +16,7 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; */
-  /* --theme-one-one: #CB9DF0;
+    /* --theme-one-one: #CB9DF0;
   --theme-one-two: #F0C1E1;
   --theme-one-three: #ff8615;
   --theme-one-three-dark: #ff7b00;
@@ -29,52 +29,55 @@
 
 
 
-  /* --theme-one-primary: #B980F0;
+    /* --theme-one-primary: #B980F0;
   --theme-one-secondary: #FE9898;
   --theme-one-tertiary: #E5FBB8;
   --theme-one-neutral-light: #fff5c5;
   --theme-one-neutral-dark: #2b2b2b; */
 
-  --theme-one-bg: #fff2b9;
-  --theme-one-primary: #FFB22C;
-  --theme-one-secondary-low: #ffde4d31;
-  --theme-one-secondary: #FFDE4D;
-  --theme-one-tertiary: #FF4C4C;
-  --theme-one-tertiary-light: #ff8888;
-  --theme-one-light: #ffffff;
-  --theme-one-neutral-light: #e1e1e1;
-  --theme-one-neutral: #7f7f7f;
-  --theme-one-dark: #2b2b2b;
-  --color-success: #11d304;
-  --color-semi-transparent-black: rgba(0, 0, 0, 0.5);
+    --theme-one-bg: #fff2b9;
+    --theme-one-primary: #FFB22C;
+    --theme-one-secondary-low: #ffde4d31;
+    --theme-one-secondary: #FFDE4D;
+    --theme-one-tertiary: #FF4C4C;
+    --theme-one-tertiary-light: #ff8888;
+    --theme-one-light: #ffffff;
+    --theme-one-neutral-light: #e1e1e1;
+    --theme-one-neutral-light2: #c9c9c9;
+    --theme-one-neutral: #7f7f7f;
+    --theme-one-dark: #2b2b2b;
+    --color-success: #11d304;
+    --color-semi-transparent-black: rgba(0,0,0,0.5);
 
 
-  --theme-one-card-main-bg: #ffffff;
-  --theme-one-card-main-text: #2b2b2b;
+    --theme-one-card-main-bg: #ffffff;
+    --theme-one-card-main-text: #2b2b2b;
 
 }
 
 html,
 body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 .app-container {
-  position: relative;
+    position: relative;
 }
 
 @layer components {
 
-  html,
-  body {
-    @apply bg-[var(--theme-one-bg)] text-black;
-  }
-  .app-container{
-    @apply relative
-  }
-  .app-container {
+    html,
+    body {
+        @apply bg-[var(--theme-one-bg)] text-black;
+    }
+
+    .app-container {
+        @apply relative
+    }
+
+    .app-container {
         @apply relative
     }
 
@@ -133,7 +136,7 @@ body {
     }
 
     .multi-btn {
-        @apply flex flex-col sm:flex-row gap-2 justify-between;
+        @apply flex flex-row gap-2 justify-between;
     }
 
     .btn-primary {
@@ -141,7 +144,7 @@ body {
     }
 
     .btn-primary:hover {
-        @apply bg-[var(--theme-one-secondary)] text-[var(--theme-one-dark)] font-extrabold transition-transform transform scale-105;
+        @apply bg-[var(--theme-one-secondary)] text-[var(--theme-one-dark)] transition-transform transform scale-110;
     }
 
     .btn-cancel {
@@ -195,15 +198,19 @@ body {
     }
 
     .table-header {
-        @apply flex flex-row justify-between items-center mb-5
+        @apply flex flex-row justify-between items-center mb-5 p-2
     }
 
     .table-header button {
         @apply flex items-center
     }
 
+    .table-header button span:last-child {
+        @apply hidden sm:inline
+    }
+
     .table-header button span:first-child {
-        @apply pr-3
+        @apply pr-0 sm:pr-3
     }
 
     .table {
@@ -235,5 +242,25 @@ body {
 
     .table tbody tr:hover {
         background-color: var(--theme-one-secondary);
+    }
+
+    table tbody .tr-header {
+        @apply text-center font-bold bg-[var(--theme-one-neutral-light2)] text-[var(--theme-one-dark)]
+    }
+
+    table tbody .tr-header:hover {
+        @apply text-[var(--theme-one-dark)]
+    }
+
+    table tbody .tr-header .tr-header-important {
+        @apply font-bold bg-[var(--theme-one-tertiary)] text-[var(--theme-one-light)]
+    }
+
+    table tbody .tr-header:hover> .tr-header-important {
+        @apply text-[var(--theme-one-dark)] bg-[var(--theme-one-tertiary-light)]
+    }
+
+    .backdrop-loading {
+        @apply fixed top-0 left-0 w-full h-full bg-[var(--color-semi-transparent-black)] z-50 pointer-events-none;
     }
 }

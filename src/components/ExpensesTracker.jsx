@@ -4,6 +4,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import Modal from '../layouts/Modal';
 import { LuPlus, LuClipboardList, LuSettings } from "react-icons/lu";
 import { convertToDate, getLastDayOfTheMonth } from '../firebase/utils';
+import Loading from '../layouts/Loading';
 
 const ExpensesTracker = () => {
     const { paramMonth } = useParams();
@@ -27,10 +28,14 @@ const ExpensesTracker = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [changeDate, setChangeDate] = useState(getLastDayOfTheMonth(paramMonth));
     const [changeDateIsChecked, setChangeDateIsChecked] = useState(false);
-    console.log('ano ang laman', changeDate)
+    const [openDay, setOpenDay] = useState([]);
+    // console.log('ano ang laman', changeDate)
     const fromSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+
+        console.log('loading ba', loading)
+
         if (!formDescription || !formCategory || !formPrice)
             return console.log('Please fill up all fields.')
 
@@ -49,7 +54,7 @@ const ExpensesTracker = () => {
         //     setLoading(false);
         console.log(addData.message);
         setLoading(false);
-        // clearForm();
+        clearForm();
     }
     useEffect(() => {
         const returnSavings = async () => {
@@ -61,19 +66,19 @@ const ExpensesTracker = () => {
         }
         returnSavings();
     }, []);
-    // Compute all total after expenses data is fetched
-    useEffect(() => {
-        console.log(expensesTrackerData)
-        // const total = expensesTrackerData.reduce((acc, dayData) => {
-        //     const dayTotal = dayData.reduce((dayAcc, item) => dayAcc + item.amount, 0);
-        //     return acc + dayTotal;
-        // }, 0);
-        // setAllTotal(total);
-        const total = expensesData.reduce((acc, dayData) => {
-            console.log('dayData ', dayData)
-            // return dayData
-        }, 0)
-    }, [expensesTrackerData]); // Recalculate when expensesTrackerData changes
+    // // Compute all total after expenses data is fetched
+    // useEffect(() => {
+    //     console.log(expensesTrackerData)
+    //     // const total = expensesTrackerData.reduce((acc, dayData) => {
+    //     //     const dayTotal = dayData.reduce((dayAcc, item) => dayAcc + item.amount, 0);
+    //     //     return acc + dayTotal;
+    //     // }, 0);
+    //     // setAllTotal(total);
+    //     const total = expensesData.reduce((acc, dayData) => {
+    //         console.log('dayData ', dayData)
+    //         // return dayData
+    //     }, 0)
+    // }, [expensesTrackerData]); // Recalculate when expensesTrackerData changes
 
     const updateSetData = (id, arrayData) => {
         setUpdateStatus(true);
@@ -88,6 +93,7 @@ const ExpensesTracker = () => {
     const updateFormSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+
         let data = {
             category: formCategory,
             description: formDescription,
@@ -97,12 +103,13 @@ const ExpensesTracker = () => {
         if (changeDateIsChecked)
             data.date = changeDate;
 
-        const updateResult = await expensesTrackerUpdate(updateId, data);
+        const updateResult = await expensesTrackerUpdate(updateId, data, paramMonth);
         if (updateResult.status === 'success') {
             clearForm();
             setIsModalOpen(false)
         } else
             setLoading(false);
+        // updateResult.status && <Loading onLoading={false} />
         console.log(updateResult.message);
     }
     const closeModal = () => {
@@ -111,6 +118,7 @@ const ExpensesTracker = () => {
     }
     return (
         <>
+            <Loading onLoading={loading} />
             <Modal title={!updateDataStatus ? 'Add Savings' : 'Update Savings'} isOpen={isModalOpen} onClose={closeModal}>
                 <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
                     <div className="floating-label-wrapper">
@@ -224,20 +232,20 @@ const ExpensesTracker = () => {
                             <span><LuPlus /></span>
                             <span>Add</span>
                         </button>
-                        <Link to={`/expenses/${paramMonth}`}>
+                        {/* <Link to={`/expenses/${paramMonth}`}>
                             <button
                                 className='btn btn-primary'>
                                 <span><LuClipboardList /></span>
-                                <span>Add Catergory</span>
+                                <span>Catergory</span>
                             </button>
-                        </Link>
-                        <Link to={`/expensesSettings/${paramMonth}`}>
+                        </Link> */}
+                        {/* <Link to={`/expensesSettings/${paramMonth}`}>
                             <button
                                 className='btn btn-primary'>
                                 <span><LuSettings /></span>
                                 <span>Settings</span>
                             </button>
-                        </Link>
+                        </Link> */}
                     </div>
                 </div>
                 <table className="table">
@@ -249,72 +257,87 @@ const ExpensesTracker = () => {
                             <th>Action</th >
                         </tr>
                     </thead>
-                    <tbody>
-                        {isFetchingTracker ? (
-                            <tr><td colSpan={6}>Loading...</td></tr>
-                        ) : (
-                            expensesTrackerData.length === 0 ?
-                                <tr><td colSpan={6}>No Data Found</td></tr> :
-                                Object.entries(expensesTrackerData).map(([key, value]) => {
-                                    let total = 0;
-                                    return (
-                                        <React.Fragment key={key}>
-                                            <tr><td colSpan={6}
-                                                // style={{
-                                                //     textAlign: 'center',
-                                                //     fontWeight: 'bold',
-                                                //     backgroundColor: 'lightgray',
-                                                // }}
-                                                className="text-center font-bold bg-[var(--theme-one-neutral-light)]"
-                                            > Day: {key}</td></tr>
-                                            {
-                                                value.map((item, index) => {
-                                                    // console.log(item)
-                                                    total += item.amount;
-                                                    return (
-                                                        <tr key={index}>
-                                                            <td>{item.categoryName}</td>
-                                                            <td>{item.description}</td>
-                                                            <td>{item.amount.toFixed(2)}</td>
-                                                            {/* <td>{convertToDate(item.date)}</td>
+                    {/* <tbody> */}
+                    {isFetchingTracker ? (
+                        <tbody><tr><td colSpan={6}>Loading...</td></tr></tbody>
+                    ) : (
+                        expensesTrackerData.length === 0 ?
+                            <tbody><tr><td colSpan={6}>No Data Found</td></tr></tbody> :
+                            Object.entries(expensesTrackerData).map(([key, value]) => {
+                                // let total1 = 0;
+                                const total = value.reduce((acc, item) => acc + item.amount, 0);
+                                const isOpen = openDay.includes(key);
+                                // setOpenDay(prev => [...prev, key] )
+                                const toggleDay = () => {
+                                    setOpenDay((prev) =>
+                                        prev.includes(key)
+                                            ? prev.filter((day) => day !== key) // remove it (close)
+                                            : [...prev, key] // add it (open)
+                                    );
+                                };
+                                return (
+                                    <tbody key={key}>
+                                        <tr
+                                            className="tr-header"
+                                            onClick={toggleDay}
+                                        ><td colSpan={2}
+                                        // style={{
+                                        //     textAlign: 'center',
+                                        //     fontWeight: 'bold',
+                                        //     backgroundColor: 'lightgray',
+                                        // }}
+
+                                        > Day: {key}</td>
+                                            <td className="tr-header-important ">Total: </td>
+                                            <td className="tr-header-important">{total.toFixed(2)}</td>
+                                        </tr>
+                                        {isOpen &&
+                                            value.map((item, index) => {
+                                                // console.log(item)
+                                                // total1 += item.amount;
+                                                return (
+                                                    <tr key={index}>
+                                                        <td>{item.categoryName}</td>
+                                                        <td>{item.description}</td>
+                                                        <td>{item.amount.toFixed(2)}</td>
+                                                        {/* <td>{convertToDate(item.date)}</td>
                                                             <td>{convertToDate(item.createdAt)}</td> */}
-                                                            {/* <td>
+                                                        {/* <td>
                                                                 <button onClick={async () => {
                                                                     await deleteDataController('expensesTracker', item.id)
                                                                 }}>Delete</button>
                                                             </td> */}
-                                                            <td><button onClick={() => updateSetData(item.id,
-                                                                {
-                                                                    id: item.id,
-                                                                    category: item.category,
-                                                                    description: item.description,
-                                                                    price: item.price,
-                                                                    discount: item.discount,
-                                                                    date: convertToDate(item.date)
-                                                                }
-                                                            )
-                                                            }>Update</button></td>
-                                                        </tr>
-                                                    )
-                                                }
-                                                ).reverse()
+                                                        <td><button onClick={() => updateSetData(item.id,
+                                                            {
+                                                                id: item.id,
+                                                                category: item.category,
+                                                                description: item.description,
+                                                                price: item.price,
+                                                                discount: item.discount,
+                                                                date: convertToDate(item.date)
+                                                            }
+                                                        )
+                                                        }>Update</button></td>
+                                                    </tr>
+                                                )
                                             }
-                                            <tr><td colSpan={3} ></td>
+                                            ).reverse()
+                                        }
+                                        {/* <tr><td colSpan={3} ></td>
                                                 <td
                                                     className="font-blod align-right bg-[var(--theme-one-tertiary)]"
                                                 >
-                                                    Total: {total.toFixed(2)}
-                                                    {/* {setAllTotal(allTotal + total)} */}
+                                                    Total: {total1.toFixed(2)}
                                                 </td>
-                                            </tr>
-                                        </React.Fragment >
-                                    )
+                                            </tr> */}
+                                    </tbody >
+                                )
 
-                                }
-                                ).reverse()
-                        )
-                        }
-                    </tbody>
+                            }
+                            ).reverse()
+                    )
+                    }
+                    {/* </tbody> */}
                 </table>
             </div >
         </>

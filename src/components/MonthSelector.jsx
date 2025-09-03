@@ -22,11 +22,13 @@ export default function MonthSelection({ onLogOut }) {
         e.preventDefault();
         setAddNewMonth(true)
         const collected = await creteCollectedData(monthData);
-        collected ? setAddNewMonth(false) : setAddNewMonth(true)
+        // collected ? setAddNewMonth(false) : setAddNewMonth(true)
+        console.log(collected)
     }
 
     return (
         <>
+        {/* <Loading onLoading={loading} /> */}
             {/* <Logout onLogout={onLogOut} /> */}
             <div className='card card-no-bg'>
                 <form className='flex flex-wrap justify-end'

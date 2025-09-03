@@ -1,7 +1,6 @@
-import { Link,useLocation  } from 'react-router-dom';
+import { Link, useLocation, useParams, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import Cookies from 'js-cookie';
-import { useParams, useNavigate } from 'react-router-dom';
 import { logout } from '../firebase/controller';
 import '../css/sidenav.css';
 import { LuIndentDecrease, LuIndentIncrease, LuCalendarDays, LuCoins, LuHandCoins, LuClipboardList, LuNewspaper, LuShoppingBag, LuSettings, LuLogOut, LuCircleUserRound } from "react-icons/lu";
@@ -13,7 +12,7 @@ export default function SideNav({ hide, sidenavRef }) {
     const navigate = useNavigate();
     const location = useLocation(); // Get the current location
     // console.log(paramMonth)
-    const isActive = (path) => location.pathname === path;
+    const isActive = (path) => location.hash.startsWith(`#${path}`);
     useEffect(() => {
         if (!paramMonth) {
             navigate('/'); // Redirect to home if paramMonth is missing
@@ -34,10 +33,10 @@ export default function SideNav({ hide, sidenavRef }) {
         // { to: `/savingsTracker/${paramMonth}`, label: 'Savings Tracker', icon: <LuClipboardList /> },
         { to: `/savingsTracker/${paramMonth}`, label: 'Savings', icon: <LuHandCoins /> },
         { to: `/bills/${paramMonth}`, label: 'Bills', icon: <LuNewspaper /> },
-        // { to: `/expenses/${paramMonth}`, label: 'Expenses', icon: <LuShoppingBag /> },
-        // { to: `/expensestracker/${paramMonth}`, label: 'Expenses Tracker', icon: <LuClipboardList /> },
+        { to: `/expenses/expensesSettings/${paramMonth}`, label: 'Expenses', icon: <LuShoppingBag /> },
+        { to: `/expensestracker/${paramMonth}`, label: 'Expenses Tracker', icon: <LuClipboardList /> },
         // { to: `/expensesSettings/${paramMonth}`, label: 'Expenses Settings', icon: <LuSettings /> },
-        { to: `/expensestracker/${paramMonth}`, label: 'Expenses', icon: <LuShoppingBag /> },
+        // { to: `/expensestracker/${paramMonth}`, label: 'Expenses', icon: <LuShoppingBag /> },
     ];
     return (
         <aside

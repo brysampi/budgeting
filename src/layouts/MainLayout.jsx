@@ -6,7 +6,7 @@ const MainLayout = () => {
     const [hideNav, setHideNav] = useState(false);
     const sidenavRef = useRef();
     // const mainRef = useRef();
-    const backdropRef = useRef(); // Reference for the backdrop overlay
+    const backdropSidenavRef = useRef(); // Reference for the backdrop overlay
     const clickOutSideOfSidenav = (e) => {
         // console.log(mainRef.current)
         if (window.innerWidth <= 670 || window.innerHeight <= 600) {
@@ -29,7 +29,7 @@ const MainLayout = () => {
             // ref={mainRef}
             className="app-container">
             {/* <Logout /> */}
-            {hideNav && <div ref={backdropRef} className="backdrop-sidenav" onClick={() => setHideNav(false)} />}
+            {hideNav && <div ref={backdropSidenavRef} className="backdrop-sidenav" onClick={() => setHideNav(false)} />}
 
             <SideNav hide={[hideNav, setHideNav]} sidenavRef={sidenavRef} />
             <main

@@ -214,7 +214,7 @@ const Bills = () => {
                                         <td>{item.description}</td>
                                         <td>{convertToDate(item.dueDate)}</td>
                                         <td>{item.budget.toFixed(2)}</td>
-                                        <td className={`${item.status == 'paid' ? 'text-[var(--color-success)] font-bold' : ''}`}>{item.actual.toFixed(2)}</td>
+                                        <td className={`${item.budget < item.actual ? 'text-[var(--theme-one-tertiary)] font-bold' : ''}`}>{item.actual.toFixed(2)}</td>
                                         {/* <td>{item.status}</td> */}
                                         {/* <td>{convertToDate(item.paidAt)}</td> */}
                                         <td>
