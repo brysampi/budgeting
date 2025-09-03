@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom';
-import SideNav from '../components/SideNav';
+import SideNav from '../layouts/SideNav';
+import Navbar from '../layouts/Navbar';
 import Logout from '../components/Logout';
 import { useState, useRef, useEffect } from 'react';
 const MainLayout = () => {
@@ -22,7 +23,7 @@ const MainLayout = () => {
 
         return () => {
             document.removeEventListener('mousedown', clickOutSideOfSidenav);
-           };
+        };
     }, [hideNav])
     return (
         <div
@@ -44,6 +45,7 @@ const MainLayout = () => {
                     }
                 }}
             >
+                <Navbar />
                 <Outlet />
             </main>
 

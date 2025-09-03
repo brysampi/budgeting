@@ -164,7 +164,7 @@ body {
     }
 
     .card-main {
-        @apply bg-[var(--theme-one-card-main-bg)] mb-[30px] p-1 sm:p-10 overflow-auto
+        @apply bg-[var(--theme-one-card-main-bg)] mb-[10px] p-1 sm:p-10 overflow-auto
     }
 
     .card-two {
@@ -194,7 +194,7 @@ body {
     }
 
     .card-container {
-        @apply flex flex-col content-start justify-between items-baseline md:flex-row
+        @apply flex flex-col content-start justify-between md:flex-row
     }
 
     .table-header {
@@ -226,7 +226,7 @@ body {
     }
 
     .table thead tr th {
-        @apply bg-[var(--theme-one-primary)] text-[var(--theme-one-dark)]
+        @apply bg-[var(--theme-one-primary)] text-[var(--theme-one-dark)] 
     }
 
     .table thead tr th:hover {
@@ -235,22 +235,23 @@ body {
 
 
 
-    .table tbody tr:nth-child(2n) {
-        background-color: #9e9e9e33;
-        /* White for the next 2 rows */
+    .table tbody .tr-header:first-child {   
+        @apply bg-[var(--theme-one-neutral-light)] text-center font-bold cursor-pointer
     }
 
-    .table tbody tr:hover {
-        background-color: var(--theme-one-secondary);
+    .table tbody tr:hover,
+    .table tbody .tr-header:first-child:hover {
+        @apply bg-[var(--theme-one-secondary)]
     }
 
-    table tbody .tr-header {
+    /* table tbody .tr-header {
         @apply text-center font-bold bg-[var(--theme-one-neutral-light2)] text-[var(--theme-one-dark)]
     }
 
     table tbody .tr-header:hover {
         @apply text-[var(--theme-one-dark)]
-    }
+    }'
+     */
 
     table tbody .tr-header .tr-header-important {
         @apply font-bold bg-[var(--theme-one-tertiary)] text-[var(--theme-one-light)]
