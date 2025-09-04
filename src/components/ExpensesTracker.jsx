@@ -8,15 +8,7 @@ import Loading from '../layouts/Loading';
 
 const ExpensesTracker = () => {
     const { paramMonth } = useParams();
-    useEffect(() => {
-        document.title = `Expenses Tracker`;
-    }, [paramMonth]);
-    const navigate = useNavigate();
-    useEffect(() => {
-        if (!paramMonth) {
-            navigate('/monthSelect');
-        }
-    }, [paramMonth, navigate]);
+
     const [formCategory, setFormCategory] = useState('');
     const [formDescription, setFormDescription] = useState('');
     const [formPrice, setFormPrice] = useState('');

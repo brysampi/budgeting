@@ -36,6 +36,10 @@ export async function login(user, password) {
     }
 
 }
+// -------------------------- Collected Data Navbar -----------------------------------
+// export async function getCollectedDataByMonthRealTime_controller(inputDate, setData, isFetching) {
+//     await getCollectedDataByMonthRealTime('collectedData', inputDate, setData, isFetching)
+// }
 // -------------------------- Collected Data -----------------------------------
 export async function getCollectedDataRealTimeController(setData, isFetching) {
     await getCollectedDataRealTime('collectedData', setData, isFetching)
@@ -562,7 +566,7 @@ export async function updateExpenses_extension_1(extensionId, monthlyBudget) {
 export async function getExpensesExtension(expensesId, inputDate) {
     await getExtensionByExpenses(expensesId, inputDate)
 }
-export async function expensesTrackerUpdate(id, arrayData,paramMonth) {
+export async function expensesTrackerUpdate(id, arrayData, paramMonth) {
     const discountPrice = !arrayData.discount || arrayData.discount === '' ? 0 : arrayData.discount;
     const data = {
         category: arrayData.category,

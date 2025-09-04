@@ -7,12 +7,7 @@ import { LuPlus, LuClipboardList } from "react-icons/lu";
 
 const SavingsTracker = () => {
     const { paramMonth } = useParams();
-    const navigate = useNavigate();
-    useEffect(() => {
-        if (!paramMonth) {
-            navigate('/monthSelect'); // Redirect to home if paramMonth is missing
-        }
-    }, [paramMonth, navigate]);
+    
     const [formCategory, setFormCategory] = useState('');
     const [formDescription, setFormDescription] = useState('');
     const [formAmount, setFormAmount] = useState('');
@@ -175,7 +170,7 @@ const SavingsTracker = () => {
                             <span><LuPlus /></span>
                             <span>Add</span>
                         </button>
-                        <Link to={`/expensesSettings/${paramMonth}`}>
+                        <Link to={`/expenses/expensesSettings/${paramMonth}`}>
                             <button
                                 className='btn btn-primary'>
                                 <span><LuClipboardList /></span>

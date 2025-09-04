@@ -16,15 +16,11 @@ import LoginPage from '../components/LoginPage';
 
 const AppRoutes = () => {
     const location = useLocation();
-    useEffect(() => {
-        if (location.pathname === "/income:paramMonth")
-            document.title = "income";
-        else if (location.pathname === "/settings")
-            document.title = "Settings";
-        else
-            document.title = "My App";
+    // useEffect(() => {
+    //     if (location.pathname === "/")
+    //         document.title = "Budgeting App";
 
-    }, [location]);
+    // }, [location]);
     const [loggedIn, setLoggedIn] = useState(Cookies.get('logged_status') ? true : false)
     return (
         <Routes>

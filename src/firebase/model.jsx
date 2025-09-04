@@ -267,6 +267,34 @@ export async function getCollectedDataRealTime(table, setData, isFetching) {
         return errorMsg('Failed to fetch data. Check console for error.');
     }
 }
+// export async function getCollectedDataByMonthRealTime(table, inputDate, setData, isFetching) {
+//     try {
+//         const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
+//         const que = query(
+//             collection(db, table),
+//             where("user", "==", getUserID()),
+//             where("date", ">=", startOfMonth),
+//             where("date", "<=", endOfMonth),
+//             where("status", "==", "active"),
+//             orderBy("date", "desc"),
+//         );
+//         const unsubscribe = onSnapshot(que, async (snapshot) => {
+//             const promises = snapshot.docs.map(async (docSnap) => ({
+//                 id: docSnap.id,
+//                 ...docSnap.data(),
+//             }));
+//             const resolvedData = await Promise.all(promises);
+//             setData(resolvedData);
+//             isFetching(false);
+//             return promises;
+//         });
+//         return unsubscribe;
+//     } catch (error) {
+//         console.error("Error fetching data: ", error);
+//         // throw new Error("Failed to fetch data");
+//         return errorMsg('Failed to fetch data. Check console for error.');
+//     }
+// }
 // ------------------------------- Savings -------------------------------------
 export async function getSavingsDataRealTime(inputDate, setData, isFetching, dropdownData) {
     // console.log("Fetching savings tracker data for month: ", inputDate);

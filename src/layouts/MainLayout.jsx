@@ -1,12 +1,42 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useParams, matchPath, useNavigate } from 'react-router-dom';
 import SideNav from '../layouts/SideNav';
 import Navbar from '../layouts/Navbar';
 import Logout from '../components/Logout';
 import { useState, useRef, useEffect } from 'react';
+
 const MainLayout = () => {
+    const { paramMonth } = useParams();
+    // console.log('paramonth to ', paramMonth)
+
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (!paramMonth) {
+            navigate('/monthSelect'); // Redirect to home if paramMonth is missing
+        }
+    }, [paramMonth, navigate]);
+
+    const routes = [
+        { path: "/", title: "Bell Budgeting App" },
+        { path: "/income/:paraMonth", title: "Income" },
+        { path: "/savings/:paraMonth", title: "Savings Summary / Category" },
+        { path: "/savingsTracker/:paraMonth", title: "Savings Tracker" },
+        { path: "/bills/:paraMonth", title: "Bills" },
+        { path: "/expenses/:paraMonth", title: "Expenses" },
+        { path: "/expensesTracker/:paraMonth", title: "Expenses Tracker" },
+        { path: "/expenses/expensesSettings/:paraMonth", title: "Expenses Settings" },
+    ];
+
+    const currentRoute =
+        routes.find((r) => matchPath({ path: r.path, end: true }, location.pathname)) ||
+        { title: "Bell Budgeting App" };
+
+    useEffect(() => {
+        // console.log('Current Route:', currentRoute);
+        document.title = `${currentRoute.title} - Bell Budgeting App` || "Bell Budgeting App";
+    }, [currentRoute]);
+
     const [hideNav, setHideNav] = useState(false);
     const sidenavRef = useRef();
-    // const mainRef = useRef();
     const backdropSidenavRef = useRef(); // Reference for the backdrop overlay
     const clickOutSideOfSidenav = (e) => {
         // console.log(mainRef.current)
@@ -45,7 +75,7 @@ const MainLayout = () => {
                     }
                 }}
             >
-                <Navbar />
+                <Navbar title={currentRoute.title} paramMonth={paramMonth}/>
                 <Outlet />
             </main>
 
