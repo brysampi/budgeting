@@ -170,7 +170,7 @@ const SavingsTracker = () => {
                             <span><LuPlus /></span>
                             <span>Add</span>
                         </button>
-                        <Link to={`/expenses/expensesSettings/${paramMonth}`}>
+                        <Link to={`/savings/${paramMonth}`}>
                             <button
                                 className='btn btn-primary'>
                                 <span><LuClipboardList /></span>
