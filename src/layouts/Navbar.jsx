@@ -25,7 +25,7 @@ const Navbar = ({ title, paramMonth }) => {
     }, [])
     return (
         <>
-            <div className="card card-main flex flex-row justify-between items-center p-5">
+            <div className="card card-main flex flex-row justify-between items-center p-5 mb-[10px]">
                 <div>{title}</div>
                 <div>{
                     isFetching ? 'Loading...' :

@@ -13,25 +13,34 @@
 }
 
 .modal-content {
-  background: white;
+  background: var(--color-theme-tertiary-light);
   padding: 20px;
   width: 400px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 10px;
+  /* border-bottom: 1px solid var(--color-theme-important); */
+  box-shadow: 0px 10px 10px -6px rgba(0, 0, 0, 0.2);
+  padding-bottom: 15px;
+  margin-bottom: 10px;
 }
+.modal-header .modal-title{
+  color: var(--color-theme-important);
+  font-weight: bold;
+}
+
 .modal-header button {
   background-color: transparent;
   border: none;
   font-size: 16px;
   cursor: pointer;
 }
-.modal-body{
+
+.modal-body {
   padding-top: 10px;
 }

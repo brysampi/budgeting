@@ -46,22 +46,26 @@ export default function SideNav({ hide, sidenavRef }) {
         <aside
             ref={sidenavRef}
             className="sidenav-container">
-            <div className="shrink" onClick={() => setHideNav(!hideNav)}>
+            {/* <div className="shrink" onClick={() => setHideNav(!hideNav)}>
                 <div className="shrink-icon">
                     {hideNav ? < LuIndentIncrease /> : <LuIndentDecrease />}
                 </div>
-            </div>
+            </div> */}
             <div className={`sidenav ${hideNav ? 'w-[200px] sm:w-[50px]' : 'w-[50px] sm:w-[200px]'}`}>
 
-                <div className="title">
+                {/* <div className="title">
                     <span className={hideText}>
                         My Logo here
                     </span>
 
-                </div>
+                </div> */}
 
                 <div className="sidenav-content">
                     <ul>
+                        <li onClick={() => setHideNav(!hideNav)} className="cursor-none flex flex-row-reverse justify-between mb-[1rem]">
+                            <span className="shrink">{hideNav ? < LuIndentIncrease /> : <LuIndentDecrease />}</span>
+                            <span className={hideText}>Budgeting</span>
+                        </li>
                         {menuItems.map((item, idx) => (
                             <Link key={idx} to={item.to}>
                                 <li className={isActive(item.to, item.exact) ? 'active' : ''}>
@@ -84,7 +88,7 @@ export default function SideNav({ hide, sidenavRef }) {
                     </ul>
                 </div >
                 <ul>
-                    <li className="text-white rounded-b-lg">
+                    <li className="">
                         <span><LuCircleUserRound /></span>
                         <span className={hideText}>Profile</span>
                     </li>

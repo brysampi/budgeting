@@ -66,8 +66,8 @@ const MainLayout = () => {
             <main
                 // ref={contentRef}
                 // onClick={() => setHideNav(false)}
-                className={`main-content transition-all duration-300 mt-[2.5vh] mb-[2.5vh] mr-5 
-                    ${hideNav ? 'ml-[60px]  sm:ml-[60px]' : 'ml-[60px]  sm:ml-[210px]'}
+                className={`main-content transition-all duration-300
+                    ${hideNav ? 'ml-[60px]  sm:ml-[60px]' : 'ml-[60px]  sm:ml-[230px] m-[20px]'}
                     `}
                 onClick={() => {
                     if (window.innerWidth <= 768) {
