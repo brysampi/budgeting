@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { expensesTracker, getExpensesTracker, getExpenses, expensesTrackerUpdate, deleteDataController, checkStaticData } from '../firebase/controller';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Modal from '../layouts/Modal';
-import { LuPlus, LuClipboardList, LuSettings } from "react-icons/lu";
+import { LuPlus, LuArrowBigUpDash, LuArrowBigDownDash } from "react-icons/lu";
 import { convertToDate, getLastDayOfTheMonth } from '../firebase/utils';
 import Loading from '../layouts/Loading';
 
@@ -24,13 +24,25 @@ const ExpensesTracker = () => {
     const [changeDate, setChangeDate] = useState(getLastDayOfTheMonth(paramMonth));
     const [changeDateIsChecked, setChangeDateIsChecked] = useState(false);
     const [openDay, setOpenDay] = useState([]);
+    const [getAllDays, setGetAllDays] = useState([]);
 
     const allTotal = useMemo(() => {
+        // Get All Days
+        // Object.keys(expensesTrackerData).map((key) => {
+        //     setGetAllDays(prev => prev.includes(key) ? prev : [...prev, key] );
+        // });
         if (!expensesTrackerData || Object.keys(expensesTrackerData).length === 0) return 0;
         return Object.values(expensesTrackerData).reduce((acc, items) => {
             const dayTotal = items.reduce((sum, item) => sum + item.amount, 0);
+            // console.log('items date', items)
             return acc + dayTotal;
         }, 0);
+    }, [expensesTrackerData]);
+
+    useEffect(() => {
+        if (!expensesTrackerData) return;
+        const days = Object.keys(expensesTrackerData);
+        setGetAllDays(days);
     }, [expensesTrackerData]);
 
     const fromSubmit = async (e) => {
@@ -119,126 +131,147 @@ const ExpensesTracker = () => {
             </div> */}
 
             <div className="card card-main">
-                <div className='table-header'>
-                    <div>
-                        {/* Table Title Here */}
-                        OverAll Total: {allTotal.toFixed(2)}
-                    </div>
-                    <div className='multi-btn'>
-                        <button
-                            className='btn btn-primary'
-                            onClick={() => setIsModalOpen(true)}>
-                            <span><LuPlus /></span>
-                            <span>Add</span>
-                        </button>
-                        {/* <Link to={`/expenses/${paramMonth}`}>
+                <div className='table-container'>
+                    <div className='table-header'>
+                        <div>
+                            {/* Table Title Here */}
+                            OverAll Total: <span className='text-[var(--color-theme-important)] font-extrabold'>{allTotal.toFixed(2)}</span>
+                            <div className='flex gap-2 mt-2'>
+                                <div onClick={() => getAllDays.forEach(day => setOpenDay(getAllDays.includes(day) ? [...getAllDays] : [...getAllDays, day]))}>
+                                    <LuArrowBigDownDash />
+                                </div>
+                                <div onClick={() => setOpenDay([])}>
+                                    < LuArrowBigUpDash />
+                                </div>
+                            </div>
+                        </div>
+                        <div className='multi-btn'>
+                            <button
+                                className='btn btn-primary'
+                                onClick={() => setIsModalOpen(true)}>
+                                <span><LuPlus /></span>
+                                <span>Add</span>
+                            </button>
+                            {/* <Link to={`/expenses/${paramMonth}`}>
                             <button
                                 className='btn btn-primary'>
                                 <span><LuClipboardList /></span>
                                 <span>Catergory</span>
                             </button>
                         </Link> */}
-                        {/* <Link to={`/expensesSettings/${paramMonth}`}>
+                            {/* <Link to={`/expensesSettings/${paramMonth}`}>
                             <button
                                 className='btn btn-primary'>
                                 <span><LuSettings /></span>
                                 <span>Settings</span>
                             </button>
                         </Link> */}
+                        </div>
                     </div>
-                </div>
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th>Category</th>
-                            <th>Description</th>
-                            <th>Price</th>
-                            <th>Action</th >
-                        </tr>
-                    </thead>
-                    {/* <tbody> */}
-                    {isFetchingTracker ? (
-                        <tbody><tr><td colSpan={6}>Loading...</td></tr></tbody>
-                    ) : (
-                        expensesTrackerData.length === 0 ?
-                            <tbody><tr><td colSpan={6}>No Data Found</td></tr></tbody> :
-                            Object.entries(expensesTrackerData).map(([key, value]) => {
-                                // let total1 = 0;
-                                const total = value.reduce((acc, item) => acc + item.amount, 0);
-                                // setOpenDay(prev => [...prev, key] )
-                                const isOpen = openDay.includes(key);
-                                const toggleDay = () => {
-                                    setOpenDay((prev) =>
-                                        prev.includes(key)
-                                            ? prev.filter((day) => day !== key) // remove it (close)
-                                            : [...prev, key] // add it (open)
-                                    );
-                                };
-                                return (
-                                    <tbody key={key}>
-                                        <tr
-                                            className="tr-header"
-                                            onClick={toggleDay}
-                                        ><td colSpan={2}
-                                        // style={{
-                                        //     textAlign: 'center',
-                                        //     fontWeight: 'bold',
-                                        //     backgroundColor: 'lightgray',
-                                        // }}
+                    <div className='table-body'>
+                        <div className='w-full overflow-x-auto'>
+                            <table className="table">
+                                <thead>
+                                    <tr>
+                                        <th>Category</th>
+                                        <th>Description</th>
+                                        <th>Price</th>
+                                        <th>Action</th >
+                                    </tr>
+                                </thead>
+                                {/* <tbody> */}
+                                {isFetchingTracker ? (
+                                    <tbody><tr><td colSpan={6}>Loading...</td></tr></tbody>
+                                ) : (
+                                    expensesTrackerData.length === 0 ?
+                                        <tbody><tr><td colSpan={6}>No Data Found</td></tr></tbody> :
+                                        Object.entries(expensesTrackerData).map(([key, value]) => {
+                                            // let total1 = 0;
+                                            const total = value.reduce((acc, item) => acc + item.amount, 0);
+                                            // setOpenDay(prev => [...prev, key] )
+                                            const isOpen = openDay.includes(key);
+                                            const toggleDay = () => {
+                                                setOpenDay((prev) =>
+                                                    prev.includes(key)
+                                                        ? prev.filter((day) => day !== key) // remove it (close)
+                                                        : [...prev, key] // add it (open)
+                                                );
+                                            };
+                                            return (
+                                                <tbody key={key}>
+                                                    <tr
+                                                        className="tr-header"
+                                                        onClick={toggleDay}
+                                                    ><td colSpan={2}
+                                                    // style={{
+                                                    //     textAlign: 'center',
+                                                    //     fontWeight: 'bold',
+                                                    //     backgroundColor: 'lightgray',
+                                                    // }}
 
-                                        > Day: {key}</td>
-                                            <td className="tr-header-important ">Total: </td>
-                                            <td className="tr-header-important">{total.toFixed(2)}</td>
-                                        </tr>
-                                        {isOpen &&
-                                            value.map((item, index) => {
-                                                // console.log(item)
-                                                // total1 += item.amount;
-                                                return (
-                                                    <tr key={index}>
-                                                        <td>{item.categoryName}</td>
-                                                        <td>{item.description}</td>
-                                                        <td>{item.amount.toFixed(2)}</td>
-                                                        {/* <td>{convertToDate(item.date)}</td>
+                                                    >
+                                                            <div className='flex flex-row-reverse justify-evenly items-center'>
+                                                                Day: {key}
+                                                                <span>{isOpen ? <LuArrowBigUpDash /> : <LuArrowBigDownDash />} </span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="tr-header-important ">Total: </td>
+                                                        <td className="tr-header-important">{total.toFixed(2)}</td>
+                                                    </tr>
+                                                    {isOpen &&
+                                                        value.map((item, index) => {
+                                                            // console.log(item)
+                                                            // total1 += item.amount;
+                                                            return (
+                                                                <tr key={index}>
+                                                                    <td>{item.categoryName}</td>
+                                                                    <td>{item.description}</td>
+                                                                    <td>{item.amount.toFixed(2)}</td>
+                                                                    {/* <td>{convertToDate(item.date)}</td>
                                                             <td>{convertToDate(item.createdAt)}</td> */}
-                                                        {/* <td>
+                                                                    {/* <td>
                                                                 <button onClick={async () => {
                                                                     await deleteDataController('expensesTracker', item.id)
                                                                 }}>Delete</button>
                                                             </td> */}
-                                                        <td><button onClick={() => updateSetData(item.id,
-                                                            {
-                                                                id: item.id,
-                                                                category: item.category,
-                                                                description: item.description,
-                                                                price: item.price,
-                                                                discount: item.discount,
-                                                                date: convertToDate(item.date)
-                                                            }
-                                                        )
-                                                        }>Update</button></td>
-                                                    </tr>
-                                                )
-                                            }
-                                            ).reverse()
-                                        }
-                                        {/* <tr><td colSpan={3} ></td>
+                                                                    <td><button onClick={() => updateSetData(item.id,
+                                                                        {
+                                                                            id: item.id,
+                                                                            category: item.category,
+                                                                            description: item.description,
+                                                                            price: item.price,
+                                                                            discount: item.discount,
+                                                                            date: convertToDate(item.date)
+                                                                        }
+                                                                    )
+                                                                    }>Update</button></td>
+                                                                </tr>
+                                                            )
+                                                        }
+                                                        ).reverse()
+                                                    }
+                                                    {/* <tr><td colSpan={3} ></td>
                                                 <td
                                                     className="font-blod align-right bg-[var(--theme-one-tertiary)]"
                                                 >
                                                     Total: {total1.toFixed(2)}
                                                 </td>
                                             </tr> */}
-                                    </tbody >
-                                )
+                                                </tbody >
+                                            )
 
-                            }
-                            ).reverse()
-                    )
-                    }
-                    {/* </tbody> */}
-                    {/* {console.log('all total', allTotalSum)} */}
-                </table>
+                                        }
+                                        ).reverse()
+                                )
+                                }
+                                {/* </tbody> */}
+                                {/* {console.log('all total', allTotalSum)} */}
+                            </table>
+                        </div>
+
+                    </div>
+
+                </div>
             </div >
             <Modal title={!updateDataStatus ? 'Add Savings' : 'Update Savings'} isOpen={isModalOpen} onClose={closeModal}>
                 <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>

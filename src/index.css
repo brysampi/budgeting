@@ -35,7 +35,7 @@
   --theme-one-neutral-light: #fff5c5;
   --theme-one-neutral-dark: #2b2b2b; */
 
-    --theme-one-bg: #fff2b9;
+    /* --theme-one-bg: #fff2b9;
     --theme-one-primary: #FFB22C;
     --theme-one-secondary-low: #ffde4d31;
     --theme-one-secondary: #FFDE4D;
@@ -51,7 +51,22 @@
 
 
     --theme-one-card-main-bg: #ffffff;
-    --theme-one-card-main-text: #2b2b2b;
+    --theme-one-card-main-text: #2b2b2b; */
+
+    --color-theme-primary: #121212;
+    --color-theme-secondary: #1E1E1E;
+    --color-theme-tertiary: #414141;
+    --color-theme-tertiary-light: #5a5959;
+    --color-theme-important: #FFB22C;
+    --color-theme-important-light: #fdbf54;
+    --color-theme-important-dark: #ac781f;
+
+    --color-light: #fff9ef;
+    --color-dark: #000000;
+    --color-success: #11d304;
+    --color-danger: #ff4c4c;
+    --color-warning: #ffde4d;
+    --color-semi-transparent-black: #00000080;
 
 }
 
@@ -62,6 +77,10 @@ body {
     padding: 0;
 }
 
+input[type="month"]::-webkit-calendar-picker-indicator {
+    filter: invert(100%) sepia(100%) saturate(500%) hue-rotate(200deg);
+}
+
 .app-container {
     position: relative;
 }
@@ -70,7 +89,7 @@ body {
 
     html,
     body {
-        @apply bg-[var(--theme-one-bg)] text-black;
+        @apply bg-[var(--color-theme-primary)] text-black text-[var(--color-light)];
     }
 
     .app-container {
@@ -87,7 +106,7 @@ body {
 
     .floating-label-wrapper input,
     .floating-label-wrapper .input {
-        @apply border-[var(--theme-one-neutral)] border-solid border-[1px] rounded-md p-[10px_10px] bg-transparent w-full text-gray-600;
+        @apply border-[var(--color-theme-tertiary)] text-[var(--color-light)] border-x-0 border-t-0 border-[1px] p-[10px_10px] bg-transparent w-full focus:outline-none;
     }
 
     .floating-label-wrapper input::placeholder,
@@ -96,43 +115,55 @@ body {
     }
 
     .floating-label-wrapper label {
-        @apply absolute left-[10px] top-[20px] text-[#666] text-[0.9rem] transition-all duration-200 ease-in-out pointer-events-none;
+        @apply text-[var(--color-light)] font-bold absolute left-[10px] top-[20px] text-[0.9rem] transition-all duration-200 ease-in-out pointer-events-none;
     }
 
     .floating-label-wrapper input:focus,
     .floating-label-wrapper .input:focus,
     .floating-label-wrapper input:not(:placeholder-shown),
     .floating-label-wrapper .input:not(:placeholder-shown) {
-        @apply border-[var(--theme-one-primary)] border-solid border-[2px];
+        @apply border-[var(--color-theme-secondary)];
     }
 
     .floating-label-wrapper input:focus+label,
     .floating-label-wrapper .input:focus+label,
     .floating-label-wrapper input:not(:placeholder-shown)+label,
     .floating-label-wrapper .input:not(:placeholder-shown)+label {
-        @apply bg-[var(--theme-one-card-main-bg)] text-[var(--theme-one-card-main-text)] top-[0px] left-[10px] text-[0.9rem] font-[600] px-[2px] py-0;
+        @apply text-[var(--color-theme-secondary)] top-[0px] left-[10px] text-[0.9rem] px-[2px] py-0;
     }
 
     /* Inputs in Login page */
-    .floating-label-wrapper .input-login:focus+label,
-    .floating-label-wrapper .input-login:not(:placeholder-shown)+label {
-        @apply bg-[var(--theme-one-light)] text-[var(--theme-one-dark)];
+    .floating-label-wrapper.input-login input {
+        @apply text-[var(--color-light)] border-[var(--color-theme-tertiary)]
+    }
+
+    .floating-label-wrapper.input-login label {
+        @apply text-[var(--color-light)];
+    }
+
+    .floating-label-wrapper.input-login input:focus+label,
+    .floating-label-wrapper.input-login input:not(:placeholder-shown)+label {
+        @apply bg-[var(--color-theme-secondary)] text-[var(--color-theme-light)];
+    }
+
+    .floating-label-wrapper select option {
+        @apply bg-[var(--color-theme-secondary)] text-[var(--color-light)];
     }
 
     /* .floating-label-wrapper input:not(:placeholder-shown) {
     @apply border-[var(--theme-one-primary)] border-solid border-[2px];
   } */
 
-    form>* {
+    form:not(.form-select-month)>* {
         @apply py-[10px];
-    }
-
-    .btn {
-        @apply shadow-[0px_0px_5px_rgba(0,0,0,0.3)] rounded-lg py-2 px-6
     }
 
     .form-pannel {
         @apply min-w-[300px] w-full sm:w-auto
+    }
+
+    .btn {
+        @apply shadow-[0px_0px_5px_rgba(0,0,0,0.3)] rounded-lg py-2 px-6
     }
 
     .multi-btn {
@@ -140,53 +171,72 @@ body {
     }
 
     .btn-primary {
-        @apply bg-[var(--theme-one-primary)] text-[var(--theme-one-dark)];
+        @apply bg-[var(--color-theme-important)] text-[var(--color-dark)] cursor-pointer;
     }
 
     .btn-primary:hover {
-        @apply bg-[var(--theme-one-secondary)] text-[var(--theme-one-dark)] transition-transform transform scale-110;
+        @apply bg-[var(--color-theme-important-dark)] text-[var(--color-light)];
+    }
+
+    .btn-primary-gradient {
+        @apply bg-gradient-to-r from-[var(--color-theme-important)] to-[var(--color-theme-important-dark)] text-[var(--theme-one-dark)];
     }
 
     .btn-cancel {
-        @apply bg-[var(--theme-one-neural-light)] text-[var(--theme-one-dark)] cursor-pointer;
+        @apply bg-[var(--color-theme-tertiary)] text-[var(--color-light)] cursor-pointer;
     }
 
     .btn-cancel:hover {
-        @apply bg-[var(--theme-one-neutral)] text-[var(--theme-one-light)] font-extrabold transition-transform transform scale-105;
+        @apply bg-[var(--theme-one-neutral)] text-[var(--color-dark)];
+    }
+
+    .multi-card>.card {
+        @apply mb-[1rem]
     }
 
     .card {
-        @apply shadow-[0px_0px_20px_rgba(0,0,0,0.1)] flex flex-col justify-center rounded-lg min-w-[320px] w-full mx-0 sm:min-w-0 sm:w-auto sm:mx-5
+        @apply flex flex-col justify-center rounded-lg min-w-[12.5rem] p-[.5rem] sm:p-[1.5rem_2rem]
+    }
+
+    .card .title {
+        @apply text-[var(--theme-one-three)] font-bold text-[1rem] mb-2
+    }
+
+    .card .details {
+        /* @apply text-[var(--theme-one-four)] font-semibold text-sm mb-2 */
+        @apply text-[.7rem]
     }
 
     .card-login {
-        @apply h-full w-full sm:h-auto sm:max-w-[500px] py-0 px-0 bg-[var(--theme-one-light)] mb-[30px] sm:py-[60px] sm:px-[20px]
+        @apply h-full w-full sm:h-auto sm:max-w-[500px] py-0 px-0 bg-[var(--color-theme-secondary)] mb-[30px] sm:py-[60px] sm:px-[20px]
     }
 
     .card-main {
-        @apply bg-[var(--theme-one-card-main-bg)] mb-[10px] p-1 sm:p-10 overflow-auto
+        @apply bg-[var(--color-theme-secondary)]
     }
 
-    .card-two {
-        @apply p-3 m-1 min-w-[300px] text-black transition-transform transform bg-[var(--theme-one-secondary-low)] border-[var(--theme-one-primary)] border-solid border-[2px] sm:p-5 sm:m-6
+    .card-shadow {
+        @apply p-[1.5rem_2rem] m-[1rem] bg-[var(--color-theme-secondary)]
     }
 
-    .card-two:hover {
-        @apply bg-[var(--theme-one-primary)] border-[var(--theme-one-secondary-low)] scale-105
+    .card-shadow:hover:not(.card-no-hover) {
+        @apply bg-[var(--color-theme-tertiary)]
     }
 
-
-    .card-two .title {
-        @apply text-[var(--theme-one-three)] font-bold text-lg mb-2
+    .card-shadow .title {
+        @apply text-[var(--color-light)] font-bold text-lg mb-2
     }
 
-    .card-two .details {
-        /* @apply text-[var(--theme-one-four)] font-semibold text-sm mb-2 */
-        @apply text-sm
+    .card-shadow:hover .details {
+        @apply text-[var(--color-theme-secondary)]
     }
 
-    .card-two .details span {
-        @apply text-[var(--theme-one-tertiary)] font-semibold text-base mb-2
+    .card-shadow .details {
+        @apply text-[var(--color-theme-tertiary-light)]
+    }
+
+    .card-shadow .details span {
+        @apply text-[var(--color-theme-important)] font-semibold text-base mb-2
     }
 
     .card-no-bg {
@@ -195,6 +245,26 @@ body {
 
     .card-container {
         @apply flex flex-col content-start justify-between md:flex-row
+    }
+
+    .select-month-container {
+        @apply flex flex-col items-center mb-[1rem] 
+    }
+
+    .select-month-container form {
+        @apply max-w-none flex flex-col sm:flex-row sm:max-w-[30rem]
+    }
+
+    .select-month-container input {
+        @apply w-full border-[var(--color-theme-important)] text-[var(--color-light)] border-solid border-[1px] rounded-l-lg p-[10px_10px] bg-transparent
+    }
+
+    .select-month-container form:hover button {
+        @apply bg-[var(--color-theme-important-dark)] rounded-r-lg text-[var(--color-theme-primary)] cursor-pointer
+    }
+
+    .select-month-container form:hover input {
+        @apply border-[var(--color-theme-important-dark)] rounded-l-lg
     }
 
     .table-header {
@@ -213,8 +283,12 @@ body {
         @apply pr-0 sm:pr-3
     }
 
+    /* .table-container {
+        @apply overflow-auto;
+    } */
+
     .table {
-        @apply w-full overflow-auto
+        @apply w-full
     }
 
     .table th {
@@ -226,22 +300,22 @@ body {
     }
 
     .table thead tr th {
-        @apply bg-[var(--theme-one-primary)] text-[var(--theme-one-dark)] 
+        @apply bg-[var(--color-theme-tertiary)] text-[var(--theme-one-dark)]
     }
 
     .table thead tr th:hover {
-        @apply bg-[var(--theme-one-secondary)] text-[var(--theme-one-dark)] cursor-not-allowed
+        @apply bg-[var(--color-theme-tertiary-light)] text-[var(--theme-one-dark)] cursor-not-allowed
     }
 
 
 
-    .table tbody .tr-header:first-child {   
-        @apply bg-[var(--theme-one-neutral-light)] text-center font-bold cursor-pointer
+    .table tbody .tr-header:first-child {
+        @apply bg-[var(--color-theme-tertiary-light)] text-center font-bold cursor-pointer
     }
 
     .table tbody tr:hover,
     .table tbody .tr-header:first-child:hover {
-        @apply bg-[var(--theme-one-secondary)]
+        @apply bg-[var(--color-theme-tertiary)]
     }
 
     /* table tbody .tr-header {
@@ -254,11 +328,11 @@ body {
      */
 
     table tbody .tr-header .tr-header-important {
-        @apply font-bold bg-[var(--theme-one-tertiary)] text-[var(--theme-one-light)]
+        @apply font-bold bg-[var(--color-theme-tertiary-light)] text-[var(--color-theme-important)]
     }
 
-    table tbody .tr-header:hover> .tr-header-important {
-        @apply text-[var(--theme-one-dark)] bg-[var(--theme-one-tertiary-light)]
+    table tbody .tr-header:hover>.tr-header-important {
+        @apply text-[var(--color-dark)] bg-[var(--color-theme-important-light)];
     }
 
     .backdrop-loading {

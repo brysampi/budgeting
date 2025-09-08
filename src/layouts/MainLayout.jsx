@@ -17,6 +17,7 @@ const MainLayout = () => {
 
     const routes = [
         { path: "/", title: "Bell Budgeting App" },
+        { path: "/wallets/:paraMonth", title: "Wallets" },
         { path: "/income/:paraMonth", title: "Income" },
         { path: "/savings/:paraMonth", title: "Savings Summary / Category" },
         { path: "/savingsTracker/:paraMonth", title: "Savings Tracker" },
@@ -66,8 +67,8 @@ const MainLayout = () => {
             <main
                 // ref={contentRef}
                 // onClick={() => setHideNav(false)}
-                className={`main-content transition-all duration-300 mt-[2.5vh] mb-[2.5vh] mr-5 
-                    ${hideNav ? 'ml-[60px]  sm:ml-[60px]' : 'ml-[60px]  sm:ml-[210px]'}
+                className={`main-content transition-all duration-300 m-[20px] mt-[2.5vh]
+                    ${hideNav ? 'ml-[60px]  sm:ml-[80px]' : 'ml-[60px]  sm:ml-[230px] '}
                     `}
                 onClick={() => {
                     if (window.innerWidth <= 768) {
@@ -75,7 +76,7 @@ const MainLayout = () => {
                     }
                 }}
             >
-                <Navbar title={currentRoute.title} paramMonth={paramMonth}/>
+                <Navbar title={currentRoute.title} paramMonth={paramMonth} />
                 <Outlet />
             </main>
 

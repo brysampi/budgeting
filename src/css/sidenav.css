@@ -1,9 +1,9 @@
 .sidenav-container {
-    @apply fixed z-[2] top-0 left-0 overflow-visible h-full;
+    @apply fixed z-[2] top-0 left-0 overflow-visible h-full
 }
 
 .sidenav {
-    @apply relative top-[2.5vh] ml-[20px] bg-[var(--theme-one-light)] h-[95vh] rounded-tr-lg flex flex-col justify-between sm:rounded-lg transition-all duration-300;
+    @apply relative top-[2.5vh] ml-[20px] bg-[var(--color-theme-secondary)] h-[95vh] rounded-tr-lg flex flex-col justify-between sm:rounded-lg;
 }
 
 .sidenav ul:not(:last-child) {
@@ -14,21 +14,22 @@
     @apply overflow-y-auto overflow-x-clip flex flex-col justify-between h-full
 }
 
-.sidenav>ul:last-child {
-    @apply bg-[var(--theme-one-tertiary)] mt-auto rounded-br-lg sm:rounded-b-lg
-}
+
 
 .sidenav ul li {
-    @apply p-[10px_18px] flex block cursor-pointer;
+    @apply p-[10px_18px] flex block cursor-pointer min-h-[44px]
 }
 
 .sidenav ul li.active {
-    @apply bg-[var(--theme-one-primary)] text-white font-semibold;
+    @apply bg-[var(--color-theme-important)] text-[var(--color-dark)] font-semibold;
 }
 
-.sidenav ul li a:hover,
-.sidenav ul li:hover {
-    @apply bg-[var(--theme-one-primary)] text-white font-semibold;
+/* .sidenav ul li:hover:not(.active) {
+    @apply text-[var(--color-theme-important)]  ;
+} */
+.sidenav ul a:hover:not(:first-child):not(.active),
+.sidenav ul:not(:first-child) li:hover:not(.active) {
+    @apply text-[var(--color-theme-important)];
 }
 
 /* .sidenav ul li span {
@@ -44,17 +45,21 @@
     /* @apply flex items-center justify-center; */
 }
 
+.sidenav>ul:last-child {
+    @apply bg-[var(--color-theme-tertiary)] mt-auto rounded-br-lg sm:rounded-b-lg
+}
+
 .sidenav .title {
     @apply text-center text-[var(--theme-one-primary)] font-bold text-xl p-5 mb-[10px];
 }
 
-.shrink {
+/* .shrink {
     @apply relative right-0 top-[5vh]
 }
 
 .shrink .shrink-icon {
     @apply absolute right-[-20px] z-[2] bg-[var(--theme-one-primary)] text-white h-[40px] w-[40px] rounded-full shadow flex items-center justify-center cursor-pointer;
-}
+} */
 
 .sidenav-link {
     @apply hidden sm:inline
@@ -72,9 +77,9 @@
         @apply h-full top-0 ml-0 rounded-r-lg;
     }
 
-    .shrink {
+    /* .shrink {
         @apply top-[20px]
-    }
+    } */
 
     .backdrop-sidenav {
         @apply fixed top-0 left-0 w-full h-full bg-[var(--color-semi-transparent-black)] z-[1] pointer-events-auto;

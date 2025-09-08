@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { getCollectedDataRealTimeController, creteCollectedData } from '../firebase/controller'
 import { getMonthNames } from '../firebase/utils'
 import Logout from '../components/Logout'
+import Navbar from '../layouts/Navbar'
 
 export default function MonthSelection({ onLogOut }) {
     const [monthData, setMonthData] = useState('')
@@ -28,13 +29,24 @@ export default function MonthSelection({ onLogOut }) {
 
     return (
         <>
-        {/* <Loading onLoading={loading} /> */}
+            {/* <Loading onLoading={loading} /> */}
             {/* <Logout onLogout={onLogOut} /> */}
-            <div className='card card-no-bg'>
-                <form className='flex flex-wrap justify-end'
+            {/* <div className='card card-shadow card-no-hover flex flex-col justify-between my-[1rem]  sm:flex-row'>
+                <div className='flex items-center mb-[1rem] sm:mb-0 sm:text-left text-2xl font-bold'>
+                    Select Month
+                </div>
+
+                <div>
+                    Profile
+                </div>
+            </div> */}
+            <Navbar title={'Select Month'} />
+            <div className='select-month-container'>
+                <form className='form-select-month py-0'
                     onSubmit={collectData}>
-                    <div className='floating-label-wrapper w-full sm:max-w-[300px] bg-[var(--theme-one-light)] px-5 rounded-l-lg'>
+                    <div className=''>
                         <input
+                            className=''
                             type="month"
                             id="month"
                             value={monthData}
@@ -43,11 +55,12 @@ export default function MonthSelection({ onLogOut }) {
                         {/* <label htmlFor="month">Select Month</label> */}
                     </div>
 
-                    <button className="btn btn-primary w-full sm:max-w-[300px]"
-                        disabled={addNewMonth}>{addNewMonth ? 'Loading' : 'Select Month'}</button>
+                    <button className="btn btn-primary btn-select-month sm:min-w-[9rem] rounded-l-none text-[var(--color-dark)]"
+                        disabled={addNewMonth}>{addNewMonth ? 'Loading' : 'Select Month'}
+                    </button>
                 </form>
             </div>
-            <div className="card card-main sm:flex sm:flex-row sm:flex-wrap sm:justify-center sm:items-center">
+            <div className="sm:flex sm:flex-row sm:flex-wrap sm:justify-center sm:items-center">
                 {isFetching ? (
                     <h1>Fetching Data ...</h1>
                 ) : (
@@ -55,18 +68,18 @@ export default function MonthSelection({ onLogOut }) {
                         <h1>No Data Found ...</h1> :
                         monthCollectionData.map((item, index) => (
                             <div key={index + 1} className=''>
-                                {console.log('items to',item)}
+                                {console.log('items to', item)}
                                 <Link to={'/income/' +
                                     item.date.toDate().getFullYear()
                                     + '-' +
                                     (item.date.toDate().getMonth() + 1)
                                 }>
-                                    <div className="card card-two">
+                                    <div className="card card-shadow">
                                         <div className="title">
                                             {getMonthNames(item.date) + ' ' + item.date.toDate().getFullYear() + '    '}
                                         </div>
                                         <div className="details">
-                                            Remaining Income: <span className="title">{item.remainingIncome.toFixed(2)}</span>
+                                            Remaining Income: <span>{item.remainingIncome.toFixed(2)}</span>
 
                                         </div>
 

@@ -418,33 +418,8 @@ export async function expensesDefault(arrayData) {
     // updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
-export async function getAllDataController(table, setExpensesDefaultData, isFetching) {
-    try {
-        await getAllDataRealtime(table, setExpensesDefaultData, isFetching)
-    } catch (error) {
-        console.error("Error fetching Expenses Default in Controller:", error);
-    }
-}
-export async function getDataRealTimeController(table, inputDate, setData, isFetching) {
-    try {
-        await getDataRealTime(table, inputDate, setData, isFetching);
-    } catch (error) {
-        console.error(`Error fetching data from ${table} in Controller:`, error);
-    }
-}
-// --------------------------------------------------------------------
-export async function allUpdate(table, id, arrayData) {
-    const { date, ...removeDateData } = arrayData;
-    const updateResult = await updateData(table, id, removeDateData)
-    if (updateResult.status !== 'success') {
-        console.log('Failed to update data.');
-        return errorMsg('Failed to update data. Check console for error.');
-    }
-    console.log('Data updated successfully.');
-    updateCollectedData(arrayData.date);
-    return successMsg('Successfully Updated.', updateResult);
 
-}
+// -------------------------- Expenses Update -----------------------------------
 export async function updateExpenses_extension(expensesId, arrayData) {
     try {
         let { date, monthlyBudget, ...removeDateData } = arrayData;
@@ -587,8 +562,53 @@ export async function expensesTrackerUpdate(id, arrayData, paramMonth) {
     updateCollectedData(paramMonth);
     return successMsg('Successfully Updated.', updateResult);
 }
+// -------------------------- Wallets -----------------------------------
+export async function addWallets(arrayData) {
+    if (arrayData.description === '' || arrayData.date === '')
+        return errorMsg('Please fill up all fields.')
+    if (!getUserID())
+        return errorMsg('No LoggedIn User Found.')
+    const data = {
+        name: arrayData.name,
+        date: convertToTimeStamp(arrayData.date),
+        status: 'active',
+        user: getUserID(),
+    }
+    const addReturn = await addData('wallets', data)
+    updateCollectedData(arrayData.date)
+    return successMsg('Successfully Added.', addReturn)
+}
+// -------------------------------- Get Data ------------------------------------
+export async function getAllDataRealTimeController(table, setExpensesDefaultData, isFetching) {
+    try {
+        await getAllDataRealtime(table, setExpensesDefaultData, isFetching)
+    } catch (error) {
+        console.error("Error fetching Expenses Default in Controller:", error);
+    }
+}
+export async function getDataRealTimeController(table, inputDate, setData, isFetching) {
+    try {
+        await getDataRealTime(table, inputDate, setData, isFetching);
+    } catch (error) {
+        console.error(`Error fetching data from ${table} in Controller:`, error);
+    }
+}
+// --------------------------------------------------------------------
+export async function allUpdate(table, id, arrayData) {
+    const { date, ...removeDateData } = arrayData;
+    const updateResult = await updateData(table, id, removeDateData)
+    if (updateResult.status !== 'success') {
+        console.log('Failed to update data.');
+        return errorMsg('Failed to update data. Check console for error.');
+    }
+    console.log('Data updated successfully.');
+    updateCollectedData(arrayData.date);
+    return successMsg('Successfully Updated.', updateResult);
+
+}
 
 export async function updateDataController(table, updateId, arrayData) {
+    console.log('updateDataController', table, updateId, arrayData)
     let { date, ...removeDateData } = arrayData;
     if (!getUserID())
         return errorMsg('No LoggedIn User Found.')
@@ -602,7 +622,6 @@ export async function updateDataController(table, updateId, arrayData) {
     updateCollectedData(date);
     // return console.log('Removed Data Successfully.', removeDateData);
     return updateResult
-
 }
 // --------------------------------------------------------------------
 export async function logout() {

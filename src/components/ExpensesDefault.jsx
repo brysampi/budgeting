@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { expensesDefault, getAllDataController, deleteDataController } from '../firebase/controller';
+import { expensesDefault, getAllDataRealTimeController, deleteDataController } from '../firebase/controller';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const ExpensesDefault = () => {
@@ -41,7 +41,7 @@ const ExpensesDefault = () => {
     useEffect(() => {
         const returnExpensesDefault = async () => {
             setIsFetching(true);
-            return await getAllDataController('expensesDefault', setExpensesDefaultData, setIsFetching);
+            return await getAllDataRealTimeController('expensesDefault', setExpensesDefaultData, setIsFetching);
 
         }
         returnExpensesDefault();
