@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { logout } from '../firebase/controller';
 import '../css/sidenav.css';
-import { LuIndentDecrease, LuIndentIncrease, LuCalendarDays, LuCoins, LuHandCoins, LuClipboardList, LuNewspaper, LuShoppingBag, LuSettings, LuLogOut, LuCircleUserRound } from "react-icons/lu";
+import { LuIndentDecrease, LuIndentIncrease, LuCalendarDays, LuCoins, LuHandCoins, LuClipboardList, LuNewspaper, LuShoppingBag, LuSettings, LuLogOut, LuCircleUserRound,LuWallet  } from "react-icons/lu";
 import { LiaCalendar, LiaCoinsSolid, LiaUserCogSolid } from "react-icons/lia";
 
 export default function SideNav({ hide, sidenavRef }) {
@@ -32,6 +32,7 @@ export default function SideNav({ hide, sidenavRef }) {
     const hideText = hideNav ? 'inline sm:hidden' : 'hidden sm:inline';
     const menuItems = [
         { to: '/', label: 'Select Month', icon: <LuCalendarDays />, exact: true },
+        { to:`/wallets/${paramMonth}`, label: 'Wallets', icon: <LuWallet /> },
         { to: `/income/${paramMonth}`, label: 'Income', icon: <LiaCoinsSolid /> },
         // { to: `/savings/${paramMonth}`, label: 'Savings', icon: <LuHandCoins /> },
         // { to: `/savingsTracker/${paramMonth}`, label: 'Savings Tracker', icon: <LuClipboardList /> },

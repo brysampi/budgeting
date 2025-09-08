@@ -41,8 +41,8 @@ export default function MonthSelection({ onLogOut }) {
                 </div>
             </div> */}
             <Navbar title={'Select Month'} />
-            <div className='select-month-container '>
-                <form className='py-0'
+            <div className='select-month-container'>
+                <form className='form-select-month py-0'
                     onSubmit={collectData}>
                     <div className=''>
                         <input
@@ -55,7 +55,7 @@ export default function MonthSelection({ onLogOut }) {
                         {/* <label htmlFor="month">Select Month</label> */}
                     </div>
 
-                    <button className="btn btn-primary sm:min-w-[9rem] rounded-l-none text-[var(--color-dark)]"
+                    <button className="btn btn-primary btn-select-month sm:min-w-[9rem] rounded-l-none text-[var(--color-dark)]"
                         disabled={addNewMonth}>{addNewMonth ? 'Loading' : 'Select Month'}
                     </button>
                 </form>
