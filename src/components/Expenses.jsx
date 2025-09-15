@@ -1,17 +1,11 @@
 import { useState, useEffect } from 'react';
 import { expenses, getExpenses, deleteDataController, updateExpenses_extension } from '../firebase/controller';
-import { useParams, useNavigate,Link } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import Modal from '../layouts/Modal';
-import { LuPlus,LuArrowLeft,LuSettings  } from "react-icons/lu";
+import { LuPlus, LuArrowLeft, LuSettings } from "react-icons/lu";
 
 const Expenses = () => {
     const { paramMonth } = useParams();
-    const navigate = useNavigate();
-    useEffect(() => {
-        if (!paramMonth) {
-            navigate('/monthSelect'); // Redirect to home if paramMonth is missing
-        }
-    }, [paramMonth, navigate]);
     const [formCategory, setFormCategory] = useState('');
     const [formBudget, setFormBudget] = useState('');
     const [loading, setLoading] = useState(false);
@@ -90,48 +84,6 @@ const Expenses = () => {
     }
     return (
         <>
-            <Modal title={!updateDataStatus ? 'Add Savings' : 'Update Savings'} isOpen={isModalOpen} onClose={closeModal}>
-                <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
-                    <div className="floating-label-wrapper">
-                        <input
-                            type="text"
-                            id="categoryExpenses"
-                            placeholder="Category"
-                            value={formCategory}
-                            onChange={(e) => setFormCategory(e.target.value)}
-                        />
-                        <label htmlFor="categoryExpenses">Category</label>
-                    </div>
-                    <div className="floating-label-wrapper">
-                        <input
-                            type='text'
-                            id="budgetExpenses"
-                            placeholder="Budget"
-                            value={formBudget}
-                            onChange={(e) => setFormBudget(e.target.value)}
-                        />
-                        <label htmlFor="budgetExpenses">Budget:</label>
-                    </div>
-                    <div className="multi-btn">
-                        <button
-                            className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
-                            type="submit"
-                            disabled={loading}>{
-                                loading ? "Loading" :
-                                    !updateDataStatus ? 'Add' : 'Update'
-                            }
-                        </button>
-                        <button
-                            className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
-                            type="button"
-                            onClick={clearForm}
-                            disabled={loading}>{
-                                loading ? 'Loading' :
-                                    !updateDataStatus ? 'Clear' : 'Cancel'}
-                        </button>
-                    </div>
-                </form>
-            </Modal >
             <div className="card-container">
                 <div className="card card-no-bg flex-1"> </div>
                 <div className="card card-main">
@@ -217,6 +169,48 @@ const Expenses = () => {
                     </tbody>
                 </table>
             </div>
+            <Modal title={!updateDataStatus ? 'Add Savings' : 'Update Savings'} isOpen={isModalOpen} onClose={closeModal}>
+                <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
+                    <div className="floating-label-wrapper">
+                        <input
+                            type="text"
+                            id="categoryExpenses"
+                            placeholder="Category"
+                            value={formCategory}
+                            onChange={(e) => setFormCategory(e.target.value)}
+                        />
+                        <label htmlFor="categoryExpenses">Category</label>
+                    </div>
+                    <div className="floating-label-wrapper">
+                        <input
+                            type='text'
+                            id="budgetExpenses"
+                            placeholder="Budget"
+                            value={formBudget}
+                            onChange={(e) => setFormBudget(e.target.value)}
+                        />
+                        <label htmlFor="budgetExpenses">Budget:</label>
+                    </div>
+                    <div className="multi-btn">
+                        <button
+                            className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
+                            type="submit"
+                            disabled={loading}>{
+                                loading ? "Loading" :
+                                    !updateDataStatus ? 'Add' : 'Update'
+                            }
+                        </button>
+                        <button
+                            className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
+                            type="button"
+                            onClick={clearForm}
+                            disabled={loading}>{
+                                loading ? 'Loading' :
+                                    !updateDataStatus ? 'Clear' : 'Cancel'}
+                        </button>
+                    </div>
+                </form>
+            </Modal >
         </>
     )
 

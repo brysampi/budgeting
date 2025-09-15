@@ -1,18 +1,19 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { expensesTracker, getExpensesTracker, getExpenses, expensesTrackerUpdate, deleteDataController, checkStaticData } from '../firebase/controller';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useOutletContext } from 'react-router-dom';
 import Modal from '../layouts/Modal';
 import { LuPlus, LuArrowBigUpDash, LuArrowBigDownDash } from "react-icons/lu";
 import { convertToDate, getLastDayOfTheMonth } from '../firebase/utils';
 import Loading from '../layouts/Loading';
 
 const ExpensesTracker = () => {
+    const { wallets, walletsData } = useOutletContext();
     const { paramMonth } = useParams();
-
     const [formCategory, setFormCategory] = useState('');
     const [formDescription, setFormDescription] = useState('');
     const [formPrice, setFormPrice] = useState('');
     const [formDiscount, setFormDiscount] = useState('');
+    const [formWallet, setFormWallet] = useState('');
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [isFetchingTracker, setIsFetchingTracker] = useState(true);
@@ -49,7 +50,7 @@ const ExpensesTracker = () => {
         e.preventDefault();
         setLoading(true);
 
-        console.log('loading ba', loading)
+        // console.log('loading ba', loading)
 
         if (!formDescription || !formCategory || !formPrice)
             return console.log('Please fill up all fields.')
@@ -59,6 +60,7 @@ const ExpensesTracker = () => {
             description: formDescription,
             price: parseFloat(formPrice),
             discount: parseFloat(formDiscount),
+            wallet: formWallet,
             date: changeDateIsChecked ? changeDate : null,
         })
         // if (addData.status === 'success') {
@@ -76,11 +78,17 @@ const ExpensesTracker = () => {
             setIsFetching(true);
             await getExpenses(paramMonth, setExpensesData, setIsFetching, true);
             // setFormCategory();
-            await getExpensesTracker(paramMonth, setExpensesTrackerData, setIsFetchingTracker);
+            await getExpensesTracker(paramMonth, setExpensesTrackerData, setIsFetchingTracker, wallets);
             clearForm();
         }
         returnSavings();
-    }, []);
+        setFormWallet(wallets)
+    }, [wallets]);
+    useEffect(() => {
+        if (!formWallet && walletsData && walletsData.length > 0) {
+            setFormWallet(walletsData[walletsData.length - 1].id);
+        }
+    }, [walletsData, formWallet]);
 
     const updateSetData = (id, arrayData) => {
         setUpdateStatus(true);
@@ -91,6 +99,7 @@ const ExpensesTracker = () => {
         setFormDiscount(arrayData.discount)
         setIsModalOpen(true)
         setChangeDate(arrayData.date)
+        setFormWallet(arrayData.wallet)
     }
     const updateFormSubmit = async (e) => {
         e.preventDefault();
@@ -101,6 +110,7 @@ const ExpensesTracker = () => {
             description: formDescription,
             price: parseFloat(formPrice),
             discount: parseFloat(formDiscount),
+            wallet: formWallet,
         }
         if (changeDateIsChecked)
             data.date = changeDate;
@@ -173,6 +183,7 @@ const ExpensesTracker = () => {
                             <table className="table">
                                 <thead>
                                     <tr>
+                                        {/* <th>wallet</th> */}
                                         <th>Category</th>
                                         <th>Description</th>
                                         <th>Price</th>
@@ -224,6 +235,7 @@ const ExpensesTracker = () => {
                                                             // total1 += item.amount;
                                                             return (
                                                                 <tr key={index}>
+                                                                    {/* <td>{item.wallet}</td> */}
                                                                     <td>{item.categoryName}</td>
                                                                     <td>{item.description}</td>
                                                                     <td>{item.amount.toFixed(2)}</td>
@@ -241,6 +253,7 @@ const ExpensesTracker = () => {
                                                                             description: item.description,
                                                                             price: item.price,
                                                                             discount: item.discount,
+                                                                            wallet: item.wallet,
                                                                             date: convertToDate(item.date)
                                                                         }
                                                                     )
@@ -328,6 +341,21 @@ const ExpensesTracker = () => {
                             onChange={(e) => setFormDiscount(e.target.value)}
                         />
                         <label htmlFor="discountExpensesTracker">Discount</label>
+                    </div>
+                    <div className="floating-label-wrapper">
+                        <select
+                            id="selectWallet"
+                            placeholder="Select Wallet"
+                            className='input'
+                            value={formWallet}
+                            onChange={(e) => setFormWallet(e.target.value)}
+                        >
+                            {walletsData &&
+                                walletsData.map((data) => (
+                                    <option key={data.id} value={data.id}>{data.name}</option>
+                                )).reverse()
+                            }
+                        </select>
                     </div>
                     <input type="checkBox" name="changeDate" id="changeDate" value={changeDateIsChecked} onChange={(e) => setChangeDateIsChecked(e.target.checked)} />
                     <label htmlFor="changeDate">Change Date</label>

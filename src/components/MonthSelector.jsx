@@ -40,7 +40,7 @@ export default function MonthSelection({ onLogOut }) {
                     Profile
                 </div>
             </div> */}
-            <Navbar title={'Select Month'} />
+            {/* <Navbar title={'Select Month'} /> */}
             <div className='select-month-container'>
                 <form className='form-select-month py-0'
                     onSubmit={collectData}>

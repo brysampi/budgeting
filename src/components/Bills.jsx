@@ -1,23 +1,18 @@
 import { useState, useEffect } from 'react';
 import { addBills, getDataRealTimeController, deleteDataController, updateBills } from '../firebase/controller';
 import { convertToDate, convertToTimeStamp, getLastDayOfTheMonth } from '../firebase/utils';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate,useOutletContext } from 'react-router-dom';
 import Modal from '../layouts/Modal';
 import { LuPlus } from "react-icons/lu";
 
 const Bills = () => {
+    const { wallets, walletsData } = useOutletContext();
     const { paramMonth } = useParams();
-
-    const navigate = useNavigate();
-    useEffect(() => {
-        if (!paramMonth) {
-            navigate('/monthSelect');
-        }
-    }, [paramMonth, navigate]);
     const [formDescription, setFormDescription] = useState('');
     const [formDueDate, setFormDueDate] = useState(getLastDayOfTheMonth(paramMonth)); // Default to today's date
     const [formBudget, setFormBudget] = useState('');
     const [formActual, setFormActual] = useState('');
+    const [formWallet, setFormWallet] = useState('');
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [billsData, setBillsData] = useState([]);
@@ -40,6 +35,7 @@ const Bills = () => {
             dueDate: formDueDate,
             budget: !formBudget ? 0 : parseFloat(formBudget),
             actual: !formActual ? 0 : parseFloat(formActual),
+            wallet: formWallet,
             date: paramMonth,
         })
         if (addReturn.status === 'success') {
@@ -53,10 +49,16 @@ const Bills = () => {
     useEffect(() => {
         const returnBills = async () => {
             setIsFetching(true);
-            return await getDataRealTimeController('bills', paramMonth, setBillsData, setIsFetching);
+            return await getDataRealTimeController('bills', paramMonth, setBillsData, setIsFetching,wallets);
         }
         returnBills();
-    }, []);
+        setFormWallet(wallets)
+    }, [wallets]);
+    useEffect(() => {
+        if (!formWallet && walletsData && walletsData.length > 0) {
+            setFormWallet(walletsData[walletsData.length - 1].id);
+        }
+    }, [walletsData, formWallet]);
     const updateSetData = (id, arrayData) => {
         setUpdateStatus(true);
         setUpdateId(id)
@@ -66,6 +68,7 @@ const Bills = () => {
         setFormActual(arrayData.actual)
         setPaymentStatus(arrayData.paymentStatus)
         setIsModalOpen(true)
+        setFormWallet(arrayData.wallet)
     }
     const updateFormSubmit = async (e) => {
         e.preventDefault();
@@ -84,7 +87,8 @@ const Bills = () => {
             budget: !formBudget ? 0 : parseFloat(formBudget),
             actual: !formActual ? 0 : parseFloat(formActual),
             date: paramMonth,
-            paymentStatus: paymentStatus
+            paymentStatus: paymentStatus,
+            wallet: formWallet,
         });
 
         if (updateReturn.status === 'success') {
@@ -107,68 +111,6 @@ const Bills = () => {
     }
     return (
         <>
-            <Modal title={!updateDataStatus ? 'Add Income' : 'Update Income'} isOpen={isModalOpen} onClose={closeModal}>
-                <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
-                    <div className="floating-label-wrapper">
-                        <input
-                            type="text"
-                            id="descBills"
-                            placeholder="Description"
-                            value={formDescription}
-                            onChange={(e) => setFormDescription(e.target.value)}
-                        />
-                        <label htmlFor="descBills">description</label>
-                    </div>
-                    <div className="floating-label-wrapper">
-                        <input
-                            type="date"
-                            id="dueDateBills"
-                            placeholder="Due-Date"
-                            value={formDueDate}
-                            onChange={(e) => setFormDueDate(e.target.value)}
-                        />
-                        <label htmlFor="dueDateBills">Due-Date:</label>
-                    </div>
-                    <div className="floating-label-wrapper">
-                        <input
-                            type='text'
-                            id="budgetBills"
-                            placeholder="Budget"
-                            value={formBudget}
-                            onChange={(e) => setFormBudget(e.target.value)}
-                        />
-                        <label htmlFor="budgetBills">Budget:</label>
-                    </div>
-                    <div className="floating-label-wrapper">
-                        <input
-                            type="text"
-                            id="actualBills"
-                            placeholder="Actual"
-                            value={formActual}
-                            onChange={(e) => setFormActual(e.target.value)}
-                        />
-                        <label htmlFor="actualBills">Actual:</label>
-                    </div>
-                    <div className="multi-btn">
-                        <button
-                            className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
-                            type="submit"
-                            disabled={loading}>{
-                                loading ? "Loading" :
-                                    !updateDataStatus ? 'Add' : 'Update'
-                            }
-                        </button>
-                        <button
-                            className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
-                            type="button"
-                            onClick={clearForm}
-                            disabled={loading}>{
-                                loading ? 'Loading' :
-                                    !updateDataStatus ? 'Clear' : 'Cancel'}
-                        </button>
-                    </div>
-                </form>
-            </Modal >
             <div className="card-container">
                 <div className="card card-no-bg flex-1"></div>
                 <div className="card card-main">
@@ -211,6 +153,7 @@ const Bills = () => {
                                 <tr><td colSpan={6}>No Data Found</td></tr> :
                                 billsData.map((item, index) => (
                                     <tr key={index + 1}>
+                                        {/* <td>{item.wallet}</td> */}
                                         <td>{item.description}</td>
                                         <td>{convertToDate(item.dueDate)}</td>
                                         <td>{item.budget.toFixed(2)}</td>
@@ -226,6 +169,7 @@ const Bills = () => {
                                                     budget: item.budget,
                                                     actual: item.actual,
                                                     paymentStatus: !item.status ? '' : item.status,
+                                                    wallet: item.wallet
                                                 }
                                             )
                                             }>Update</button>
@@ -236,6 +180,83 @@ const Bills = () => {
                     </tbody>
                 </table>
             </div>
+            <Modal title={!updateDataStatus ? 'Add Income' : 'Update Income'} isOpen={isModalOpen} onClose={closeModal}>
+                <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
+                    <div className="floating-label-wrapper">
+                        <input
+                            type="text"
+                            id="descBills"
+                            placeholder="Description"
+                            value={formDescription}
+                            onChange={(e) => setFormDescription(e.target.value)}
+                        />
+                        <label htmlFor="descBills">description</label>
+                    </div>
+                    <div className="floating-label-wrapper">
+                        <input
+                            type="date"
+                            id="dueDateBills"
+                            placeholder="Due-Date"
+                            value={formDueDate}
+                            onChange={(e) => setFormDueDate(e.target.value)}
+                        />
+                        <label htmlFor="dueDateBills">Due-Date:</label>
+                    </div>
+                    <div className="floating-label-wrapper">
+                        <input
+                            type='text'
+                            id="budgetBills"
+                            placeholder="Budget"
+                            value={formBudget}
+                            onChange={(e) => setFormBudget(e.target.value)}
+                        />
+                        <label htmlFor="budgetBills">Budget:</label>
+                    </div>
+                    <div className="floating-label-wrapper">
+                        <input
+                            type="text"
+                            id="actualBills"
+                            placeholder="Actual"
+                            value={formActual}
+                            onChange={(e) => setFormActual(e.target.value)}
+                        />
+                        <label htmlFor="actualBills">Actual:</label>
+                    </div>
+                    <div className="floating-label-wrapper">
+                        <select
+                            id="selectWallet"
+                            placeholder="Select Wallet"
+                            className='input'
+                            value={formWallet}
+                            onChange={(e) => setFormWallet(e.target.value)}
+                        >
+                            {walletsData &&
+                                walletsData.map((data) => (
+                                    <option key={data.id} value={data.id}>{data.name}</option>
+                                )).reverse()
+                            }
+                        </select>
+                    </div>
+                    <div className="multi-btn">
+                        <button
+                            className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
+                            type="submit"
+                            disabled={loading}>{
+                                loading ? "Loading" :
+                                    !updateDataStatus ? 'Add' : 'Update'
+                            }
+                        </button>
+                        <button
+                            className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
+                            type="button"
+                            onClick={clearForm}
+                            disabled={loading}>{
+                                loading ? 'Loading' :
+                                    !updateDataStatus ? 'Clear' : 'Cancel'}
+                        </button>
+                    </div>
+                </form>
+            </Modal >
         </>
     )
 

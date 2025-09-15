@@ -7,6 +7,8 @@ import { useState, useRef, useEffect } from 'react';
 const MainLayout = () => {
     const { paramMonth } = useParams();
     // console.log('paramonth to ', paramMonth)
+    const [wallets, setWallets] = useState('')
+    const [walletsData, setWalletsData] = useState([])
 
     const navigate = useNavigate();
     useEffect(() => {
@@ -49,6 +51,7 @@ const MainLayout = () => {
         }
         // setHideNav(true);
     }
+
     useEffect(() => {
         document.addEventListener('mousedown', clickOutSideOfSidenav)
 
@@ -76,8 +79,15 @@ const MainLayout = () => {
                     }
                 }}
             >
-                <Navbar title={currentRoute.title} paramMonth={paramMonth} />
-                <Outlet />
+                <Navbar
+                    title={currentRoute.title}
+                    paramMonth={paramMonth}
+                    wallets={wallets}
+                    setWallets={setWallets}
+                    walletsData={walletsData}
+                    setWalletsData={setWalletsData}
+                />
+                <Outlet context={{ wallets, walletsData }} />
             </main>
 
         </div>

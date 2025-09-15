@@ -83,17 +83,23 @@ export async function getData(table, inputDate) {
         return errorMsg('Failed to fetch data. Check console for error.');
     }
 }
-export async function getDataRealTime(table, inputDate, setData, isFetching) {
+export async function getDataRealTime(table, inputDate, setData, isFetching, wallet = '') {
+    // console.log("Fetching data for month: ", inputDate, " and wallet: ", wallet);
     try {
         const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
-        const que = query(
-            collection(db, table),
+        const constraints = [
             where("user", "==", getUserID()),
             where("date", ">=", startOfMonth),
             where("date", "<=", endOfMonth),
             orderBy("date", "desc"),
             orderBy("createdAt", "desc"),
-        );
+        ];
+        if (wallet !== '')
+            constraints.push(where("wallet", "==", wallet));
+
+        const que = query(collection(db, table), ...constraints);
+        // Add conditionally
+
         const unsubscribe = onSnapshot(que, async (snapshot) => {
             const promises = snapshot.docs.map(async (docSnap) => ({
                 id: docSnap.id,
@@ -128,25 +134,60 @@ export async function getDataById(table, data) {
         return errorMsg('Failed to fetch data. Check console for error.');
     }
 }
-export async function getAllData(table, inputDate) {
+export async function getAllData(table, debug = false) {
     try {
-        const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
         const usersRef = collection(db, table);
         const que = query(
             usersRef,
             where("user", "==", getUserID()),
             orderBy("createdAt", "asc"),
         );
+
         const querySnapshot = await getDocs(que);
-        // console.log(querySnapshot.docs)
-        const promises = querySnapshot.docs.map(async (docSnap) => {
-            return {
-                id: docSnap.id,
-                ...docSnap.data(),
-            };
-        })
-        const resolvedData = await Promise.all(promises);
-        return resolvedData;
+
+        if (debug) {
+            console.log(`Fetched ${querySnapshot.size} documents for expensesId: ${expensesId}`);
+        }
+
+        if (querySnapshot.empty) {
+            return null;
+        }
+
+        const data = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        }));
+        return data;
+    } catch (error) {
+        console.error("Error fetching: ", error);
+        return [];
+    }
+}
+export async function getAllDataActive(table, debug = false) {
+    try {
+        const usersRef = collection(db, table);
+        const que = query(
+            usersRef,
+            where("user", "==", getUserID()),
+            where("status", "==", "active"),
+            orderBy("createdAt", "asc"),
+        );
+
+        const querySnapshot = await getDocs(que);
+
+        if (debug) {
+            console.log(`Fetched ${querySnapshot.size} documents for expensesId: ${expensesId}`);
+        }
+
+        if (querySnapshot.empty) {
+            return null;
+        }
+
+        const docSnap = querySnapshot.docs[0];
+        return {
+            id: docSnap.id,
+            ...docSnap.data(),
+        };
     } catch (error) {
         console.error("Error fetching: ", error);
         return [];
@@ -176,18 +217,23 @@ export async function getAllDataRealtime(table, setData, isFetching) {
         throw new Error("Failed to fetch data");
     }
 }
-export async function getDataCategoryRealTime(table, inputDate, setData, isFetching) {
+export async function getDataCategoryRealTime(table, inputDate, setData, isFetching, wallet = '') {
     try {
         const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
-        const que = query(
-            collection(db, table.tracker),
+        
+         const constraints = [
             where("user", "==", getUserID()),
             where("date", ">=", startOfMonth),
             where("date", "<=", endOfMonth),
             orderBy("date", "desc"),
             orderBy("createdAt", "desc"),
-        );
+        ];
 
+        if (wallet !== '')
+            constraints.push(where("wallet", "==", wallet));
+
+        const que = query(collection(db, table.tracker),...constraints);
+        
         const unsubscribe = onSnapshot(que, async (snapshot) => {
             let groupedByDay = []
             const promises = snapshot.docs.map(async (docSnap) => {

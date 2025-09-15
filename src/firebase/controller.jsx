@@ -2,7 +2,7 @@ import { serverTimestamp } from 'firebase/firestore';
 import Cookies from 'js-cookie';
 import { successMsg, errorMsg, getUserID, convertToTimeStamp, convertToDate } from '../firebase/utils';
 import {
-    addData, updateData, deleteData, getData, getUser, getAllData, getAllDataRealtime, getDataById,
+    addData, updateData, deleteData, getData, getUser, getAllData, getAllDataRealtime, getDataById, getAllDataActive,
     getDataRealTime,
     //  getExpensesTrackerDataRealTime, 
     getDataCategoryRealTime,
@@ -222,13 +222,13 @@ export async function savingsTracker(arrayData) {
     updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
-export async function getSavingsTracker(inputDate, setExpensesData, isFetching) {
+export async function getSavingsTracker(inputDate, setExpensesData, isFetching, wallet = '') {
     try {
         const table = {
             main: 'savings',
             tracker: 'savingsTracker'
         }
-        await getDataCategoryRealTime(table, inputDate, setExpensesData, isFetching);
+        await getDataCategoryRealTime(table, inputDate, setExpensesData, isFetching, wallet);
     } catch (error) {
         console.error("Error fetching Expenses Tracker in Controller:", error);
     }
@@ -386,13 +386,13 @@ export async function expensesTracker(arrayData) {
     updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
-export async function getExpensesTracker(inputDate, setExpensesData, isFetching) {
+export async function getExpensesTracker(inputDate, setExpensesData, isFetching, wallet = '') {
     try {
         const table = {
             main: 'expenses',
             tracker: 'expensesTracker'
         }
-        await getDataCategoryRealTime(table, inputDate, setExpensesData, isFetching);
+        await getDataCategoryRealTime(table, inputDate, setExpensesData, isFetching, wallet);
     } catch (error) {
         console.error("Error fetching Expenses Tracker in Controller:", error);
     }
@@ -549,6 +549,7 @@ export async function expensesTrackerUpdate(id, arrayData, paramMonth) {
         price: arrayData.price,
         discount: discountPrice,
         amount: arrayData.price - discountPrice,
+        wallet: arrayData.wallet,
     }
     if (arrayData.date)
         data.date = convertToTimeStamp(arrayData.date)
@@ -578,7 +579,30 @@ export async function addWallets(arrayData) {
     updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
+export async function getWalletData(table, debug = false) {
+    try {
+        return await getAllDataActive(table, debug);
+    } catch (error) {
+        console.error(`Error fetching data from ${table} in Controller:`, error);
+    }
+}
 // -------------------------------- Get Data ------------------------------------
+export async function getDataController(table, inputDate) {
+    try {
+        return await getData(table, inputDate);
+    } catch (error) {
+        console.error(`Error fetching data from ${table} in Controller:`, error);
+    }
+}
+export async function getAllDataController(table, debug = false) {
+    try {
+        return await getAllData(table, debug);
+        // const test =  await getAllData(table, debug);
+        // console.log('getAllDataController', test);
+    } catch (error) {
+        console.error(`Error fetching data from ${table} in Controller:`, error);
+    }
+}
 export async function getAllDataRealTimeController(table, setExpensesDefaultData, isFetching) {
     try {
         await getAllDataRealtime(table, setExpensesDefaultData, isFetching)
@@ -586,15 +610,20 @@ export async function getAllDataRealTimeController(table, setExpensesDefaultData
         console.error("Error fetching Expenses Default in Controller:", error);
     }
 }
-export async function getDataRealTimeController(table, inputDate, setData, isFetching) {
+export async function getDataRealTimeController(table, inputDate, setData, isFetching, wallet = '') {
     try {
-        await getDataRealTime(table, inputDate, setData, isFetching);
+        console.log('getDataRealTimeController', wallet)
+        await getDataRealTime(table, inputDate, setData, isFetching, wallet);
     } catch (error) {
         console.error(`Error fetching data from ${table} in Controller:`, error);
     }
 }
 // --------------------------------------------------------------------
+// Not Used Anymore
 export async function allUpdate(table, id, arrayData) {
+    if (!getUserID())
+        return errorMsg('No LoggedIn User Found.')
+
     const { date, ...removeDateData } = arrayData;
     const updateResult = await updateData(table, id, removeDateData)
     if (updateResult.status !== 'success') {
@@ -604,15 +633,13 @@ export async function allUpdate(table, id, arrayData) {
     console.log('Data updated successfully.');
     updateCollectedData(arrayData.date);
     return successMsg('Successfully Updated.', updateResult);
-
 }
-
 export async function updateDataController(table, updateId, arrayData) {
-    console.log('updateDataController', table, updateId, arrayData)
-    let { date, ...removeDateData } = arrayData;
     if (!getUserID())
         return errorMsg('No LoggedIn User Found.')
 
+    let { date, ...removeDateData } = arrayData;
+    console.log('updateDataController', table, updateId, removeDateData)
     const updateResult = await updateData(table, updateId, removeDateData);
     if (updateResult.status !== 'success') {
         console.log('Failed to update data.');
@@ -620,7 +647,6 @@ export async function updateDataController(table, updateId, arrayData) {
     }
     console.log('Data updated successfully.', removeDateData);
     updateCollectedData(date);
-    // return console.log('Removed Data Successfully.', removeDateData);
     return updateResult
 }
 // --------------------------------------------------------------------

@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LuPlus } from 'react-icons/lu';
 import Modal from '../layouts/Modal';
 import { useParams } from 'react-router-dom';
-import { addWallets, getAllDataRealTimeController,updateDataController } from '../firebase/controller';
-
+import { addWallets, getAllDataRealTimeController,updateDataController,deleteDataController  } from '../firebase/controller';
 
 const Wallets = () => {
     const { paramMonth } = useParams();
@@ -180,7 +179,7 @@ const Wallets = () => {
                                         <td>{item.status}</td>
                                         {/* <td>{convertToDate(item.paidAt)}</td> */}
                                         <td>
-                                            {/* <button onClick={async () => { await deleteDataController('bills', item.id) }}>Delete</button> */}
+                                            {/* <button onClick={async () => { await deleteDataController('wallets', item.id) }}>Delete</button> */}
                                             <button onClick={() => updateSetData(item.id,
                                                 {
                                                     name: item.name,

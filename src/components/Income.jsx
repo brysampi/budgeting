@@ -1,26 +1,23 @@
 import { useState, useEffect } from 'react';
 import { income, getDataRealTimeController, deleteDataController, updateDataController } from '../firebase/controller';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
 import Modal from '../layouts/Modal';
 import { LuPlus } from "react-icons/lu";
 
 const Income = () => {
+    const { wallets, walletsData } = useOutletContext();
     const { paramMonth } = useParams();
-    const navigate = useNavigate();
-    useEffect(() => {
-        if (!paramMonth) {
-            navigate('/monthSelect'); // Redirect to home if paramMonth is missing
-        }
-    }, [paramMonth, navigate]);
     const [formDescription, setFormDescription] = useState('');
     const [formExpected, setFormExpected] = useState('');
     const [formAmount, setFormAmount] = useState('');
+    const [formWallet, setFormWallet] = useState('');
     const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [incomeData, setIncomeData] = useState([]);
     const [updateDataStatus, setUpdateStatus] = useState(false);
     const [updateId, setUpdateId] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
+
 
     const fromSubmit = async (e) => {
         e.preventDefault();
@@ -31,10 +28,11 @@ const Income = () => {
             console.log('Please fill up all fields.')
             return
         }
-        const addData = await income({
+        const addData = income({
             description: formDescription,
             expected: !formExpected ? 0 : parseFloat(formExpected),
             amount: !formAmount ? 0 : parseFloat(formAmount),
+            wallet: formWallet,
             date: paramMonth,
         })
         if (addData.status === 'success') {
@@ -45,13 +43,21 @@ const Income = () => {
             setLoading(false);
         console.log(addData.message);
     }
+
     useEffect(() => {
         const returnIncome = async () => {
             setIsFetching(true);
-            return await getDataRealTimeController('income', paramMonth, setIncomeData, setIsFetching);
+            return await getDataRealTimeController('income', paramMonth, setIncomeData, setIsFetching, wallets);
         }
         returnIncome();
-    }, []);
+        setFormWallet(wallets)
+    }, [wallets]);
+    useEffect(() => {
+        if (!formWallet && walletsData && walletsData.length > 0) {
+            setFormWallet(walletsData[walletsData.length - 1].id);
+        }
+    }, [walletsData, formWallet]);
+    
     const updateSetData = (id, arrayData) => {
         setUpdateStatus(true);
         setUpdateId(id)
@@ -59,6 +65,7 @@ const Income = () => {
         setFormExpected(arrayData.expected)
         setFormAmount(arrayData.amount)
         setIsModalOpen(true)
+        setFormWallet(arrayData.wallet)
     }
     const updateFormSubmit = async (e) => {
         e.preventDefault();
@@ -73,6 +80,7 @@ const Income = () => {
             description: formDescription,
             expected: !formExpected ? 0 : parseFloat(formExpected),
             amount: !formAmount ? 0 : parseFloat(formAmount),
+            wallet: formWallet,
             date: paramMonth,
         }
         const updateExpenses = await updateDataController('income', updateId, data);
@@ -137,6 +145,7 @@ const Income = () => {
                                                     description: item.description,
                                                     expected: item.expected,
                                                     amount: item.amount,
+                                                    wallet: item.wallet
                                                 }
                                             )
                                             }>Update</button>
@@ -179,6 +188,21 @@ const Income = () => {
                             onChange={(e) => setFormAmount(e.target.value)}
                         />
                         <label htmlFor="amountIncome">Amount</label>
+                    </div>
+                    <div className="floating-label-wrapper">
+                        <select
+                            id="selectWallet"
+                            placeholder="Select Wallet"
+                            className='input'
+                            value={formWallet}
+                            onChange={(e) => setFormWallet(e.target.value)}
+                        >
+                            {walletsData &&
+                                walletsData.map((data) => (
+                                    <option key={data.id} value={data.id}>{data.name}</option>
+                                )).reverse()
+                            }
+                        </select>
                     </div>
                     <div className="multi-btn">
                         <button
