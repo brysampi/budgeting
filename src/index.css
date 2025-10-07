@@ -60,6 +60,7 @@
     --color-theme-important: #FFB22C;
     --color-theme-important-light: #fdbf54;
     --color-theme-important-dark: #ac781f;
+    --color-theme-important-low: #ffb22c1f;
 
     --color-light: #fff9ef;
     --color-dark: #000000;
@@ -115,7 +116,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
     }
 
     .floating-label-wrapper label {
-        @apply text-[var(--color-light)] font-bold absolute left-[10px] top-[20px] text-[0.9rem] transition-all duration-200 ease-in-out pointer-events-none;
+        @apply text-[var(--color-theme-secondary)] font-bold absolute left-[10px] top-[20px] text-[0.9rem] transition-all duration-200 ease-in-out pointer-events-none;
     }
 
     .floating-label-wrapper input:focus,
@@ -130,6 +131,15 @@ input[type="month"]::-webkit-calendar-picker-indicator {
     .floating-label-wrapper input:not(:placeholder-shown)+label,
     .floating-label-wrapper .input:not(:placeholder-shown)+label {
         @apply text-[var(--color-theme-secondary)] top-[0px] left-[10px] text-[0.9rem] px-[2px] py-0;
+    }
+
+    /* Change Border and Text when Focused */
+    .floating-label-wrapper input:focus {
+        @apply border-[var(--color-theme-important)];
+    }
+
+    .floating-label-wrapper input:focus+label {
+        @apply text-[var(--color-theme-important)];
     }
 
     /* Inputs in Login page */
@@ -163,11 +173,15 @@ input[type="month"]::-webkit-calendar-picker-indicator {
     }
 
     .btn {
-        @apply shadow-[0px_0px_5px_rgba(0,0,0,0.3)] rounded-lg py-2 px-6
+        @apply shadow-[0px_0px_5px_rgba(0,0,0,0.3)] rounded-lg py-2 px-6 border-[1px] border-solid border-transparent
     }
 
     .multi-btn {
         @apply flex flex-row gap-2 justify-between;
+    }
+
+    .multi-btn-evenly {
+        @apply flex flex-row gap-2 justify-evenly;
     }
 
     .btn-primary {
@@ -175,7 +189,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
     }
 
     .btn-primary:hover {
-        @apply bg-[var(--color-theme-important-dark)] text-[var(--color-light)];
+        @apply bg-[var(--color-theme-important-dark)] border-[var(--color-theme-important-dark)] text-[var(--color-light)];
     }
 
     .btn-primary-gradient {
@@ -183,11 +197,11 @@ input[type="month"]::-webkit-calendar-picker-indicator {
     }
 
     .btn-cancel {
-        @apply bg-[var(--color-theme-tertiary)] text-[var(--color-light)] cursor-pointer;
+        @apply bg-transparent text-[var(--color-light)] cursor-pointer border-[1px] border-solid border-[var(--color-theme-important)];
     }
 
     .btn-cancel:hover {
-        @apply bg-[var(--theme-one-neutral)] text-[var(--color-dark)];
+        @apply bg-[var(--color-theme-important-low)] text-[var(--color-theme-important)];
     }
 
     .multi-card>.card {
@@ -248,7 +262,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
     }
 
     .select-month-container {
-        @apply flex flex-col items-center mb-[1rem] 
+        @apply flex flex-col items-center mb-[1rem]
     }
 
     .select-month-container form {

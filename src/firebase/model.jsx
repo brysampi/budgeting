@@ -145,9 +145,8 @@ export async function getAllData(table, debug = false) {
 
         const querySnapshot = await getDocs(que);
 
-        if (debug) {
+        if (debug)
             console.log(`Fetched ${querySnapshot.size} documents for expensesId: ${expensesId}`);
-        }
 
         if (querySnapshot.empty) {
             return null;
@@ -175,9 +174,8 @@ export async function getAllDataActive(table, debug = false) {
 
         const querySnapshot = await getDocs(que);
 
-        if (debug) {
+        if (debug) 
             console.log(`Fetched ${querySnapshot.size} documents for expensesId: ${expensesId}`);
-        }
 
         if (querySnapshot.empty) {
             return null;
@@ -191,6 +189,31 @@ export async function getAllDataActive(table, debug = false) {
     } catch (error) {
         console.error("Error fetching: ", error);
         return [];
+    }
+}
+export async function getAllDataActiveRealTime(table, setData, isFetching) {
+    try {
+        const que = query(
+            collection(db, table),
+            where("user", "==", getUserID()),
+            where("status", "==", "active"),
+            orderBy("date", "desc"),
+            orderBy("createdAt", "desc"),
+        );
+        const unsubscribe = onSnapshot(que, async (snapshot) => {
+            const promises = snapshot.docs.map(async (docSnap) => ({
+                id: docSnap.id,
+                ...docSnap.data(),
+            }));
+            const resolvedData = await Promise.all(promises);
+            setData(resolvedData);
+            isFetching(false);
+            return resolvedData;
+        });
+        return unsubscribe;
+    } catch (error) {
+        console.error("Error fetching data: ", error);
+        throw new Error("Failed to fetch data");
     }
 }
 export async function getAllDataRealtime(table, setData, isFetching) {
@@ -220,8 +243,8 @@ export async function getAllDataRealtime(table, setData, isFetching) {
 export async function getDataCategoryRealTime(table, inputDate, setData, isFetching, wallet = '') {
     try {
         const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
-        
-         const constraints = [
+
+        const constraints = [
             where("user", "==", getUserID()),
             where("date", ">=", startOfMonth),
             where("date", "<=", endOfMonth),
@@ -232,8 +255,8 @@ export async function getDataCategoryRealTime(table, inputDate, setData, isFetch
         if (wallet !== '')
             constraints.push(where("wallet", "==", wallet));
 
-        const que = query(collection(db, table.tracker),...constraints);
-        
+        const que = query(collection(db, table.tracker), ...constraints);
+
         const unsubscribe = onSnapshot(que, async (snapshot) => {
             let groupedByDay = []
             const promises = snapshot.docs.map(async (docSnap) => {
@@ -622,9 +645,8 @@ export async function getExtensionByExpenses(expensesId, inputDate, debug = fals
         );
         const querySnapshot = await getDocs(expensesQuery);
 
-        if (debug) {
+        if (debug)
             console.log(`Fetched ${querySnapshot.size} documents for expensesId: ${expensesId}`);
-        }
 
         if (querySnapshot.empty) {
             return null;
@@ -640,7 +662,6 @@ export async function getExtensionByExpenses(expensesId, inputDate, debug = fals
         return [];
     }
 }
-
 
 // --------------------------------------------------------------------
 export async function updateData(table, id, arrayData) {

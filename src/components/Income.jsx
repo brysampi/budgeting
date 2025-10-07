@@ -1,117 +1,61 @@
 import { useState, useEffect } from 'react';
-import { income, getDataRealTimeController, deleteDataController, updateDataController } from '../firebase/controller';
-import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
+import { getDataRealTimeController, deleteDataController } from '../firebase/controller';
+import { useParams, useOutletContext } from 'react-router-dom';
+import { LuPlus, LuTrash2, LuSquarePen } from 'react-icons/lu';
 import Modal from '../layouts/Modal';
-import { LuPlus } from "react-icons/lu";
+import ModalForms from './ModalForms';
 
 const Income = () => {
-    const { wallets, walletsData } = useOutletContext();
+    const selectedWallet = useOutletContext();
     const { paramMonth } = useParams();
-    const [formDescription, setFormDescription] = useState('');
-    const [formExpected, setFormExpected] = useState('');
-    const [formAmount, setFormAmount] = useState('');
-    const [formWallet, setFormWallet] = useState('');
-    const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [incomeData, setIncomeData] = useState([]);
     const [updateDataStatus, setUpdateStatus] = useState(false);
-    const [updateId, setUpdateId] = useState('');
+    const [updateData, setUpdateData] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-
-
-    const fromSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        if (!formDescription || !formExpected) {
-            setLoading(false);
-            alert('Please fill up all fields.')
-            console.log('Please fill up all fields.')
-            return
-        }
-        const addData = income({
-            description: formDescription,
-            expected: !formExpected ? 0 : parseFloat(formExpected),
-            amount: !formAmount ? 0 : parseFloat(formAmount),
-            wallet: formWallet,
-            date: paramMonth,
-        })
-        if (addData.status === 'success') {
-            console.log(addData.message);
-            setLoading(false);
-            clearForm();
-        } else
-            setLoading(false);
-        console.log(addData.message);
-    }
 
     useEffect(() => {
         const returnIncome = async () => {
             setIsFetching(true);
-            return await getDataRealTimeController('income', paramMonth, setIncomeData, setIsFetching, wallets);
+            return await getDataRealTimeController('income', paramMonth, setIncomeData, setIsFetching, selectedWallet);
         }
         returnIncome();
-        setFormWallet(wallets)
-    }, [wallets]);
-    useEffect(() => {
-        if (!formWallet && walletsData && walletsData.length > 0) {
-            setFormWallet(walletsData[walletsData.length - 1].id);
-        }
-    }, [walletsData, formWallet]);
-    
-    const updateSetData = (id, arrayData) => {
+    }, [selectedWallet]);
+
+    const updateSetData = (arrayData) => {
         setUpdateStatus(true);
-        setUpdateId(id)
-        setFormDescription(arrayData.description)
-        setFormExpected(arrayData.expected)
-        setFormAmount(arrayData.amount)
+        setUpdateData(arrayData)
         setIsModalOpen(true)
-        setFormWallet(arrayData.wallet)
     }
-    const updateFormSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
 
-        if (formDescription === '') {
-            setLoading(false);
-            return console.log('Please fill up all fields.')
-        }
-
-        let data = {
-            description: formDescription,
-            expected: !formExpected ? 0 : parseFloat(formExpected),
-            amount: !formAmount ? 0 : parseFloat(formAmount),
-            wallet: formWallet,
-            date: paramMonth,
-        }
-        const updateExpenses = await updateDataController('income', updateId, data);
-
-        if (updateExpenses.status === 'success') {
-            setLoading(false);
-            clearForm();
-            setUpdateStatus(false);
-        } else
-            setLoading(false);
-        console.log(updateExpenses.message);
-    }
-    const closeModal = () => {
-        clearForm();
-        setIsModalOpen(false)
-    }
     return (
         <>
+            <Modal title={!updateDataStatus ? 'Add Income' : 'Update Income'} isModalOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+                <ModalForms
+                    paramMonth={paramMonth}
+                    isModalOpen={isModalOpen}
+                    setIsModalOpen={setIsModalOpen}
+                    formType={'income'}
+                    selectedWallet={selectedWallet}
+                    isUpdate={updateDataStatus}
+                    setIsUpdate={setUpdateStatus}
+                    updateData={updateData}
+                    setUpdateData={setUpdateData}
+                />
+            </Modal >
             <div className="card-container">
-                <div className="card card-no-bg flex-1"> </div>
+                <div className="card card-no-bg flex-1"></div>
                 <div className="card card-main">
                 </div>
             </div>
             <div className="card card-main">
-                <div className='table-header'>
+                <div className="table-header">
                     <div>
                         {/* Table Title Here */}
                     </div>
                     <div>
                         <button
-                            className='btn btn-primary'
+                            className="btn btn-primary"
                             onClick={() => setIsModalOpen(true)}>
                             <span><LuPlus /></span>
                             <span>Add</span>
@@ -139,16 +83,25 @@ const Income = () => {
                                         <td>{item.expected.toFixed(2)}</td>
                                         <td>{item.amount.toFixed(2)}</td>
                                         <td>
-                                            {/* <button onClick={async () => { await deleteDataController('income', item.id) }}>Delete</button> */}
-                                            <button onClick={() => updateSetData(item.id,
-                                                {
-                                                    description: item.description,
-                                                    expected: item.expected,
-                                                    amount: item.amount,
-                                                    wallet: item.wallet
-                                                }
-                                            )
-                                            }>Update</button>
+                                            <div className="multi-btn-evenly">
+                                                <button
+                                                    className="btn btn-cancel"
+                                                    onClick={async () => { await deleteDataController('income', item.id) }}>
+                                                    <LuTrash2 />
+                                                </button>
+                                                <button
+                                                    className="btn btn-cancel"
+                                                    onClick={() => updateSetData(
+                                                        {
+                                                            id: item.id,
+                                                            description: item.description,
+                                                            expected: item.expected,
+                                                            amount: item.amount,
+                                                            wallet: item.wallet
+                                                        }
+                                                    )
+                                                    }><LuSquarePen /></button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))
@@ -156,85 +109,7 @@ const Income = () => {
                     </tbody>
                 </table>
             </div>
-            <Modal title={!updateDataStatus ? 'Add Income' : 'Update Income'} isOpen={isModalOpen} onClose={closeModal}>
-                {/* <form onSubmit={fromSubmit}> */}
-                <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
-                    <div className="floating-label-wrapper">
-                        <input
-                            type="text"
-                            id="descIncome"
-                            placeholder="Description"
-                            value={formDescription}
-                            onChange={(e) => setFormDescription(e.target.value)}
-                        />
-                        <label htmlFor="descIncome">Description</label>
-                    </div>
-                    <div className="floating-label-wrapper">
-                        <input
-                            type="text"
-                            id="expectedIncome"
-                            placeholder="Expected"
-                            value={formExpected}
-                            onChange={(e) => setFormExpected(e.target.value)}
-                        />
-                        <label htmlFor="expectedIncome">Expected</label>
-                    </div>
-                    <div className="floating-label-wrapper">
-                        <input
-                            type="text"
-                            id="amountIncome"
-                            placeholder="Amount"
-                            value={formAmount}
-                            onChange={(e) => setFormAmount(e.target.value)}
-                        />
-                        <label htmlFor="amountIncome">Amount</label>
-                    </div>
-                    <div className="floating-label-wrapper">
-                        <select
-                            id="selectWallet"
-                            placeholder="Select Wallet"
-                            className='input'
-                            value={formWallet}
-                            onChange={(e) => setFormWallet(e.target.value)}
-                        >
-                            {walletsData &&
-                                walletsData.map((data) => (
-                                    <option key={data.id} value={data.id}>{data.name}</option>
-                                )).reverse()
-                            }
-                        </select>
-                    </div>
-                    <div className="multi-btn">
-                        <button
-                            className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
-                            type="submit"
-                            disabled={loading}>{
-                                loading ? "Loading" :
-                                    !updateDataStatus ? 'Add' : 'Update'
-                            }
-                        </button>
-                        <button
-                            className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
-                            type="button"
-                            onClick={closeModal}
-                            disabled={loading}>{
-                                loading ? 'Loading' :
-                                    !updateDataStatus ? 'Close' : 'Cancel'}
-                        </button>
-                    </div>
-                </form>
-            </Modal >
         </>
     )
-
-    function clearForm() {
-        setFormDescription('')
-        setFormExpected('')
-        setFormAmount('')
-        setUpdateStatus(false)
-        setUpdateId('')
-        setLoading(false)
-    }
 }
 export default Income;
-

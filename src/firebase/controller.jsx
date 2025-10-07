@@ -2,7 +2,7 @@ import { serverTimestamp } from 'firebase/firestore';
 import Cookies from 'js-cookie';
 import { successMsg, errorMsg, getUserID, convertToTimeStamp, convertToDate } from '../firebase/utils';
 import {
-    addData, updateData, deleteData, getData, getUser, getAllData, getAllDataRealtime, getDataById, getAllDataActive,
+    addData, updateData, deleteData, getData, getUser, getAllData, getAllDataRealtime, getDataById, getAllDataActiveRealTime,
     getDataRealTime,
     //  getExpensesTrackerDataRealTime, 
     getDataCategoryRealTime,
@@ -162,6 +162,7 @@ export async function income(arrayData) {
         description: arrayData.description,
         expected: arrayData.expected,
         amount: arrayData.amount,
+        wallet: arrayData.wallet,
         date: convertToTimeStamp(arrayData.date),
         user: getUserID(),
     }
@@ -235,7 +236,7 @@ export async function getSavingsTracker(inputDate, setExpensesData, isFetching, 
 }
 
 // -------------------------- Bills -----------------------------------
-export async function addBills(arrayData) {
+export async function bills(arrayData) {
     if (arrayData.description === '' || arrayData.dueDate === '' || arrayData.budget === 0 || arrayData.date === '')
         return errorMsg('Please fill up all fields.')
 
@@ -579,13 +580,6 @@ export async function addWallets(arrayData) {
     updateCollectedData(arrayData.date)
     return successMsg('Successfully Added.', addReturn)
 }
-export async function getWalletData(table, debug = false) {
-    try {
-        return await getAllDataActive(table, debug);
-    } catch (error) {
-        console.error(`Error fetching data from ${table} in Controller:`, error);
-    }
-}
 // -------------------------------- Get Data ------------------------------------
 export async function getDataController(table, inputDate) {
     try {
@@ -612,8 +606,15 @@ export async function getAllDataRealTimeController(table, setExpensesDefaultData
 }
 export async function getDataRealTimeController(table, inputDate, setData, isFetching, wallet = '') {
     try {
-        console.log('getDataRealTimeController', wallet)
+        // console.log('getDataRealTimeController', wallet)
         await getDataRealTime(table, inputDate, setData, isFetching, wallet);
+    } catch (error) {
+        console.error(`Error fetching data from ${table} in Controller:`, error);
+    }
+}
+export async function getAllDataActiveRealTimeController(table, setData, isFetching) {
+    try {
+        return await getAllDataActiveRealTime(table, setData, isFetching);
     } catch (error) {
         console.error(`Error fetching data from ${table} in Controller:`, error);
     }
@@ -646,7 +647,7 @@ export async function updateDataController(table, updateId, arrayData) {
         return updateResult
     }
     console.log('Data updated successfully.', removeDateData);
-    updateCollectedData(date);
+    await updateCollectedData(date);
     return updateResult
 }
 // --------------------------------------------------------------------

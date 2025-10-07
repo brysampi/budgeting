@@ -1,107 +1,47 @@
 import { useState, useEffect } from 'react';
-import { savings, getSavings, deleteDataController, updateDataController } from '../firebase/controller';
-import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
+import { getSavings, deleteDataController } from '../firebase/controller';
+import { useParams, useOutletContext, Link } from 'react-router-dom';
+import { LuPlus, LuArrowLeft, LuTrash2, LuSquarePen } from "react-icons/lu";
 import Modal from '../layouts/Modal';
-import { LuPlus } from "react-icons/lu";
+import ModalForms from './ModalForms';
 
 const Savings = () => {
-    const { wallets, walletsData } = useOutletContext();
+    const selectedWallet = useOutletContext();
     const { paramMonth } = useParams();
-    const navigate = useNavigate();
-    useEffect(() => {
-        if (!paramMonth) {
-            navigate('/monthSelect'); // Redirect to home if paramMonth is missing
-        }
-    }, [paramMonth, navigate]);
-    const [formCategory, setFormCategory] = useState('');
-    const [formDescription, setFormDescription] = useState('');
-    const [formTarget, setFormTarget] = useState('');
-    const [formStatus, setFormStatus] = useState('');
-    const [formWallet, setFormWallet] = useState(wallets ? wallets : '');
-    const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [savingsData, setSavingsData] = useState([]);
     const [updateDataStatus, setUpdateStatus] = useState(false);
-    const [updateId, setUpdateId] = useState('');
+    const [updateData, setUpdateData] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const fromSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        if (!formCategory || !formTarget)
-            return console.log('Please fill up all fields.')
-        await savings({
-            category: formCategory,
-            description: formDescription,
-            target: parseInt(formTarget),
-            status: formStatus,
-            wallet: formWallet,
-            date: paramMonth,
-        }).then((response) => {
-            if (response && response.status == 'success') {
-                console.log('Savings Added.')
-            } else {
-                console.log('Failed to Add Savings.')
-                console.log(response)
-            }
-        }).catch((error) => {
-            console.log(error)
-        }).finally(() => {
-            clearForm()
-            setLoading(false)
-        })
-    }
     useEffect(() => {
         const returnSavings = async () => {
             setIsFetching(true);
             return await getSavings(paramMonth, setSavingsData, setIsFetching);
         }
         returnSavings();
-        setFormWallet(wallets)
-    }, [wallets]);
-    const updateSetData = (id, arrayData) => {
+    }, []);
+
+    const updateSetData = (arrayData) => {
         setUpdateStatus(true);
-        setUpdateId(id)
-        setFormCategory(arrayData.category)
-        setFormDescription(arrayData.description)
-        setFormTarget(arrayData.target)
-        setFormStatus(arrayData.status)
+        setUpdateData(arrayData)
         setIsModalOpen(true)
-        setFormWallet(arrayData.wallet)
-    }
-    const updateFormSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-
-        if (formCategory === '' || formTarget === '') {
-            setLoading(false);
-            return console.log('Please fill up all fields.')
-        }
-
-        let data = {
-            category: formCategory,
-            description: formDescription,
-            target: parseInt(formTarget),
-            status: formStatus,
-            wallet: formWallet,
-            date: paramMonth,
-        }
-        const updateExpenses = await updateDataController('savings', updateId, data);
-
-        if (updateExpenses.status === 'success') {
-            setLoading(false);
-            clearForm();
-            setUpdateStatus(false);
-        } else
-            setLoading(false);
-        console.log(updateExpenses.message);
-    }
-    const closeModal = () => {
-        clearForm();
-        setIsModalOpen(false)
     }
     return (
         <>
+            <Modal title={!updateDataStatus ? 'Add Savings Category' : 'Update Savings Category'} isModalOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+                <ModalForms
+                    paramMonth={paramMonth}
+                    isModalOpen={isModalOpen}
+                    setIsModalOpen={setIsModalOpen}
+                    formType={'savings'}
+                    selectedWallet={selectedWallet}
+                    isUpdate={updateDataStatus}
+                    setIsUpdate={setUpdateStatus}
+                    updateData={updateData}
+                    setUpdateData={setUpdateData}
+                />
+            </Modal >
             <div className='card-container'>
                 <div className='card card-no-bg flex-1'> </div>
                 <div className='card card-main'>
@@ -112,6 +52,13 @@ const Savings = () => {
                 <div className='table-header'>
                     <div>
                         {/* Table Title Here */}
+                        <Link to={`/savingsTracker/${paramMonth}`}>
+                            <button
+                                className='btn btn-cancel'>
+                                <span><LuArrowLeft /></span>
+                                <span>Back</span>
+                            </button>
+                        </Link>
                     </div>
                     <div>
                         <button
@@ -149,16 +96,24 @@ const Savings = () => {
                                         <td>{!item.actual ? item.target.toFixed(2) : (item.target - item.actual).toFixed(2)}</td>
                                         <td>{item.status}</td>
                                         <td>
-                                            {/* <button onClick={async () => { await deleteDataController('savings', item.id) }}>Delete</button> */}
-                                            <button onClick={() => updateSetData(item.id,
-                                                {
-                                                    category: item.category,
-                                                    description: item.description,
-                                                    target: item.target,
-                                                    status: item.status,
-                                                }
-                                            )
-                                            }>Update</button>
+                                            <div className="multi-btn-evenly">
+                                                <button
+                                                    className='btn btn-cancel'
+                                                    onClick={async () => { await deleteDataController('savings', item.id) }}>
+                                                    <LuTrash2 /></button>
+                                                <button
+                                                    className='btn btn-cancel'
+                                                    onClick={() => updateSetData(
+                                                        {
+                                                            id: item.id,
+                                                            categoryText: item.category,
+                                                            description: item.description,
+                                                            amount: item.target,
+                                                            status: item.status,
+                                                        }
+                                                    )
+                                                    }><LuSquarePen /></button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))
@@ -166,104 +121,8 @@ const Savings = () => {
                     </tbody>
                 </table>
             </div>
-            <Modal title={!updateDataStatus ? 'Add Savings' : 'Update Savings'} isOpen={isModalOpen} onClose={closeModal}>
-                <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
-                    <div className='floating-label-wrapper'>
-                        <input
-                            type="text"
-                            id="categorySavings"
-                            placeholder="Category"
-                            value={formCategory}
-                            onChange={(e) => setFormCategory(e.target.value)}
-                        />
-                        <label htmlFor="categorySavings">Category:</label>
-                    </div>
-                    <div className='floating-label-wrapper'>
-                        <input
-                            className='input'
-                            type="text"
-                            id="descSavings"
-                            placeholder="Description"
-                            value={formDescription}
-                            onChange={(e) => setFormDescription(e.target.value)}
-                        />
-                        <label htmlFor="descSavings">description:</label>
-                    </div>
-                    <div className='floating-label-wrapper'>
-                        <input
-                            type='text'
-                            id="targetSavings"
-                            placeholder="Target Amount"
-                            value={formTarget}
-                            onChange={(e) => setFormTarget(e.target.value)}
-                        />
-                        <label htmlFor="targetSavings">Target Amount:</label>
-                    </div>
-                    {/* wallet is not for Category */}
-                    {/* <div className="floating-label-wrapper">
-                        <select
-                            id="selectWallet"
-                            placeholder="Select Wallet"
-                            className='input'
-                            value={formWallet}
-                            onChange={(e) => setFormWallet(e.target.value)}
-                        >
-                            {walletsData &&
-                                walletsData.map((data) => (
-                                    <option key={data.id} value={data.id}>{data.name}</option>
-                                ))
-                            }
-                        </select>
-                    </div> */}
-                    {
-                        updateDataStatus &&
-                        <div className='floating-label-wrapper'>
-                            <select
-                                id="statusSavings"
-                                placeholder="Status"
-                                className='input'
-                                value={formStatus}
-                                onChange={(e) => setFormStatus(e.target.value)}
-                            >
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </select>
-                            <label htmlFor="statusSavings">Status</label>
-                        </div>
 
-                    }
-                    <div className="multi-btn">
-                        <button
-                            className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
-                            type="submit"
-                            disabled={loading}>{
-                                loading ? "Loading" :
-                                    !updateDataStatus ? 'Add' : 'Update'
-                            }
-                        </button>
-                        <button
-                            className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
-                            type="button"
-                            onClick={closeModal}
-                            disabled={loading}>{
-                                loading ? 'Loading' :
-                                    !updateDataStatus ? 'Close' : 'Cancel'}
-                        </button>
-                    </div>
-                </form>
-            </Modal >
         </>
     )
-
-    function clearForm() {
-        setFormCategory('')
-        setFormDescription('')
-        setFormTarget('')
-        setFormStatus('')
-        setUpdateStatus(false)
-        setUpdateId('')
-        setLoading(false)
-    }
 }
 export default Savings;
-

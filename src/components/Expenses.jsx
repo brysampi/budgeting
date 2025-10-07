@@ -1,89 +1,46 @@
 import { useState, useEffect } from 'react';
-import { expenses, getExpenses, deleteDataController, updateExpenses_extension } from '../firebase/controller';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { getExpenses, deleteDataController } from '../firebase/controller';
+import { useParams, Link } from 'react-router-dom';
+import { LuPlus, LuTrash2, LuSquarePen, LuSettings } from "react-icons/lu";
 import Modal from '../layouts/Modal';
-import { LuPlus, LuArrowLeft, LuSettings } from "react-icons/lu";
+import ModalForms from './ModalForms';
 
 const Expenses = () => {
     const { paramMonth } = useParams();
-    const [formCategory, setFormCategory] = useState('');
-    const [formBudget, setFormBudget] = useState('');
-    const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [expensesData, setExpensesData] = useState([]);
     const [updateDataStatus, setUpdateStatus] = useState(false);
-    const [updateId, setUpdateId] = useState('');
+    const [updateData, setUpdateData] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const fromSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-
-        if (!formCategory) {
-            setLoading(false);
-            return console.log('Please fill up Category.')
-        }
-
-        const addData = await expenses({
-            category: formCategory,
-            budget: parseInt(formBudget),
-            date: paramMonth,
-        })
-
-        if (addData.status === 'success') {
-            console.log(addData.message);
-            setLoading(false);
-            clearForm();
-        } else
-            setLoading(false);
-        console.log(addData.message);
-    }
     useEffect(() => {
         const returnExpenses = async () => {
             setIsFetching(true);
             return await getExpenses(paramMonth, setExpensesData, setIsFetching);
         }
-
         returnExpenses();
     }, []);
 
-    const updateSetData = (id, arrayData) => {
+    const updateSetData = (arrayData) => {
         setUpdateStatus(true);
-        setUpdateId(id)
-        setFormCategory(arrayData.category)
-        setFormBudget(arrayData.budget)
+        setUpdateData(arrayData)
         setIsModalOpen(true)
-    }
-    const updateFormSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-
-        if (formCategory === '') {
-            setLoading(false);
-            return console.log('Please fill up all fields.')
-        }
-
-        let data = {
-            category: formCategory,
-            monthlyBudget: !formBudget ? null : parseFloat(formBudget),
-            date: paramMonth,
-        }
-        const updateExpenses = await updateExpenses_extension(updateId, data);
-
-        if (updateExpenses.status === 'success') {
-            setLoading(false);
-            clearForm();
-            setUpdateStatus(false);
-        } else
-            setLoading(false);
-        console.log(updateExpenses.message);
-    }
-    const closeModal = () => {
-        clearForm();
-        setIsModalOpen(false)
     }
     return (
         <>
+            <Modal title={!updateDataStatus ? 'Add Expense' : 'Update Expense'} isModalOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+                <ModalForms
+                    paramMonth={paramMonth}
+                    isModalOpen={isModalOpen}
+                    setIsModalOpen={setIsModalOpen}
+                    formType={'expenses'}
+                    selectedWallet={''}
+                    isUpdate={updateDataStatus}
+                    setIsUpdate={setUpdateStatus}
+                    updateData={updateData}
+                    setUpdateData={setUpdateData}
+                />
+            </Modal >
             <div className="card-container">
                 <div className="card card-no-bg flex-1"> </div>
                 <div className="card card-main">
@@ -110,7 +67,7 @@ const Expenses = () => {
                             <span><LuPlus /></span>
                             <span>Add</span>
                         </button>
-                        <Link to={`/expenses/expensesSettings/${paramMonth}`}>
+                        <Link to={`/expensesSettings/${paramMonth}`}>
                             <button
                                 className='btn btn-primary'>
                                 <span><LuSettings /></span>
@@ -153,15 +110,23 @@ const Expenses = () => {
                                         }</td>
                                         {/* <td>{item.date}</td> */}
                                         <td>
-                                            {/* <button onClick={async () => { await deleteDataController('expenses', item.id) }}>Delete</button> */}
-                                            <button onClick={() => updateSetData(item.id,
-                                                {
-                                                    // id: item.id,
-                                                    category: item.category,
-                                                    budget: !item.monthlyBudget ? item.budget : item.monthlyBudget,
-                                                }
-                                            )
-                                            }>Update</button>
+                                            <div className="multi-btn-evenly">
+                                                <button
+                                                    className="btn btn-cancel"
+                                                    onClick={async () => { await deleteDataController('expenses', item.id) }}>
+                                                    <LuTrash2 />
+                                                </button>
+                                                <button
+                                                    className="btn btn-cancel"
+                                                    onClick={() => updateSetData(
+                                                        {
+                                                            id: item.id,
+                                                            categoryText: item.category,
+                                                            expected: !item.monthlyBudget ? item.budget : item.monthlyBudget,
+                                                        }
+                                                    )
+                                                    }><LuSquarePen /></button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))
@@ -169,58 +134,8 @@ const Expenses = () => {
                     </tbody>
                 </table>
             </div>
-            <Modal title={!updateDataStatus ? 'Add Savings' : 'Update Savings'} isOpen={isModalOpen} onClose={closeModal}>
-                <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
-                    <div className="floating-label-wrapper">
-                        <input
-                            type="text"
-                            id="categoryExpenses"
-                            placeholder="Category"
-                            value={formCategory}
-                            onChange={(e) => setFormCategory(e.target.value)}
-                        />
-                        <label htmlFor="categoryExpenses">Category</label>
-                    </div>
-                    <div className="floating-label-wrapper">
-                        <input
-                            type='text'
-                            id="budgetExpenses"
-                            placeholder="Budget"
-                            value={formBudget}
-                            onChange={(e) => setFormBudget(e.target.value)}
-                        />
-                        <label htmlFor="budgetExpenses">Budget:</label>
-                    </div>
-                    <div className="multi-btn">
-                        <button
-                            className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
-                            type="submit"
-                            disabled={loading}>{
-                                loading ? "Loading" :
-                                    !updateDataStatus ? 'Add' : 'Update'
-                            }
-                        </button>
-                        <button
-                            className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
-                            type="button"
-                            onClick={clearForm}
-                            disabled={loading}>{
-                                loading ? 'Loading' :
-                                    !updateDataStatus ? 'Clear' : 'Cancel'}
-                        </button>
-                    </div>
-                </form>
-            </Modal >
         </>
     )
-
-    function clearForm() {
-        setFormCategory('')
-        setFormBudget('')
-        setUpdateStatus(false)
-        setUpdateId('')
-        setLoading(false)
-    }
 }
 export default Expenses;
 

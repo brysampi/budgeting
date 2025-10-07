@@ -5,10 +5,10 @@ import { LuX } from "react-icons/lu";
 
 ReactModal.setAppElement('#root'); // For accessibility
 
-const Modal = ({title, isOpen, onClose, children }) => {
+const Modal = ({ title, isModalOpen, onClose, children }) => {
   return (
     <ReactModal
-      isOpen={isOpen}
+      isOpen={isModalOpen}
       onRequestClose={onClose}
       contentLabel="Modal"
       className="modal-content"

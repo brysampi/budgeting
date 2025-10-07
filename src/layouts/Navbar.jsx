@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react'
 import { useLocation, matchPath, useOutletContext } from "react-router-dom";
-import { getDataRealTimeController, getAllDataRealTimeController } from '../firebase/controller'
+import { getDataRealTimeController, getAllDataRealTimeController, getAllDataActiveRealTimeController } from '../firebase/controller'
+
 const Navbar = ({
     title,
     paramMonth,
-    wallets,
-    setWallets,
+    selectedWallet,
+    setSelectedWallet,
     walletsData,
     setWalletsData
 }) => {
     const [monthCollectionData, setMonthCollectionData] = useState([])
     const [isFetching, setIsFetching] = useState(false)
-
+    const [isFetchingNavbar, setIsFetchingNavbar] = useState(false)
+    const [walletsDataNavbar, setWalletsDataNavbar] = useState([]);
     // const { wallet, setWalletsData } = useOutletContext();
     const location = useLocation();
     // const pageTitles = {
@@ -42,9 +44,14 @@ const Navbar = ({
     // }, [])
     useEffect(() => {
         const returnWallets = async () => {
-            return await getAllDataRealTimeController('wallets', setWalletsData, setIsFetching);
+            return await getAllDataRealTimeController('wallets', setWalletsDataNavbar, setIsFetchingNavbar);
         }
+        // const returnWalletActive = async () => {
+        //     return await getAllDataActiveRealTimeController('wallets', setWalletsData, setIsFetching);
+        // }
+
         returnWallets();
+        // returnWalletActive();
     }, []);
     return (
         <>
@@ -56,13 +63,13 @@ const Navbar = ({
                             id="selectWallet"
                             placeholder="Select Wallet"
                             className='input'
-                            value={wallets}
-                            onChange={(e) => setWallets(e.target.value)}
+                            value={selectedWallet}
+                            onChange={(e) => setSelectedWallet(e.target.value)}
                         >
                             <option value="" defaultValue>All Wallet</option>
                             {/* {console.log('Wallet Data ', walletData.id)} */}
-                            {walletsData &&
-                                walletsData.map((data) => (
+                            {walletsDataNavbar &&
+                                walletsDataNavbar.map((data) => (
                                     <option key={data.id} value={data.id}>{data.name}</option>
                                 )).reverse()
                             }
@@ -71,7 +78,7 @@ const Navbar = ({
                     </div>
                 </div>
                 <div>{
-                    isFetching ? 'Loading...' :
+                    isFetchingNavbar ? 'Loading...' :
                         monthCollectionData.length === 0 ? 'No Data' :
                             `Remaining Income: ${monthCollectionData[0].remainingIncome.toFixed(2)}`
                 }</div>

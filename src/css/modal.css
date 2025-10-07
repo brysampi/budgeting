@@ -30,7 +30,7 @@
   margin-bottom: 10px;
 }
 .modal-header .modal-title{
-  color: var(--color-theme-important);
+  color: var(--color-light);
   font-weight: bold;
 }
 

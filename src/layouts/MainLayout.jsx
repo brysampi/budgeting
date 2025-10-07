@@ -7,8 +7,7 @@ import { useState, useRef, useEffect } from 'react';
 const MainLayout = () => {
     const { paramMonth } = useParams();
     // console.log('paramonth to ', paramMonth)
-    const [wallets, setWallets] = useState('')
-    const [walletsData, setWalletsData] = useState([])
+    const [selectedWallet, setSelectedWallet] = useState('')
 
     const navigate = useNavigate();
     useEffect(() => {
@@ -82,12 +81,12 @@ const MainLayout = () => {
                 <Navbar
                     title={currentRoute.title}
                     paramMonth={paramMonth}
-                    wallets={wallets}
-                    setWallets={setWallets}
-                    walletsData={walletsData}
-                    setWalletsData={setWalletsData}
+                    selectedWallet={selectedWallet}
+                    setSelectedWallet={setSelectedWallet}
+                // walletsData={walletsData}
+                // setWalletsData={setWalletsData}
                 />
-                <Outlet context={{ wallets, walletsData }} />
+                <Outlet context={selectedWallet} />
             </main>
 
         </div>

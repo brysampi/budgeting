@@ -1,29 +1,19 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { expensesTracker, getExpensesTracker, getExpenses, expensesTrackerUpdate, deleteDataController, checkStaticData } from '../firebase/controller';
 import { useParams, useOutletContext } from 'react-router-dom';
-import Modal from '../layouts/Modal';
-import { LuPlus, LuArrowBigUpDash, LuArrowBigDownDash } from "react-icons/lu";
+import { LuPlus, LuArrowBigUpDash, LuArrowBigDownDash, LuTrash2, LuSquarePen } from "react-icons/lu";
 import { convertToDate, getLastDayOfTheMonth } from '../firebase/utils';
-import Loading from '../layouts/Loading';
+import Modal from '../layouts/Modal';
+import ModalForms from './ModalForms';
 
 const ExpensesTracker = () => {
-    const { wallets, walletsData } = useOutletContext();
+    const selectedWallet = useOutletContext();
     const { paramMonth } = useParams();
-    const [formCategory, setFormCategory] = useState('');
-    const [formDescription, setFormDescription] = useState('');
-    const [formPrice, setFormPrice] = useState('');
-    const [formDiscount, setFormDiscount] = useState('');
-    const [formWallet, setFormWallet] = useState('');
-    const [loading, setLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
-    const [isFetchingTracker, setIsFetchingTracker] = useState(true);
     const [expensesTrackerData, setExpensesTrackerData] = useState([]);
-    const [expensesData, setExpensesData] = useState([]);
     const [updateDataStatus, setUpdateStatus] = useState(false);
-    const [updateId, setUpdateId] = useState('');
+    const [updateData, setUpdateData] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [changeDate, setChangeDate] = useState(getLastDayOfTheMonth(paramMonth));
-    const [changeDateIsChecked, setChangeDateIsChecked] = useState(false);
     const [openDay, setOpenDay] = useState([]);
     const [getAllDays, setGetAllDays] = useState([]);
 
@@ -46,91 +36,43 @@ const ExpensesTracker = () => {
         setGetAllDays(days);
     }, [expensesTrackerData]);
 
-    const fromSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-
-        // console.log('loading ba', loading)
-
-        if (!formDescription || !formCategory || !formPrice)
-            return console.log('Please fill up all fields.')
-
-        const addData = expensesTracker({
-            category: formCategory,
-            description: formDescription,
-            price: parseFloat(formPrice),
-            discount: parseFloat(formDiscount),
-            wallet: formWallet,
-            date: changeDateIsChecked ? changeDate : null,
-        })
-        // if (addData.status === 'success') {
-        //     console.log(addData.message);
-        //     setLoading(false);
-        //     clearForm();
-        // } else
-        //     setLoading(false);
-        console.log(addData.message);
-        setLoading(false);
-        clearForm();
-    }
     useEffect(() => {
         const returnSavings = async () => {
             setIsFetching(true);
-            await getExpenses(paramMonth, setExpensesData, setIsFetching, true);
+            // await getExpenses(paramMonth, setExpensesData, setIsFetching, true);
             // setFormCategory();
-            await getExpensesTracker(paramMonth, setExpensesTrackerData, setIsFetchingTracker, wallets);
-            clearForm();
+            await getExpensesTracker(paramMonth, setExpensesTrackerData, setIsFetching, selectedWallet);
+            // clearForm();
         }
         returnSavings();
-        setFormWallet(wallets)
-    }, [wallets]);
-    useEffect(() => {
-        if (!formWallet && walletsData && walletsData.length > 0) {
-            setFormWallet(walletsData[walletsData.length - 1].id);
-        }
-    }, [walletsData, formWallet]);
+        // setFormWallet(selectedWallet)
+    }, [selectedWallet]);
+    // useEffect(() => {
+    //     if (!formWallet && walletsData && walletsData.length > 0) {
+    //         setFormWallet(walletsData[walletsData.length - 1].id);
+    //     }
+    // }, [walletsData, formWallet]);
 
-    const updateSetData = (id, arrayData) => {
+    const updateSetData = (arrayData) => {
         setUpdateStatus(true);
-        setUpdateId(id)
-        setFormCategory(arrayData.category)
-        setFormDescription(arrayData.description)
-        setFormPrice(arrayData.price)
-        setFormDiscount(arrayData.discount)
+        setUpdateData(arrayData)
         setIsModalOpen(true)
-        setChangeDate(arrayData.date)
-        setFormWallet(arrayData.wallet)
-    }
-    const updateFormSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-
-        let data = {
-            category: formCategory,
-            description: formDescription,
-            price: parseFloat(formPrice),
-            discount: parseFloat(formDiscount),
-            wallet: formWallet,
-        }
-        if (changeDateIsChecked)
-            data.date = changeDate;
-
-        const updateResult = await expensesTrackerUpdate(updateId, data, paramMonth);
-        if (updateResult.status === 'success') {
-            clearForm();
-            setIsModalOpen(false)
-        } else
-            setLoading(false);
-        // updateResult.status && <Loading onLoading={false} />
-        console.log(updateResult.message);
-    }
-    const closeModal = () => {
-        clearForm();
-        setIsModalOpen(false)
     }
     return (
         <>
-            <Loading onLoading={loading} />
+            <Modal title={!updateDataStatus ? 'Add Bill' : 'Update Bill'} isModalOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+                <ModalForms
+                    paramMonth={paramMonth}
+                    isModalOpen={isModalOpen}
+                    setIsModalOpen={setIsModalOpen}
+                    formType={'expensesTracker'}
+                    selectedWallet={selectedWallet}
+                    isUpdate={updateDataStatus}
+                    setIsUpdate={setUpdateStatus}
+                    updateData={updateData}
+                    setUpdateData={setUpdateData}
+                />
+            </Modal >
             {/* <div className="card-container">
                 <div className="card card-main ">
                     Total: {allTotal.toFixed(2)}
@@ -191,7 +133,7 @@ const ExpensesTracker = () => {
                                     </tr>
                                 </thead>
                                 {/* <tbody> */}
-                                {isFetchingTracker ? (
+                                {isFetching ? (
                                     <tbody><tr><td colSpan={6}>Loading...</td></tr></tbody>
                                 ) : (
                                     expensesTrackerData.length === 0 ?
@@ -242,22 +184,34 @@ const ExpensesTracker = () => {
                                                                     {/* <td>{convertToDate(item.date)}</td>
                                                             <td>{convertToDate(item.createdAt)}</td> */}
                                                                     {/* <td>
-                                                                <button onClick={async () => {
-                                                                    await deleteDataController('expensesTracker', item.id)
-                                                                }}>Delete</button>
+                                                                // <button onClick={async () => {
+                                                                //     await deleteDataController('expensesTracker', item.id)
+                                                                // }}>Delete</button>
                                                             </td> */}
-                                                                    <td><button onClick={() => updateSetData(item.id,
-                                                                        {
-                                                                            id: item.id,
-                                                                            category: item.category,
-                                                                            description: item.description,
-                                                                            price: item.price,
-                                                                            discount: item.discount,
-                                                                            wallet: item.wallet,
-                                                                            date: convertToDate(item.date)
-                                                                        }
-                                                                    )
-                                                                    }>Update</button></td>
+                                                                    <td>
+                                                                        <div className="multi-btn-evenly">
+                                                                            <button
+                                                                                className="btn btn-cancel"
+                                                                                onClick={async () => {
+                                                                                    await deleteDataController('expensesTracker', item.id)
+                                                                                }}><LuTrash2 />
+                                                                            </button>
+                                                                            <button
+                                                                                className="btn btn-cancel"
+                                                                                onClick={() => updateSetData(
+                                                                                    {
+                                                                                        id: item.id,
+                                                                                        category: item.category,
+                                                                                        description: item.description,
+                                                                                        price: item.price,
+                                                                                        discount: item.discount,
+                                                                                        wallet: item.wallet,
+                                                                                        date: convertToDate(item.date)
+                                                                                    }
+                                                                                )
+                                                                                }><LuSquarePen /></button>
+                                                                        </div>
+                                                                    </td>
                                                                 </tr>
                                                             )
                                                         }
@@ -286,125 +240,7 @@ const ExpensesTracker = () => {
 
                 </div>
             </div >
-            <Modal title={!updateDataStatus ? 'Add Savings' : 'Update Savings'} isOpen={isModalOpen} onClose={closeModal}>
-                <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
-                    <div className="floating-label-wrapper">
-                        <select
-                            className="input"
-                            value={formCategory}
-                            onChange={(e) => { setFormCategory(e.target.value) }}
-                            name="categoryExpensesTracker"
-                            id="categoryExpensesTracker"
-                            placeholder="Category"
-                        >
-                            <option value="" disabled>
-                                Select a category
-                            </option>
-                            {isFetching ? (
-                                <option value="" disabled>Fetching Data Please Wait. . .</option>
-                            ) : (
-                                expensesData.length === 0 ?
-                                    <option value="" disabled>No Data Found</option> :
-                                    expensesData.map((item, index) => (
-                                        <option value={item.id} key={index + 1}>{item.category}</option>
-                                    )).reverse()
-                            )}
-                        </select>
-                        <label htmlFor="categoryExpensesTracker">Category</label>
-                    </div>
-                    <div className="floating-label-wrapper">
-                        <input
-                            type="text"
-                            id="descriptionExpensesTracker"
-                            placeholder="Description"
-                            value={formDescription}
-                            onChange={(e) => setFormDescription(e.target.value)}
-                        />
-                        <label htmlFor="descriptionExpensesTracker">Description</label>
-                    </div>
-                    <div className="floating-label-wrapper">
-                        <input
-                            type="text"
-                            id="priceExpensesTracker"
-                            placeholder="Price"
-                            value={formPrice}
-                            onChange={(e) => setFormPrice(e.target.value)}
-                        />
-                        <label htmlFor="priceExpensesTracker">Price</label>
-                    </div>
-                    <div className="floating-label-wrapper">
-                        <input
-                            type="text"
-                            id="discountExpensesTracker"
-                            placeholder="Discount"
-                            value={formDiscount}
-                            onChange={(e) => setFormDiscount(e.target.value)}
-                        />
-                        <label htmlFor="discountExpensesTracker">Discount</label>
-                    </div>
-                    <div className="floating-label-wrapper">
-                        <select
-                            id="selectWallet"
-                            placeholder="Select Wallet"
-                            className='input'
-                            value={formWallet}
-                            onChange={(e) => setFormWallet(e.target.value)}
-                        >
-                            {walletsData &&
-                                walletsData.map((data) => (
-                                    <option key={data.id} value={data.id}>{data.name}</option>
-                                )).reverse()
-                            }
-                        </select>
-                    </div>
-                    <input type="checkBox" name="changeDate" id="changeDate" value={changeDateIsChecked} onChange={(e) => setChangeDateIsChecked(e.target.checked)} />
-                    <label htmlFor="changeDate">Change Date</label>
-                    {changeDateIsChecked && (
-                        <div className="floating-label-wrapper">
-                            <input
-                                type="date"
-                                id="dateExpensesTracker"
-                                placeholder="Date"
-                                value={changeDate}
-                                onChange={(e) => setChangeDate(e.target.value)}
-                            />
-                            <label htmlFor="dateExpensesTracker">Date</label>
-                        </div>
-                    )}
-                    <div className="multi-btn">
-                        <button
-                            className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
-                            type="submit"
-                            disabled={loading}>{
-                                loading ? 'Loading' :
-                                    !updateDataStatus ? 'Add' : 'Update'
-                            }
-                        </button>
-                        <button
-                            className={`btn btn-cancel ${loading ? 'cursor-not-allowed' : ''}`}
-                            type="button"
-                            onClick={closeModal}
-                            disabled={loading}>{
-                                loading ? 'Loading' :
-                                    !updateDataStatus ? 'Close' : 'Cancel'
-                            }
-                        </button>
-                    </div>
-                </form>
-            </Modal >
         </>
     )
-
-    function clearForm() {
-        setFormDescription('')
-        setFormCategory('')
-        setFormPrice('')
-        setFormDiscount('')
-        setUpdateStatus(false)
-        setUpdateId('')
-        setLoading(false)
-        setChangeDate(getLastDayOfTheMonth(paramMonth))
-        setChangeDateIsChecked(false)
-    }
 }
 export default ExpensesTracker; 
