@@ -67,18 +67,17 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
     useEffect(() => {
         if (isModalOpen === false) {
             clearForm();
-            setChangeDate('');
         }
 
     }, [isModalOpen])
 
-    // useEffect(() => {
-    //     if (changeDateIsChecked === true)
-    //         setChangeDate(getLastDayOfTheMonth(paramMonth))
-    //     else
-    //         setChangeDate('')
-    //     // console.log('Change Date Is Checked ' + changeDate)
-    // }, [changeDateIsChecked])
+    useEffect(() => {
+        if (changeDateIsChecked === true && isUpdate === false)
+            setChangeDate(getLastDayOfTheMonth(paramMonth))
+        if (changeDateIsChecked === false && isUpdate === false)
+            setChangeDate('')
+        // console.log('Change Date Is Checked ' + changeDate)
+    }, [changeDateIsChecked])
 
     // set Update Data to Form
     useEffect(() => {
@@ -96,7 +95,11 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
         setFormStatus(updateData.status || '')
         // if (updateData.date !== undefined && updateData.date !== null && updateData.date !== '') {
         // setChangeDateIsChecked(true)
-        setChangeDate(updateData.date)
+        if (isUpdate === true) {
+            // setChangeDateIsChecked(true)
+            setChangeDate(updateData.date || '')
+        }
+
         // }
 
         console.log('Use Effect Update Data Called', formWallet)
@@ -279,9 +282,8 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
         }
         const updateExpensesStatus = await updateExpenses();
         if (updateExpensesStatus.status === 'success') {
-            // setLoading(false);
-            clearForm();
             setIsModalOpen(false);
+            clearForm();
         }
         setLoading(false);
         console.log(updateExpensesStatus.message);
@@ -292,9 +294,8 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
     //     clearForm();
     // }
     const clearForm = () => {
-        console.log('Clear Form Called')
+        // console.log('Clear Form Called')
         setUpdateId('')
-        setFormCategory('')
         setFormCategoryText('')
         setFormDescription('')
         setFormPrice('')
@@ -303,8 +304,16 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
         setFormAmount('')
         setFormWallet('')
         setFormStatus('')
+
         // setChangeDate(getLastDayOfTheMonth(paramMonth))
-        setChangeDateIsChecked(false)
+        console.log('Is Update ', isUpdate)
+        console.log('Change Date ', formCategory)
+        if (isUpdate === true) {
+            // setChangeDateIsChecked(false)
+            setChangeDate('')
+            setFormCategory('')
+        }
+        console.log('Change Date 222 ', formCategory)
         setLoading(false)
         setIsUpdate(false);
         setUpdateData([]);
