@@ -13,6 +13,7 @@ import ExpensesDefault from '../components/ExpensesDefault';
 import ExpensesSettings from '../components/ExpensesSettings';
 import LoginPage from '../components/LoginPage';
 import Wallets from '../components/Wallets';
+import Dashboard from '../components/Dashboard';
 
 
 const AppRoutes = () => {
@@ -30,6 +31,7 @@ const AppRoutes = () => {
                 <>
                     <Route path="/" element={<MonthSelection onLogOut={() => setLoggedIn(false)} />} />
                     <Route element={<MainLayout />}>
+                        <Route path="dashboard/:paramMonth" element={<Dashboard />} />
                         <Route path="wallets/:paramMonth" element={<Wallets />} />
                         <Route path="income/:paramMonth" element={<Income />} />
                         <Route path="savings/:paramMonth" element={<Savings />} />

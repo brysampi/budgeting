@@ -53,9 +53,10 @@ const Navbar = ({
         returnWallets();
         // returnWalletActive();
     }, []);
+    const progress = (180 / 200) * 100;
     return (
         <>
-            <div className="card card-main flex flex-row justify-between items-center p-5 mb-[10px]">
+            <div className="card card-main flex flex-col justify-between sm:items-center p-5 mb-[10px] sm:flex-row">
                 <div>
                     {title}
                     <div className='floating-label-wrapper'>
@@ -77,12 +78,50 @@ const Navbar = ({
                         <label htmlFor="selectWallet">Select Wallet</label>
                     </div>
                 </div>
-                <div>{
+                <div>
+                    {/* {
                     isFetchingNavbar ? 'Loading...' :
                         monthCollectionData.length === 0 ? 'No Data' :
                             `Remaining Income: ${monthCollectionData[0].remainingIncome.toFixed(2)}`
-                }</div>
-                <div>Test</div>
+                } */}
+                    <div className='w-full justify-between items-center max-w-[400px] '>
+                        <div className=''>
+                            <div>
+                                Balance
+                            </div>
+                            <div className='flex items-center gap-3 mb-2 '>
+                                <div className="w-full bg-[#5a5959] rounded-full h-2">
+                                    <div
+                                        className="bg-gradient-to-r from-[var(--color-theme-important-light)] to-[var(--color-theme-important)] h-2 rounded-full transition-all duration-500"
+                                        style={{ width: `${progress}%` }}
+                                    />
+                                </div>
+                                <div>
+                                    {`${progress}%`}
+                                </div>
+                            </div>
+                        </div>
+                        <div className='flex flex-col justify-between sm:flex-row'>
+                            <div className='flex flex-row gap-2'>
+                                <div>
+                                    Income
+                                </div>
+                                <div className='text-[var(--color-success)]'>
+                                    200.00
+                                </div>
+                            </div>
+                            <div className='flex flex-row gap-2'>
+                                <div>
+                                    Expenses
+                                </div>
+                                <div className='text-[var(--color-danger)]'>
+                                    200.00
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className='hidden sm:block'>Test</div>
             </div>
             {/* {console.log('Month Collected ',monthCollectionData.remainingIncome)} */}
             {/* {currentRoute.title} */}

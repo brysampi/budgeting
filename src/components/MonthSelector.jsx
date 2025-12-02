@@ -26,21 +26,59 @@ export default function MonthSelection({ onLogOut }) {
         // collected ? setAddNewMonth(false) : setAddNewMonth(true)
         console.log(collected)
     }
-
+    const progress = (180 / 200) * 100;
     return (
         <>
             {/* <Loading onLoading={loading} /> */}
             {/* <Logout onLogout={onLogOut} /> */}
-            {/* <div className='card card-shadow card-no-hover flex flex-col justify-between my-[1rem]  sm:flex-row'>
+            <div className='card card-shadow card-no-hover flex flex-col justify-between my-[1rem]  sm:flex-row'>
                 <div className='flex items-center mb-[1rem] sm:mb-0 sm:text-left text-2xl font-bold'>
                     Select Month
                 </div>
-
-                <div>
-                    Profile
+                <div className='w-full justify-between items-center max-w-[400px] '>
+                    <div className=''>
+                        <div>
+                            Balance
+                        </div>
+                        <div className='flex items-center gap-3 mb-2 '>
+                            <div className="w-full bg-[#5a5959] rounded-full h-2">
+                                <div
+                                    className="bg-gradient-to-r from-[var(--color-theme-important-light)] to-[var(--color-theme-important)] h-2 rounded-full transition-all duration-500"
+                                    style={{ width: `${progress}%` }}
+                                />
+                            </div>
+                            <div>
+                                {`${progress}%`}
+                            </div>
+                        </div>
+                    </div>
+                    <div className='flex flex-col justify-between sm:flex-row'>
+                        <div className='flex flex-row gap-2'>
+                            <div>
+                                Income
+                            </div>
+                            <div className='text-[var(--color-success)]'>
+                                200.00
+                            </div>
+                        </div>
+                        <div className='flex flex-row gap-2'>
+                            <div>
+                                Expenses
+                            </div>
+                            <div className='text-[var(--color-danger)]'>
+                                200.00
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div> */}
+                <div>
+                {/* <div className='flex items-center mb-[1rem] sm:mb-0 sm:text-left text-2xl font-bold'> */}
+                    Logout
+                </div>
+            </div>
             {/* <Navbar title={'Select Month'} /> */}
+
+
             <div className='select-month-container'>
                 <form className='form-select-month py-0'
                     onSubmit={collectData}>
@@ -55,7 +93,7 @@ export default function MonthSelection({ onLogOut }) {
                         {/* <label htmlFor="month">Select Month</label> */}
                     </div>
 
-                    <button className="btn btn-primary btn-select-month sm:min-w-[9rem] rounded-l-none text-[var(--color-dark)]"
+                    <button className="btn btn-primary btn-select-month sm:min-w-[9rem] rounded-l-none text-[var(--color-dark)] pl-2 pr-2 sm:pl-6 sm:pr-6"
                         disabled={addNewMonth}>{addNewMonth ? 'Loading' : 'Select Month'}
                     </button>
                 </form>
@@ -68,7 +106,7 @@ export default function MonthSelection({ onLogOut }) {
                         <h1>No Data Found ...</h1> :
                         monthCollectionData.map((item, index) => (
                             <div key={index + 1} className=''>
-                                {console.log('items to', item)}
+                                {/* {console.log('items to', item)} */}
                                 <Link to={'/income/' +
                                     item.date.toDate().getFullYear()
                                     + '-' +

@@ -37,6 +37,7 @@ export default function SideNav({ hide, sidenavRef }) {
     const hideText = hideNav ? 'inline sm:hidden' : 'hidden sm:inline';
     const menuItems = [
         { to: '/', label: 'Select Month', icon: <LuCalendarDays />, exact: true },
+        { to: `/dashboard/${paramMonth}`, label: 'Dashboard', icon: <LuClipboardList /> },
         { to: `/wallets/${paramMonth}`, label: 'Wallets', icon: <LuWallet /> },
         { to: `/income/${paramMonth}`, label: 'Income', icon: <LiaCoinsSolid /> },
         // { to: `/savings/${paramMonth}`, label: 'Savings', icon: <LuHandCoins /> },
