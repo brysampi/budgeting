@@ -1,5 +1,5 @@
 import React from 'react'
-import Rechart from './charts/Rechart';
+import PieChart from './charts/PieChart';
 import DashboardWidget from './charts/DashboardWidget';
 
 
@@ -32,18 +32,18 @@ const Dashboard = () => {
 
     return (
         <>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6 p-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-3">
                 <DashboardWidget title="Income Sources">
-                    <Rechart data={incomeData} />
+                    <PieChart data={incomeData} />
                 </DashboardWidget>
                 <DashboardWidget title="Savings Goals">
-                    <Rechart data={savingsData} />
+                    <PieChart data={savingsData} />
                 </DashboardWidget>
                 <DashboardWidget title="Budget Distribution">
-                    <Rechart data={budgetData} />
+                    <PieChart data={budgetData} />
                 </DashboardWidget>
                 <DashboardWidget title="Monthly Spending">
-                    <Rechart data={monthlyData} />
+                    <PieChart data={monthlyData} />
                 </DashboardWidget>
             </div>
         </>
