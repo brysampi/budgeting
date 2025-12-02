@@ -1,4 +1,4 @@
-import { Pie, PieChart, Tooltip, Legend } from 'recharts';
+import { Pie, PieChart, Tooltip } from 'recharts';
 
 const defaultData = [
     { name: 'Group A', value: 400 },
@@ -27,6 +27,29 @@ function CustomTooltip({ payload, label, active }) {
     return null;
 }
 
+const CustomLegend = ({ data }) => {
+    return (
+        <div className="flex flex-wrap justify-center gap-3 mt-4 px-2">
+            {data.map((entry, index) => (
+                <div
+                    key={`legend-${index}`}
+                    className="flex items-center gap-2 bg-[var(--color-theme-secondary)] px-3 py-2 rounded-lg border border-[var(--color-theme-tertiary)] hover:border-[var(--color-theme-important)] transition-colors duration-200"
+                >
+                    <div
+                        className="w-3 h-3 rounded-sm flex-shrink-0"
+                        style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                    />
+                    <span className="text-[var(--color-light)] text-xs font-medium whitespace-nowrap">
+                        {entry.name}
+                    </span>
+                    <span className="text-[var(--color-theme-tertiary-light)] text-xs">
+                        ({entry.value.toLocaleString()})
+                    </span>
+                </div>
+            ))}
+        </div>
+    );
+};
 
 export default function Rechart({ data = defaultData, isAnimationActive = true }) {
     const dataWithColors = data.map((entry, index) => ({
@@ -35,7 +58,7 @@ export default function Rechart({ data = defaultData, isAnimationActive = true }
     }));
 
     return (
-        <div className="w-full h-full flex items-center justify-center p-2 sm:p-4">
+        <div className="w-full h-full flex flex-col items-center justify-center p-2">
             <PieChart width={240} height={240}>
                 <Tooltip
                     content={<CustomTooltip />}
@@ -53,6 +76,7 @@ export default function Rechart({ data = defaultData, isAnimationActive = true }
                     isAnimationActive={isAnimationActive}
                 />
             </PieChart>
+            <CustomLegend data={data} />
         </div>
     );
 }
