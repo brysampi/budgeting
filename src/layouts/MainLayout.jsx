@@ -1,11 +1,24 @@
-import { Outlet, useParams, matchPath, useNavigate } from 'react-router-dom';
+import { Outlet, useParams, matchPath, useNavigate, useLocation } from 'react-router-dom';
 import SideNav from '../layouts/SideNav';
 import Navbar from '../layouts/Navbar';
 import Logout from '../components/Logout';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
+
+const routes = [
+    { path: "/", title: "Bell Budgeting App" },
+    { path: "/wallets/:paraMonth", title: "Wallets" },
+    { path: "/income/:paraMonth", title: "Income" },
+    { path: "/savings/:paraMonth", title: "Savings Summary / Category" },
+    { path: "/savingsTracker/:paraMonth", title: "Savings Tracker" },
+    { path: "/bills/:paraMonth", title: "Bills" },
+    { path: "/expenses/:paraMonth", title: "Expenses" },
+    { path: "/expensesTracker/:paraMonth", title: "Expenses Tracker" },
+    { path: "/expenses/expensesSettings/:paraMonth", title: "Expenses Settings" },
+];
 
 const MainLayout = () => {
     const { paramMonth } = useParams();
+    const location = useLocation();
     // console.log('paramonth to ', paramMonth)
     const [selectedWallet, setSelectedWallet] = useState('')
 
@@ -16,21 +29,10 @@ const MainLayout = () => {
         }
     }, [paramMonth, navigate]);
 
-    const routes = [
-        { path: "/", title: "Bell Budgeting App" },
-        { path: "/wallets/:paraMonth", title: "Wallets" },
-        { path: "/income/:paraMonth", title: "Income" },
-        { path: "/savings/:paraMonth", title: "Savings Summary / Category" },
-        { path: "/savingsTracker/:paraMonth", title: "Savings Tracker" },
-        { path: "/bills/:paraMonth", title: "Bills" },
-        { path: "/expenses/:paraMonth", title: "Expenses" },
-        { path: "/expensesTracker/:paraMonth", title: "Expenses Tracker" },
-        { path: "/expenses/expensesSettings/:paraMonth", title: "Expenses Settings" },
-    ];
-
-    const currentRoute =
+    const currentRoute = useMemo(() =>
         routes.find((r) => matchPath({ path: r.path, end: true }, location.pathname)) ||
-        { title: "Bell Budgeting App" };
+        { title: "Bell Budgeting App" },
+        [location.pathname]);
 
     useEffect(() => {
         // console.log('Current Route:', currentRoute);

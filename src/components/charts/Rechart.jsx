@@ -1,59 +1,58 @@
-import { Cell, Pie, PieChart,Tooltip } from 'recharts';
+import { Pie, PieChart, Tooltip, Legend } from 'recharts';
 
-const data = [
+const defaultData = [
     { name: 'Group A', value: 400 },
     { name: 'Group B', value: 300 },
     { name: 'Group C', value: 300 },
     { name: 'Group D', value: 200 },
 ];
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+
+const COLORS = ['#FFB22C', '#11d304', '#ff4c4c', '#0088FE'];
+
 function CustomTooltip({ payload, label, active }) {
-    if (active) {
+    if (active && payload && payload.length) {
+        const dataPoint = payload[0];
+        const name = dataPoint.name || (dataPoint.payload && dataPoint.payload.name) || 'Unknown';
+        const value = dataPoint.value;
+
         return (
-            <div className="custom-tooltip">
-                <p className="label">{`${label} : ${payload[0].value}`}</p>
-                <p className="intro">{getIntroOfPage(label)}</p>
-                <p className="desc">Anything you want can be displayed here.</p>
+            <div className="custom-tooltip bg-[var(--color-theme-tertiary)] p-2 rounded shadow-lg border border-[var(--color-theme-important)]">
+                <p className="label text-[var(--color-light)] font-bold">
+                    {`${name} : ${value}`}
+                </p>
             </div>
         );
     }
 
     return null;
 }
-export default function Example() {
+
+
+export default function Rechart({ data = defaultData, isAnimationActive = true }) {
+    const dataWithColors = data.map((entry, index) => ({
+        ...entry,
+        fill: COLORS[index % COLORS.length]
+    }));
+
     return (
-        <PieChart width={300} height={300}>
-            <Tooltip content={CustomTooltip}/>
-            <Pie
-                data={data}
-                // cx={50}
-                // cy={200}
-                innerRadius={100}
-                // outerRadius={70}
-                // fill="#8884d8"
-                // paddingAngle={5}
-                dataKey="value"
-            >
-                {data.map((entry, index) => (
-                    <Cell key={`cell-${entry.name}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-            </Pie>
-            {/* <Pie
-                data={data}
-                cx={420}
-                cy={200}
-                startAngle={180}
-                endAngle={0}
-                innerRadius={60}
-                outerRadius={80}
-                fill="#8884d8"
-                paddingAngle={5}
-                dataKey="value"
-            >
-                {data.map((entry, index) => (
-                    <Cell key={`cell-${entry.name}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-            </Pie> */}
-        </PieChart>
+        <div className="w-full h-full flex items-center justify-center p-2 sm:p-4">
+            <PieChart width={240} height={240}>
+                <Tooltip
+                    content={<CustomTooltip />}
+                    cursor={{ fill: 'transparent' }}
+                    wrapperStyle={{ outline: 'none' }}
+                />
+                <Pie
+                    data={dataWithColors}
+                    innerRadius="55%"
+                    outerRadius="85%"
+                    cornerRadius="0%"
+                    paddingAngle={3}
+                    dataKey="value"
+                    nameKey="name"
+                    isAnimationActive={isAnimationActive}
+                />
+            </PieChart>
+        </div>
     );
 }
