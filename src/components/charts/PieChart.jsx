@@ -7,7 +7,27 @@ const defaultData = [
     { name: 'Group D', value: 200 },
 ];
 
-const COLORS = ['#FFB22C', '#11d304', '#ff4c4c', '#0088FE'];
+// Generate dynamic colors based on data length
+const generateColors = (count) => {
+    const colors = [];
+    // Get the primary yellow color from CSS variables
+    const primaryYellow = getComputedStyle(document.documentElement)
+        .getPropertyValue('--color-theme-important').trim() || '#FFB22C';
+
+    for (let i = 0; i < count; i++) {
+        if (i === 0) {
+            // First color is always the primary yellow
+            colors.push(primaryYellow);
+        } else {
+            // Generate random vibrant colors for the rest
+            const hue = Math.floor(Math.random() * 360);
+            const saturation = 70 + Math.floor(Math.random() * 20); // 70-90%
+            const lightness = 50 + Math.floor(Math.random() * 15); // 50-65%
+            colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
+        }
+    }
+    return colors;
+};
 
 function CustomTooltip({ payload, label, active }) {
     if (active && payload && payload.length) {
@@ -27,7 +47,7 @@ function CustomTooltip({ payload, label, active }) {
     return null;
 }
 
-const CustomLegend = ({ data }) => {
+const CustomLegend = ({ data, colors }) => {
     return (
         <div className="flex flex-wrap justify-center gap-3 mt-4 px-2">
             {data.map((entry, index) => (
@@ -37,7 +57,7 @@ const CustomLegend = ({ data }) => {
                 >
                     <div
                         className="w-3 h-3 rounded-sm flex-shrink-0"
-                        style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                        style={{ backgroundColor: colors[index] }}
                     />
                     <span className="text-[var(--color-light)] text-xs font-medium whitespace-nowrap">
                         {entry.name}
@@ -51,10 +71,13 @@ const CustomLegend = ({ data }) => {
     );
 };
 
-export default function Rechart({ data = defaultData, isAnimationActive = true }) {
+export default function Rechart({ data = defaultData, isAnimationActive = false }) {
+    // Generate dynamic colors based on data length
+    const colors = generateColors(data.length);
+
     const dataWithColors = data.map((entry, index) => ({
         ...entry,
-        fill: COLORS[index % COLORS.length]
+        fill: colors[index]
     }));
 
     return (
@@ -76,7 +99,7 @@ export default function Rechart({ data = defaultData, isAnimationActive = true }
                     isAnimationActive={isAnimationActive}
                 />
             </PieChart>
-            <CustomLegend data={data} />
+            <CustomLegend data={data} colors={colors} />
         </div>
     );
 }

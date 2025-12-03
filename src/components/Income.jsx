@@ -4,7 +4,6 @@ import { useParams, useOutletContext } from 'react-router-dom';
 import { LuPlus, LuTrash2, LuSquarePen } from 'react-icons/lu';
 import Modal from '../layouts/Modal';
 import ModalForms from './ModalForms';
-import Rechart from './charts/Rechart';
 
 const Income = () => {
     const selectedWallet = useOutletContext();
