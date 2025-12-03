@@ -8,7 +8,7 @@ const DashboardWidget = ({ title, children, className = '', loading = false }) =
                     <h3 className="text-lg font-bold text-[var(--color-light)]">{title}</h3>
                 </div>
             )}
-            <div className="flex-1 w-full min-h-[300px] relative">
+            <div className="flex-1 w-full min-h-[100px] relative">
                 {loading ? (
                     <div className="absolute inset-0 flex items-center justify-center bg-[var(--color-theme-secondary)] z-10">
                         <div className="animate-pulse flex flex-col items-center w-full h-full justify-center">
