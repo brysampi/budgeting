@@ -4,25 +4,125 @@ const defaultData = [
     { name: 'Budget', value: 0, max: 100 },
 ];
 
-const ProgressBar = ({
+function ProgressBar({ data = defaultData, className = '', showPercentage = true, showBreakdown = false }) {
+    const isMulti = Array.isArray(data) && data.length > 0 && data[0].data;
+    const [showDropdown, setShowDropdown] = useState(false);
+    const [visibleItems, setVisibleItems] = useState(() => {
+        if (isMulti) {
+            return data.reduce((acc, item, idx) => {
+                acc[item.id || idx] = true;
+                return acc;
+            }, {});
+        }
+        return { 0: true };
+    });
+
+    function toggleVisibility(id) {
+        setVisibleItems(prev => ({ ...prev, [id]: !prev[id] }));
+    }
+
+    if (isMulti) {
+        // Global controls for all bars
+        const [globalPercentage, setGlobalPercentage] = useState(true);
+        const [globalWarning, setGlobalWarning] = useState(false);
+        const [globalValues, setGlobalValues] = useState(false);
+        return (
+            <div className={`relative ${className}`}>
+                {/* Dropdown Menu Button */}
+                <div className="absolute top-0 right-0 z-50">
+                    <button
+                        onClick={() => setShowDropdown(!showDropdown)}
+                        className="text-[var(--color-light)] hover:text-[var(--color-theme-important)] p-2 text-xl font-bold"
+                    >
+                        ⋮
+                    </button>
+                    {/* Dropdown Menu */}
+                    {showDropdown && (
+                        <div className="absolute right-0 mt-2 bg-[var(--color-theme-secondary)] border border-[var(--color-theme-tertiary)] rounded-lg shadow-lg p-3 min-w-[220px]">
+                            <div className="text-[var(--color-light)] text-xs font-semibold mb-2">Global Controls:</div>
+                            <label className="flex items-center gap-2 cursor-pointer text-[var(--color-light)] text-sm mb-2 hover:text-[var(--color-theme-important)]">
+                                <input
+                                    type="checkbox"
+                                    checked={globalPercentage}
+                                    onChange={() => setGlobalPercentage(v => !v)}
+                                    className="cursor-pointer"
+                                />
+                                <span>% Value</span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer text-[var(--color-light)] text-sm mb-2 hover:text-[var(--color-theme-important)]">
+                                <input
+                                    type="checkbox"
+                                    checked={globalWarning}
+                                    onChange={() => setGlobalWarning(v => !v)}
+                                    className="cursor-pointer"
+                                />
+                                <span>Warning</span>
+                            </label>
+                            {/* <hr className="my-2 border-t border-[var(--color-theme-tertiary)]" /> */}
+                            {/* <div className="text-[var(--color-light)] text-xs font-semibold mb-2">Values:</div> */}
+                            <label className="flex items-center gap-2 cursor-pointer text-[var(--color-light)] text-sm mb-2 hover:text-[var(--color-theme-important)]">
+                                <input
+                                    type="checkbox"
+                                    checked={globalValues}
+                                    onChange={() => setGlobalValues(v => !v)}
+                                    className="cursor-pointer"
+                                />
+                                <span>Show Values</span>
+                            </label>
+                            <hr className="my-2 border-t border-[var(--color-theme-tertiary)]" />
+                            <div className="text-[var(--color-light)] text-xs font-semibold mb-2">Show Progress Bars:</div>
+                            {data.map((bar, idx) => (
+                                <label key={bar.id || idx} className="flex items-center gap-2 cursor-pointer text-[var(--color-light)] text-sm mb-2 hover:text-[var(--color-theme-important)]">
+                                    <input
+                                        type="checkbox"
+                                        checked={visibleItems[bar.id || idx]}
+                                        onChange={() => toggleVisibility(bar.id || idx)}
+                                        className="cursor-pointer"
+                                    />
+                                    <span>{bar.name}</span>
+                                </label>
+                            ))}
+                        </div>
+                    )}
+                </div>
+                <div className="flex flex-col gap-6 p-4">
+                    {data.map((bar, idx) => (
+                        visibleItems[bar.id || idx] && (
+                            <SingleProgressBar
+                                key={bar.id || idx}
+                                data={bar.data}
+                                label={bar.name}
+                                showPercentage={globalPercentage}
+                                showBreakdown={showBreakdown}
+                                displayWarning={globalWarning}
+                                displayValues={globalValues}
+                            />
+                        )
+                    ))}
+                </div>
+            </div>
+        );
+    }
+    // Otherwise, render a single bar
+    return <SingleProgressBar data={data} className={className} showPercentage={showPercentage} showBreakdown={showBreakdown} />;
+}
+
+function SingleProgressBar({
     data = defaultData,
     label,
     showPercentage = true,
     showBreakdown = false,
-    primaryColor = 'var(--color-theme-important)',
-    secondaryColor = 'var(--color-theme-important-light)',
-    backgroundColor = '#5a5959',
     className = '',
-    showControls = false  // New prop to show/hide controls
-}) => {
-    const [showFilledTooltip, setShowFilledTooltip] = useState(false);
-    const [showEmptyTooltip, setShowEmptyTooltip] = useState(false);
-    const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
-
-    // Display controls state
-    const [displayPercentage, setDisplayPercentage] = useState(showPercentage);
-    const [displayValues, setDisplayValues] = useState(true);
-    const [displayWarning, setDisplayWarning] = useState(true);
+    displayWarning = true,
+    displayValues = true
+}) {
+    // Always use showPercentage from props for global control
+    const displayPercentage = showPercentage;
+    const [localValues, setLocalValues] = useState(displayValues);
+    // Use displayWarning from props if provided
+    const [localWarning, setLocalWarning] = useState(displayWarning);
+    // Tooltip logic
+    const [tooltip, setTooltip] = useState({ visible: false, type: null, x: 0, y: 0 });
 
     // Extract values from data
     const item = data[0] || defaultData[0];
@@ -33,12 +133,9 @@ const ProgressBar = ({
 
     // Calculate if over budget
     const isOverBudget = current > max;
-    const withinBudget = Math.min(current, max);
     const overBudget = isOverBudget ? current - max : 0;
 
-    // Calculate percentages
-    const withinBudgetPercent = max > 0 ? (withinBudget / max) * 100 : 0;
-    const overBudgetPercent = max > 0 ? (overBudget / max) * 100 : 0;
+    // Calculate percentage of max used
     const totalPercent = max > 0 ? (current / max) * 100 : 0;
 
     // Check for income/expenses in data
@@ -51,72 +148,52 @@ const ProgressBar = ({
 
     const handleFilledMouseMove = (e) => {
         const rect = e.currentTarget.getBoundingClientRect();
-        setTooltipPosition({
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top
-        });
-        setShowFilledTooltip(true);
-        setShowEmptyTooltip(false);
+        setTooltip({ visible: true, type: 'filled', x: e.clientX - rect.left, y: e.clientY - rect.top });
     };
-
     const handleFilledMouseLeave = () => {
-        setShowFilledTooltip(false);
+        setTooltip(prev => ({ ...prev, visible: false }));
     };
-
     const handleEmptyMouseMove = (e) => {
         const rect = e.currentTarget.getBoundingClientRect();
-        setTooltipPosition({
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top
-        });
-        setShowEmptyTooltip(true);
-        setShowFilledTooltip(false);
+        setTooltip({ visible: true, type: 'empty', x: e.clientX - rect.left, y: e.clientY - rect.top });
     };
-
     const handleEmptyMouseLeave = () => {
-        setShowEmptyTooltip(false);
+        setTooltip(prev => ({ ...prev, visible: false }));
     };
 
     return (
         <div className={`w-full ${className}`}>
-            {/* Label and Controls */}
             <div className="flex items-center justify-between mb-2">
                 <div className="text-[var(--color-light)] font-medium">
                     {displayLabel}
                 </div>
-
-                {/* Display Controls */}
-                {showControls && (
-                    <div className="flex gap-4 text-xs">
-                        <label className="flex items-center gap-1 cursor-pointer text-[var(--color-light)]">
-                            <input
-                                type="checkbox"
-                                checked={displayPercentage}
-                                onChange={(e) => setDisplayPercentage(e.target.checked)}
-                                className="cursor-pointer"
-                            />
-                            <span>%</span>
-                        </label>
-                        <label className="flex items-center gap-1 cursor-pointer text-[var(--color-light)]">
-                            <input
-                                type="checkbox"
-                                checked={displayValues}
-                                onChange={(e) => setDisplayValues(e.target.checked)}
-                                className="cursor-pointer"
-                            />
-                            <span>Values</span>
-                        </label>
-                        <label className="flex items-center gap-1 cursor-pointer text-[var(--color-light)]">
-                            <input
-                                type="checkbox"
-                                checked={displayWarning}
-                                onChange={(e) => setDisplayWarning(e.target.checked)}
-                                className="cursor-pointer"
-                            />
-                            <span>Warning</span>
-                        </label>
-                    </div>
-                )}
+            </div>
+            {/* Display Controls */}
+            <div className="flex gap-4 text-xs mb-2">
+                {/* Local values toggle hidden if global control is present */}
+                {typeof displayValues === 'undefined' ? (
+                    <label className="flex items-center gap-1 cursor-pointer text-[var(--color-light)]">
+                        <input
+                            type="checkbox"
+                            checked={localValues}
+                            onChange={(e) => setLocalValues(e.target.checked)}
+                            className="cursor-pointer"
+                        />
+                        <span>Values</span>
+                    </label>
+                ) : null}
+                {/* Local warning toggle hidden if global control is present */}
+                {typeof displayWarning === 'undefined' ? (
+                    <label className="flex items-center gap-1 cursor-pointer text-[var(--color-light)]">
+                        <input
+                            type="checkbox"
+                            checked={localWarning}
+                            onChange={(e) => setLocalWarning(e.target.checked)}
+                            className="cursor-pointer"
+                        />
+                        <span>Warning</span>
+                    </label>
+                ) : null}
             </div>
 
             {/* Progress Bar */}
@@ -135,12 +212,12 @@ const ProgressBar = ({
                         onMouseLeave={handleFilledMouseLeave}
                     >
                         {/* Filled Tooltip */}
-                        {showFilledTooltip && (
+                        {tooltip.visible && tooltip.type === 'filled' && (
                             <div
                                 className="absolute bg-[var(--color-theme-tertiary)] p-2 rounded shadow-lg border border-[var(--color-theme-important)] z-20 pointer-events-none"
                                 style={{
-                                    left: `${tooltipPosition.x}px`,
-                                    top: `${tooltipPosition.y - 40}px`,
+                                    left: `${tooltip.x}px`,
+                                    top: `${tooltip.y - 40}px`,
                                     transform: 'translateX(-50%)'
                                 }}
                             >
@@ -162,12 +239,12 @@ const ProgressBar = ({
                             onMouseLeave={handleEmptyMouseLeave}
                         >
                             {/* Empty Tooltip */}
-                            {showEmptyTooltip && (
+                            {tooltip.visible && tooltip.type === 'empty' && (
                                 <div
                                     className="absolute bg-[var(--color-theme-tertiary)] p-2 rounded shadow-lg border border-[var(--color-theme-important)] z-20 pointer-events-none"
                                     style={{
-                                        left: `${tooltipPosition.x}px`,
-                                        top: `${tooltipPosition.y - 40}px`,
+                                        left: `${tooltip.x}px`,
+                                        top: `${tooltip.y - 40}px`,
                                         transform: 'translateX(-50%)'
                                     }}
                                 >
@@ -227,6 +304,8 @@ const ProgressBar = ({
             )}
         </div>
     );
-};
+}
 
 export default ProgressBar;
+// End of file
+
