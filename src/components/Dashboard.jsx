@@ -41,14 +41,9 @@ const Dashboard = () => {
     return (
         <>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-3">
-                {/* Budget Tracker Widget */}
                 <DashboardWidget title="Budget Tracker" className="md:col-span-2">
-                    <div className="relative">
-                        {/* Progress Bars */}
-                        <ProgressBar data={progressBars} />
-                    </div>
+                    <ProgressBar data={progressBars} enableDropdown={true} />
                 </DashboardWidget>
-
                 <DashboardWidget title="Income Sources">
                     <PieChart data={incomeData} />
                 </DashboardWidget>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation, matchPath, useOutletContext } from "react-router-dom";
 import { getDataRealTimeController, getAllDataRealTimeController, getAllDataActiveRealTimeController } from '../firebase/controller'
-
+import ProgressBar from '../components/charts/ProgressBar'
 const Navbar = ({
     title,
     paramMonth,
@@ -78,14 +78,14 @@ const Navbar = ({
                         <label htmlFor="selectWallet">Select Wallet</label>
                     </div>
                 </div>
-                <div>
-                    {/* {
+                {/* <div> */}
+                {/* {
                     isFetchingNavbar ? 'Loading...' :
                         monthCollectionData.length === 0 ? 'No Data' :
                             `Remaining Income: ${monthCollectionData[0].remainingIncome.toFixed(2)}`
                 } */}
-                    <div className='w-full justify-between items-center max-w-[400px] '>
-                        <div className=''>
+                <div className='w-full justify-between items-center max-w-[400px] '>
+                    {/* <div className=''>
                             <div>
                                 Balance
                             </div>
@@ -118,9 +118,21 @@ const Navbar = ({
                                     200.00
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        </div> */}
+                    <ProgressBar data={[
+                        {
+                            id: 'balance',
+                            name: 'Remaining Balance',
+                            currentLabel: "Current Balance",
+                            remainingLabel: "Remaining Balance",
+                            data: [{ name: 'Remaining Balance', value: 3800, max: 5000 }],
+                        }
+                    ]}
+                        enableDropdown={false}
+                        showBreakdown={true}
+                    />
                 </div>
+                {/* </div> */}
                 <div className='hidden sm:block'>Test</div>
             </div>
             {/* {console.log('Month Collected ',monthCollectionData.remainingIncome)} */}
