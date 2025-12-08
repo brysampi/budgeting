@@ -72,7 +72,7 @@ export default function MonthSelection({ onLogOut }) {
                     </div>
                 </div>
                 <div>
-                {/* <div className='flex items-center mb-[1rem] sm:mb-0 sm:text-left text-2xl font-bold'> */}
+                    {/* <div className='flex items-center mb-[1rem] sm:mb-0 sm:text-left text-2xl font-bold'> */}
                     Logout
                 </div>
             </div>
@@ -107,7 +107,7 @@ export default function MonthSelection({ onLogOut }) {
                         monthCollectionData.map((item, index) => (
                             <div key={index + 1} className=''>
                                 {/* {console.log('items to', item)} */}
-                                <Link to={'/income/' +
+                                <Link to={'/dashboard/' +
                                     item.date.toDate().getFullYear()
                                     + '-' +
                                     (item.date.toDate().getMonth() + 1)
