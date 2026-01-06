@@ -36,7 +36,7 @@ export async function getUser(user, password) {
 
 export async function addData(table, arrayData, created = serverTimestamp()) {
     try {
-        const IdStored = arrayData.user;
+        const IdStored = getUserID().toString();
         if (IdStored) {
             const collectionRef = collection(db, table)
             const returnData = await addDoc(collectionRef, {
@@ -174,7 +174,7 @@ export async function getAllDataActive(table, debug = false) {
 
         const querySnapshot = await getDocs(que);
 
-        if (debug) 
+        if (debug)
             console.log(`Fetched ${querySnapshot.size} documents for expensesId: ${expensesId}`);
 
         if (querySnapshot.empty) {
@@ -428,23 +428,49 @@ export async function getSavingsDataRealTime(inputDate, setData, isFetching, dro
 export async function getBillsDataRealTime(inputDate, setData, isFetching) {
     try {
         const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
+        // console.log('startOfMonth: ', startOfMonth);
+        // console.log('endOfMonth: ', endOfMonth);
+        // console.log('getUserID(): ', inputDate);
         const que = query(
             collection(db, 'bills'),
             where("user", "==", getUserID()),
             where("date", "<=", endOfMonth),
             where("dueDate", ">=", startOfMonth),
+            // where("date", "<=", startOfMonth),
+            // where("dueDate", ">=", endOfMonth),
+            // where("date", ">=", startOfMonth),
+            // where("date", "<=", endOfMonth),
+            // where("dueDate", ">=", startOfMonth),
             orderBy("date", "desc"),
             orderBy("createdAt", "desc"),
         );
         const unsubscribe = onSnapshot(que, async (snapshot) => {
-            const promises = snapshot.docs.map(async (docSnap) => ({
-                id: docSnap.id,
-                ...docSnap.data(),
-            }));
+            const promises = snapshot.docs.map(async (docSnap) => {
+                const docData = docSnap.data();
+                // console.log(docData);
+                // console.log(docSnap.id);
+                const extensionData = await getBillsExtensionByBills(docSnap.id, inputDate);
+                // const extensionData = await getBillsExtensionByBills(docSnap.id, '2025-11');
+                // console.log(': docData : ', docData);
+                // console.log(': extensionData : ', extensionData);
+                if (extensionData) {
+                    // console.log('May Extension: ')
+                    docData.actual = extensionData.actual;
+
+                } else {
+                    console.log('Walang Extension.')
+                }
+                docData.convert = convertToDate(docData.date);
+                // console.log(' updated DocData : ', docData);
+                return {
+                    id: docSnap.id,
+                    ...docData
+                };
+            });
             const resolvedData = await Promise.all(promises);
             setData(resolvedData);
             isFetching(false);
-            return resolvedData;
+            return promises;
         });
         return unsubscribe;
     } catch (error) {
@@ -452,6 +478,40 @@ export async function getBillsDataRealTime(inputDate, setData, isFetching) {
         throw new Error("Failed to fetch data");
     }
 }
+export async function getBillsExtensionByBills(billsId, inputDate, debug = false) {
+    try {
+        const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
+        const usersRef = collection(db, 'billsExtension');
+        const billsQuery = query(
+            usersRef,
+            where("user", "==", getUserID()),
+            where("date", ">=", startOfMonth),
+            where("date", "<=", endOfMonth),
+            where("billsId", "==", billsId),
+            orderBy("date", "desc"),
+            orderBy("createdAt", "desc"),
+            limit(1)
+        );
+        const querySnapshot = await getDocs(billsQuery);
+
+        if (debug)
+            console.log(`Fetched ${querySnapshot.size} documents for billsId: ${billsId}`);
+
+        if (querySnapshot.empty) {
+            return null;
+        }
+
+        const docSnap = querySnapshot.docs[0];
+        return {
+            id: docSnap.id,
+            ...docSnap.data(),
+        };
+    } catch (error) {
+        console.error(`Error fetching bills extensions for ID ${billsId}:`, error);
+        return [];
+    }
+}
+
 // ------------------------------- Expenses -------------------------------------
 export async function getExpensesDataRealTime(inputDate, setExpensesData, isFetching, dropdownData) {
     try {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getDataRealTimeController, deleteDataController } from '../firebase/controller';
+import { getDataRealTimeController, getBillsDataRealTimeController, deleteDataController } from '../firebase/controller';
 import { convertToDate } from '../firebase/utils';
 import { useParams, useOutletContext } from 'react-router-dom';
 import { LuPlus, LuTrash2, LuSquarePen } from 'react-icons/lu';
@@ -18,10 +18,11 @@ const Bills = () => {
     useEffect(() => {
         const returnBills = async () => {
             setIsFetching(true);
-            return await getDataRealTimeController('bills', paramMonth, setBillsData, setIsFetching, selectedWallet);
+            // return await getDataRealTimeController('bills', paramMonth, setBillsData, setIsFetching, selectedWallet);
+            // return await getBillsDataRealTimeController(paramMonth, setBillsData, setIsFetching, selectedWallet);
+            return await getBillsDataRealTimeController(paramMonth, setBillsData, setIsFetching, selectedWallet);
         }
         returnBills();
-
     }, [selectedWallet]);
 
     const updateSetData = (arrayData) => {
@@ -45,12 +46,6 @@ const Bills = () => {
                     setUpdateData={setUpdateData}
                 />
             </Modal >
-            <div className="card-container">
-                <div className="card card-no-bg flex-1"></div>
-                <div className="card card-main">
-
-                </div>
-            </div>
 
             <div className="card card-main">
                 <div className='table-header'>
@@ -87,18 +82,15 @@ const Bills = () => {
                                 <tr><td colSpan={6}>No Data Found</td></tr> :
                                 billsData.map((item, index) => (
                                     <tr key={index + 1}>
-                                        {/* <td>{item.wallet}</td> */}
                                         <td>{item.description}</td>
                                         <td>{convertToDate(item.dueDate)}</td>
                                         <td>{item.budget.toFixed(2)}</td>
-                                        <td className={`${item.budget < item.actual ? 'text-[var(--theme-one-tertiary)] font-bold' : ''}`}>{item.actual.toFixed(2)}</td>
-                                        {/* <td>{item.status}</td> */}
-                                        {/* <td>{convertToDate(item.paidAt)}</td> */}
+                                        <td>{item.actual && item.actual.toFixed(2)}</td>
                                         <td>
                                             <div className="multi-btn-evenly">
                                                 <button
                                                     className="btn btn-cancel"
-                                                    onClick={async () => { await deleteDataController('bills', item.id) }}>
+                                                    onClick={async () => { await deleteDataController('income', item.id) }}>
                                                     <LuTrash2 />
                                                 </button>
                                                 <button
@@ -110,7 +102,6 @@ const Bills = () => {
                                                             dueDate: convertToDate(item.dueDate),
                                                             expected: item.budget,
                                                             amount: item.actual,
-                                                            paymentStatus: !item.status ? '' : item.status,
                                                             wallet: item.wallet
                                                         }
                                                     )

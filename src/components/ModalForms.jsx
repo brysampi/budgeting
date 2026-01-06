@@ -26,9 +26,6 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
     const [changeDateIsChecked, setChangeDateIsChecked] = useState(false);
 
 
-    const [paymentStatus, setPaymentStatus] = useState('')
-
-
     // console.log('Update Data ', isUpdate)
     // console.log('FOrm TYpe ', formType)
     const [loading, setLoading] = useState(false);
@@ -81,7 +78,7 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
 
     // set Update Data to Form
     useEffect(() => {
-        console.log('Update Data ', updateData)
+        // console.log('Update Data ', updateData)
         setUpdateId(updateData.id || '')
         setFormCategory(updateData.category || '')
         setFormCategoryText(updateData.categoryText || '')
@@ -93,6 +90,7 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
         setFormWallet(updateData.wallet || '')
         setFormMonthlyBudget(updateData.monthlyBudget || '')
         setFormStatus(updateData.status || '')
+        setFormDueDate(updateData.dueDate || '')
         // if (updateData.date !== undefined && updateData.date !== null && updateData.date !== '') {
         // setChangeDateIsChecked(true)
         if (isUpdate === true) {
@@ -102,7 +100,7 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
 
         // }
 
-        console.log('Use Effect Update Data Called', formWallet)
+        // console.log('Use Effect Update Data Called', formWallet)
     }, [isUpdate, updateData])
     // Set The First Wallet as Default
     useEffect(() => {
@@ -190,6 +188,7 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
         if (returnAddStatus.status === 'success') {
             // console.log(addStatus().message);
             // setLoading(false);
+            // console.log(returnAddStatus.data.id);
             clearForm();
         }
         setLoading(false);
@@ -246,7 +245,6 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
                     dueDate: convertToTimeStamp(formDueDate),
                     budget: !formExpected ? 0 : parseFloat(formExpected),
                     actual: !formAmount ? 0 : parseFloat(formAmount),
-                    paymentStatus: paymentStatus,
                     wallet: formWallet,
                     date: paramMonth,
                 });
@@ -281,6 +279,7 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
             }
         }
         const updateExpensesStatus = await updateExpenses();
+        console.log('Update Expenses Status Forms: ', updateExpensesStatus)
         if (updateExpensesStatus.status === 'success') {
             setIsModalOpen(false);
             clearForm();
@@ -306,14 +305,14 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
         setFormStatus('')
 
         // setChangeDate(getLastDayOfTheMonth(paramMonth))
-        console.log('Is Update ', isUpdate)
-        console.log('Change Date ', formCategory)
+        // console.log('Is Update ', isUpdate)
+        // console.log('Change Date ', formCategory)
         if (isUpdate === true) {
             // setChangeDateIsChecked(false)
             setChangeDate('')
             setFormCategory('')
         }
-        console.log('Change Date 222 ', formCategory)
+        // console.log('Change Date 222 ', formCategory)
         setLoading(false)
         setIsUpdate(false);
         setUpdateData([]);

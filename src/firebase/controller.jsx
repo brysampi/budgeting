@@ -6,7 +6,7 @@ import {
     getDataRealTime,
     //  getExpensesTrackerDataRealTime, 
     getDataCategoryRealTime,
-    getBillsDataRealTime,
+    getBillsDataRealTime, getBillsExtensionByBills,
     getExpensesDataRealTime, getExpensesDataRealTime_v2, getExpensesDataRealTime_extension, getExtensionByExpenses,
     getCollectedDataRealTime,
     getSavingsDataRealTime,
@@ -240,32 +240,41 @@ export async function bills(arrayData) {
     if (arrayData.description === '' || arrayData.dueDate === '' || arrayData.budget === 0 || arrayData.date === '')
         return errorMsg('Please fill up all fields.')
 
-    // if (arrayData.actual <= 0)
-    //     return errorMsg("Actual Can't be negative.")
-
     if (arrayData.budget <= 0)
         return errorMsg("Budget can't be negative.")
 
     if (!getUserID())
         return errorMsg('No LoggedIn User Found.')
+
     const data = {
         description: arrayData.description,
         dueDate: convertToTimeStamp(arrayData.dueDate),
         budget: arrayData.budget,
-        actual: arrayData.actual,
-        status: arrayData.actual !== 0 && arrayData.actual >= arrayData.budget ? 'paid' : 'not_paid',
+        // actual: arrayData.actual,
+        // status: arrayData.actual !== 0 && arrayData.actual >= arrayData.budget ? 'paid' : 'not_paid',
         date: convertToTimeStamp(arrayData.date),
-        user: getUserID().toString(),
+        // user: getUserID().toString(),
     }
-    if (data.status === 'paid')
-        data.paidAt = convertToTimeStamp(arrayData.date);
+
+    // if (data.status === 'paid')
+    //     data.paidAt = convertToTimeStamp(arrayData.date);
 
     const addReturn = await addData('bills', data)
-    updateCollectedData(arrayData.date)
-    return successMsg('Successfully Added.', addReturn)
+    console.log(addReturn)
+    if (arrayData.actual && addReturn.status === 'success') {
+        const dataExtension = {
+            billsId: addReturn.data.id,
+            actual: arrayData.actual,
+            date: convertToTimeStamp(arrayData.date),
+            // user: getUserID().toString(),
+        }
+        const addReturnExtension = await addData('billsExtension', dataExtension)
+        console.log('Bills Extension Message: ', addReturnExtension.message)
+    }
+    // updateCollectedData(arrayData.date)
+    return addReturn
 }
-// Not Used Anymore
-export async function getBillsDataRealTimeController(inputDate, setData, isFetching) {
+export async function getBillsDataRealTimeController(inputDate, setData, isFetching, wallet = '') {
     try {
         await getBillsDataRealTime(inputDate, setData, isFetching);
     } catch (error) {
@@ -273,29 +282,74 @@ export async function getBillsDataRealTimeController(inputDate, setData, isFetch
     }
 }
 export async function updateBills(updateId, arrayData) {
-    let { date, paymentStatus, ...removeDateData } = arrayData;
     if (!getUserID())
         return errorMsg('No LoggedIn User Found.')
+    // const billsData = await getDataById('bills', updateId)
+    // const data = {};
+    // const dataExtension = {};
+    // if (billsData.data.description != arrayData.description)
+    //     data.description = arrayData.description
 
-    if ((!paymentStatus || paymentStatus == 'not_paid') && arrayData.actual !== 0 && arrayData.actual >= arrayData.budget) {
-        removeDateData.status = 'paid';
-        removeDateData.paidAt = serverTimestamp();
+    // if (billsData.data.dueDate.toMillis() != arrayData.dueDate.toMillis())
+    //     data.dueDate = arrayData.dueDate
+
+    // if (billsData.data.budget != arrayData.budget)
+    //     data.budget = arrayData.budget
+
+    // if (billsData.data.wallet != arrayData.wallet)
+    //     data.wallet = arrayData.wallet
+    const data = {
+        description: arrayData.description,
+        dueDate: arrayData.dueDate,
+        budget: arrayData.budget,
+        wallet: arrayData.wallet,
     }
-    // removeDateData.paidAt = serverTimestamp();
-    // removeDateData.paidAt = convertToTimeStamp('2025-07-31');
-    if (arrayData.budget > arrayData.actual) {
-        removeDateData.status = 'not_paid';
-        // removeDateData.paidAt = serverTimestamp();
+    // if update status is 1, it means there was an error updating the extension
+    const updateStatus = 0;
+
+    const extensionData = await getBillsExtensionByBills(updateId, arrayData.date);
+
+    if (arrayData.actual && extensionData) {
+        const dataExtension = {
+            actual: arrayData.actual
+        }
+
+        const updateResultExtension = await updateData('billsExtension', extensionData.id, dataExtension);
+        console.log('Update Result Extension: ', updateResultExtension)
+        if (updateResultExtension.status === 'error')
+            updateStatus = 1;
+        // Dito nag aayos ka ng consition linisin mo nlng working na
+    } else if (arrayData.actual && !extensionData) {
+
+        const dataExtension = {
+            billsId: updateId,
+            actual: arrayData.actual,
+            date: convertToTimeStamp(arrayData.date),
+            // user: getUserID().toString(),
+        }
+        const addReturnExtension = await addData('billsExtension', dataExtension)
+        console.log('Bills Extension Message: ', addReturnExtension.message)
+        if (addReturnExtension.status === 'error')
+            updateStatus = 1;
     }
-    const updateResult = await updateData('bills', updateId, removeDateData);
-    if (updateResult.status !== 'success') {
-        console.log('Failed to update data.');
-        return updateResult
+
+    if (updateStatus != 1) {
+        const updateResult = await updateData('bills', updateId, data);
+        console.log('Update Result: ', updateResult)
+        return updateResult;
     }
-    console.log('Data updated successfully.', removeDateData);
-    updateCollectedData(date);
-    // return console.log('Removed Data Successfully.', removeDateData);
-    return updateResult
+
+    return errorMsg('Error updating bills.')
+
+}
+export async function getBillsExtension(billsId, date) {
+    try {
+        await getBillsExtensionByBills(billsId, date);
+    } catch (error) {
+        console.error(`Error fetching data from ${table} in Controller:`, error);
+    }
+}
+export async function addBillsExtension(arrayData) {
 
 }
 // -------------------------- Expenses -----------------------------------
@@ -539,9 +593,9 @@ export async function updateExpenses_extension_1(extensionId, monthlyBudget) {
         ? successMsg('Successfully Updated Monthly Budget.', { id: extensionUpdateResult.data.id })
         : errorMsg('Failed to update Monthly Budget. Check console for error.');
 }
-export async function getExpensesExtension(expensesId, inputDate) {
-    await getExtensionByExpenses(expensesId, inputDate)
-}
+// export async function getExpensesExtension(expensesId, inputDate) {
+//     await getExtensionByExpenses(expensesId, inputDate)
+// }
 export async function expensesTrackerUpdate(id, arrayData, paramMonth) {
     const discountPrice = !arrayData.discount || arrayData.discount === '' ? 0 : arrayData.discount;
     const data = {
