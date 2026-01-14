@@ -30,7 +30,7 @@ const ExpensesSettings = () => {
     }
     return (
         <>
-            <Modal title={!updateDataStatus ? 'Add Bill' : 'Update Bill'} isModalOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+            <Modal title={!updateDataStatus ? 'Add Bill Settings' : 'Update Bill Settings'} isModalOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
                 <ModalForms
                     paramMonth={paramMonth}
                     isModalOpen={isModalOpen}

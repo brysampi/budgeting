@@ -147,15 +147,21 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
                     wallet: formWallet,
                     date: paramMonth,
                 })
-            else if (formType === 'bills')
-                return bills({
+            else if (formType === 'bills' || formType === 'billsSettings') {
+                const billsAddData = {
                     description: formDescription,
                     dueDate: formDueDate,
                     budget: !formExpected ? 0 : parseFloat(formExpected),
-                    actual: !formAmount ? 0 : parseFloat(formAmount),
+                    // actual: !formAmount ? 0 : parseFloat(formAmount),
                     wallet: formWallet,
                     date: paramMonth,
-                })
+                }
+                if (formType === 'bills')
+                    billsAddData.actual = !formAmount ? 0 : parseFloat(formAmount);
+                if (formType === 'billsSettings')
+                    billsAddData.monthlyBudget = !formMonthlyBudget ? 0 : parseFloat(formMonthlyBudget);
+                return bills(billsAddData)
+            }
             else if (formType === 'expenses')
                 return expenses({
                     category: formCategoryText,
@@ -239,15 +245,34 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
             return console.log(data())
 
         const updateExpenses = async () => {
-            if (formType === 'bills') {
-                return await updateBills(updateId, {
+            if (formType === 'bills' || formType === 'billsSettings') {
+                const billsUpdateData = {
                     description: formDescription,
                     dueDate: convertToTimeStamp(formDueDate),
-                    budget: !formExpected ? 0 : parseFloat(formExpected),
-                    actual: !formAmount ? 0 : parseFloat(formAmount),
+                    // budget: !formExpected ? 0 : parseFloat(formExpected),
+                    // actual: !formAmount ? 0 : parseFloat(formAmount),
                     wallet: formWallet,
                     date: paramMonth,
-                });
+                }
+                if (formType === 'bills') {
+                    billsUpdateData.actual = !formAmount ? 0 : parseFloat(formAmount);
+                    billsUpdateData.monthlyBudget = !formExpected ? 0 : parseFloat(formExpected);
+                }
+                if (formType === 'billsSettings') {
+                    billsUpdateData.budget = !formExpected ? 0 : parseFloat(formExpected);
+                    billsUpdateData.monthlyBudget = !formMonthlyBudget ? 0 : parseFloat(formMonthlyBudget);
+                }
+
+                return await updateBills(updateId, billsUpdateData, formType);
+
+                // return await updateBills(updateId, {
+                //     description: formDescription,
+                //     dueDate: convertToTimeStamp(formDueDate),
+                //     budget: !formExpected ? 0 : parseFloat(formExpected),
+                //     actual: !formAmount ? 0 : parseFloat(formAmount),
+                //     wallet: formWallet,
+                //     date: paramMonth,
+                // });
             } else if (formType === 'expenses') {
                 return await updateExpenses_extension(updateId, {
                     category: formCategoryText,
@@ -369,7 +394,14 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
                     )
                 }
                 {
-                    (formType === 'wallets' || formType === 'income' || formType === 'savingsTracker' || formType === 'savings' || formType === 'bills' || formType === 'expensesTracker') &&
+                    (formType === 'wallets' ||
+                        formType === 'income' ||
+                        formType === 'savingsTracker' ||
+                        formType === 'savings' ||
+                        formType === 'bills' ||
+                        formType === 'billsSettings' ||
+                        formType === 'expensesTracker'
+                    ) &&
                     (
                         <>
                             <div className="floating-label-wrapper">
@@ -413,7 +445,7 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
                     )
                 }
                 {
-                    (formType === 'bills') &&
+                    (formType === 'bills' || formType === 'billsSettings') &&
                     (
                         <>
                             <div className="floating-label-wrapper">
@@ -430,7 +462,12 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
                     )
                 }
                 {
-                    (formType === 'income' || formType === 'bills' || formType === 'expenses' || formType === 'expensesSettings') &&
+                    (formType === 'income' ||
+                        formType === 'bills' ||
+                        formType === 'billsSettings' ||
+                        formType === 'expenses' ||
+                        formType === 'expensesSettings'
+                    ) &&
                     (
                         <>
                             <div className="floating-label-wrapper">
@@ -441,13 +478,40 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
                                     value={formExpected}
                                     onChange={(e) => setFormExpected(e.target.value)}
                                 />
-                                <label htmlFor="formExpected">{formType === 'bills' || formType === 'expenses' || formType === 'expensesSettings' ? 'Budget' : 'Expected'}</label>
+                                <label htmlFor="formExpected">{
+                                    formType === 'bills' ||
+                                        formType === 'billsSettings' ||
+                                        formType === 'expenses' ||
+                                        formType === 'expensesSettings' ? 'Budget' : 'Expected'}</label>
                             </div>
                         </>
                     )
                 }
                 {
-                    (formType === 'income' || formType === 'savingsTracker' || formType === 'savings' || formType === 'bills') &&
+                    (formType === 'expensesSettings' ||
+                        formType === 'billsSettings'
+                    ) &&
+                    (
+                        <>
+                            <div className="floating-label-wrapper">
+                                <input
+                                    type='text'
+                                    id="monthlyBudgetExpenses"
+                                    placeholder="Monthly Budget"
+                                    value={formMonthlyBudget}
+                                    onChange={(e) => setFormMonthlyBudget(e.target.value)}
+                                />
+                                <label htmlFor="monthlyBudgetExpenses">{getMonthNamesSingleDigit(paramMonth)} Budget</label>
+                            </div>
+                        </>
+                    )
+                }
+                {
+                    (formType === 'income' ||
+                        formType === 'savingsTracker' ||
+                        formType === 'savings' ||
+                        formType === 'bills'
+                    ) &&
                     (
                         <>
                             <div className="floating-label-wrapper">
@@ -489,23 +553,7 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
                         </>
                     )
                 }
-                {
-                    (formType === 'expensesSettings') &&
-                    (
-                        <>
-                            <div className="floating-label-wrapper">
-                                <input
-                                    type='text'
-                                    id="monthlyBudgetExpenses"
-                                    placeholder="Monthly Budget"
-                                    value={formMonthlyBudget}
-                                    onChange={(e) => setFormMonthlyBudget(e.target.value)}
-                                />
-                                <label htmlFor="monthlyBudgetExpenses">{getMonthNamesSingleDigit(paramMonth)} Budget</label>
-                            </div>
-                        </>
-                    )
-                }
+
                 {
                     (isUpdate && (formType === 'wallets' || formType === 'savings' || formType === 'expensesSettings')) &&
                     (

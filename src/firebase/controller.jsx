@@ -237,7 +237,7 @@ export async function getSavingsTracker(inputDate, setExpensesData, isFetching, 
 
 // -------------------------- Bills -----------------------------------
 export async function bills(arrayData) {
-    if (arrayData.description === '' || arrayData.dueDate === '' || arrayData.budget === 0 || arrayData.date === '')
+    if (arrayData.description === '' || arrayData.dueDate === '')
         return errorMsg('Please fill up all fields.')
 
     if (arrayData.budget <= 0)
@@ -264,10 +264,13 @@ export async function bills(arrayData) {
     if (arrayData.actual && addReturn.status === 'success') {
         const dataExtension = {
             billsId: addReturn.data.id,
-            actual: arrayData.actual,
             date: convertToTimeStamp(arrayData.date),
             // user: getUserID().toString(),
         }
+        if (arrayData.monthlyBudget)
+            dataExtension.monthlyBudget = arrayData.monthlyBudget;
+        else
+            dataExtension.actual = arrayData.actual
         const addReturnExtension = await addData('billsExtension', dataExtension)
         console.log('Bills Extension Message: ', addReturnExtension.message)
     }
@@ -281,52 +284,45 @@ export async function getBillsDataRealTimeController(inputDate, setData, isFetch
         console.error(`Error fetching data from ${table} in Controller:`, error);
     }
 }
-export async function updateBills(updateId, arrayData) {
+export async function updateBills(updateId, arrayData, formType) {
+    // console.log('Update Bills: ', arrayData)
     if (!getUserID())
         return errorMsg('No LoggedIn User Found.')
-    // const billsData = await getDataById('bills', updateId)
-    // const data = {};
-    // const dataExtension = {};
-    // if (billsData.data.description != arrayData.description)
-    //     data.description = arrayData.description
 
-    // if (billsData.data.dueDate.toMillis() != arrayData.dueDate.toMillis())
-    //     data.dueDate = arrayData.dueDate
-
-    // if (billsData.data.budget != arrayData.budget)
-    //     data.budget = arrayData.budget
-
-    // if (billsData.data.wallet != arrayData.wallet)
-    //     data.wallet = arrayData.wallet
     const data = {
         description: arrayData.description,
         dueDate: arrayData.dueDate,
-        budget: arrayData.budget,
+        // budget: arrayData.budget,
         wallet: arrayData.wallet,
     }
+    if (arrayData.budget)
+        data.budget = arrayData.budget;
     // if update status is 1, it means there was an error updating the extension
     const updateStatus = 0;
 
     const extensionData = await getBillsExtensionByBills(updateId, arrayData.date);
+    const getBillsData = await getDataById('bills', updateId);
 
-    if (arrayData.actual && extensionData) {
-        const dataExtension = {
-            actual: arrayData.actual
-        }
+    const dataExtension = {}
 
+    if (formType === 'bills') {
+        if (getBillsData.data.budget !== arrayData.budget)
+            dataExtension.monthlyBudget = arrayData.monthlyBudget;
+        dataExtension.actual = arrayData.actual;
+    }
+    else {
+        dataExtension.monthlyBudget = arrayData.monthlyBudget;
+    }
+
+    if (extensionData) {
         const updateResultExtension = await updateData('billsExtension', extensionData.id, dataExtension);
         console.log('Update Result Extension: ', updateResultExtension)
         if (updateResultExtension.status === 'error')
             updateStatus = 1;
-        // Dito nag aayos ka ng consition linisin mo nlng working na
-    } else if (arrayData.actual && !extensionData) {
+    } else {
+        dataExtension.billsId = updateId;
+        dataExtension.date = convertToTimeStamp(arrayData.date);
 
-        const dataExtension = {
-            billsId: updateId,
-            actual: arrayData.actual,
-            date: convertToTimeStamp(arrayData.date),
-            // user: getUserID().toString(),
-        }
         const addReturnExtension = await addData('billsExtension', dataExtension)
         console.log('Bills Extension Message: ', addReturnExtension.message)
         if (addReturnExtension.status === 'error')

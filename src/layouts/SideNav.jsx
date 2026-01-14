@@ -17,6 +17,8 @@ export default function SideNav({ hide, sidenavRef }) {
             return true
         else if (path == `/expenses/${paramMonth}` && location.pathname == `/expensesSettings/${paramMonth}`)
             return true
+        else if (path == `/bills/${paramMonth}` && location.pathname == `/billsSettings/${paramMonth}`)
+            return true
         // location.pathname == `/savingsTracker/${paramMonth}` ? 'active' : 
         return exact
             ? location.pathname === path

@@ -11,9 +11,10 @@ const routes = [
     { path: "/savings/:paraMonth", title: "Savings Summary / Category" },
     { path: "/savingsTracker/:paraMonth", title: "Savings Tracker" },
     { path: "/bills/:paraMonth", title: "Bills" },
+    { path: "/billsSettings/:paraMonth", title: "Bills Settings" },
     { path: "/expenses/:paraMonth", title: "Expenses" },
     { path: "/expensesTracker/:paraMonth", title: "Expenses Tracker" },
-    { path: "/expenses/expensesSettings/:paraMonth", title: "Expenses Settings" },
+    { path: "/expensesSettings/:paraMonth", title: "Expenses Settings" },
 ];
 
 const MainLayout = () => {

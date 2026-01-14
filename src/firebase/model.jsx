@@ -116,9 +116,9 @@ export async function getDataRealTime(table, inputDate, setData, isFetching, wal
         throw new Error("Failed to fetch data");
     }
 }
-export async function getDataById(table, data) {
+export async function getDataById(table, id) {
     try {
-        const docRef = doc(db, table, data);
+        const docRef = doc(db, table, id);
         // "users" is the collection name, "USER_ID" is the document ID
 
         const docSnap = await getDoc(docRef);
@@ -456,6 +456,7 @@ export async function getBillsDataRealTime(inputDate, setData, isFetching) {
                 if (extensionData) {
                     // console.log('May Extension: ')
                     docData.actual = extensionData.actual;
+                    docData.monthlyBudget = extensionData.monthlyBudget;
 
                 } else {
                     console.log('Walang Extension.')
