@@ -51,7 +51,7 @@ export async function addData(table, arrayData, created = serverTimestamp()) {
         else
             return errorMsg('No LoggedIn User Found.')
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         return errorMsg('check console for error.')
     }
 }
@@ -751,5 +751,29 @@ export async function deleteData(table, id) {
     } catch (error) {
         console.error("Error deleting data:", error);
         return errorMsg('Failed to delete data. Check console for error.')
+    }
+}
+
+export async function deleteAllData(table, userID) {
+    try {
+        // const userID = getUserID();
+        if (!userID) {
+            return errorMsg('No LoggedIn User Found.');
+        }
+
+        const q = query(collection(db, table), where("user", "==", userID));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+            return successMsg('No data to delete.');
+        }
+
+        const deletePromises = querySnapshot.docs.map((docSnap) => deleteDoc(doc(db, table, docSnap.id)));
+        await Promise.all(deletePromises);
+
+        return successMsg('Successfully Deleted All Data.');
+    } catch (error) {
+        console.error("Error deleting all data:", error);
+        return errorMsg('Failed to delete all data. Check console for error.');
     }
 }

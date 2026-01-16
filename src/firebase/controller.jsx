@@ -10,6 +10,7 @@ import {
     getExpensesDataRealTime, getExpensesDataRealTime_v2, getExpensesDataRealTime_extension, getExtensionByExpenses,
     getCollectedDataRealTime,
     getSavingsDataRealTime,
+    deleteAllData,
 } from '../firebase/model';
 
 export async function checkStaticData(inputDate) {
@@ -237,7 +238,7 @@ export async function getSavingsTracker(inputDate, setExpensesData, isFetching, 
 
 // -------------------------- Bills -----------------------------------
 export async function bills(arrayData) {
-    if (arrayData.description === '' || arrayData.dueDate === '')
+    if (arrayData.description === '' || arrayData.dueDate === '' || arrayData.wallet === '')
         return errorMsg('Please fill up all fields.')
 
     if (arrayData.budget <= 0)
@@ -284,8 +285,14 @@ export async function getBillsDataRealTimeController(inputDate, setData, isFetch
         console.error(`Error fetching data from ${table} in Controller:`, error);
     }
 }
+
 export async function updateBills(updateId, arrayData, formType) {
-    // console.log('Update Bills: ', arrayData)
+    if (arrayData.description === '' || arrayData.dueDate === '' || arrayData.wallet === '')
+        return errorMsg('Please fill up all fields.')
+
+    if (arrayData.budget <= 0)
+        return errorMsg("Budget can't be negative.")
+
     if (!getUserID())
         return errorMsg('No LoggedIn User Found.')
 
@@ -298,7 +305,7 @@ export async function updateBills(updateId, arrayData, formType) {
     if (arrayData.budget)
         data.budget = arrayData.budget;
     // if update status is 1, it means there was an error updating the extension
-    const updateStatus = 0;
+    let updateStatus = 0;
 
     const extensionData = await getBillsExtensionByBills(updateId, arrayData.date);
     const getBillsData = await getDataById('bills', updateId);
@@ -708,14 +715,79 @@ export async function logout() {
     return successMsg('Logout successful');
 }
 export async function deleteDataController(table, id) {
-    await deleteData(table, id).then((response) => {
-        if (response && response.status === 'success')
-            console.log('Data deleted successfully.');
-        else
-            console.log('Failed to delete data.');
+    // await deleteData(table, id).then((response) => {
+    //     if (response && response.status === 'success')
+    //         console.log('Data deleted successfully.');
+    //     else
+    //         console.log('Failed to delete data.');
 
-    }).catch((error) => {
-        console.error('Error deleting data:', error);
-    });
+    // }).catch((error) => {
+    //     console.error('Error deleting data:', error);
+    // });
     console.log('Delete is Working But Will Not Delete in Production.');
+}
+export async function transferOldBills() {
+    const billsData = await getAllData('bills');
+    billsData.forEach(async (bill) => {
+        console.log('Fetching...')
+        console.log('Bill: ', convertToDate(bill.date))
+        const extensionData = await getBillsExtensionByBills(bill.id, convertToDate(bill.date));
+        const dataExtension = {
+            actual: bill.actual,
+        }
+
+        if (extensionData) {
+            const updateResultExtension = await updateData('billsExtension', extensionData.id, dataExtension);
+            console.log('Update Result Extension: ', updateResultExtension)
+        } else {
+            dataExtension.billsId = bill.id;
+            dataExtension.date = convertToTimeStamp(convertToDate(bill.date));
+
+            const addReturnExtension = await addData('billsExtension', dataExtension)
+            console.log('Bills Extension Message: ', addReturnExtension.message)
+        }
+
+
+        // const dataExtension = {
+        //     billsId: bill.id,
+        //     date: convertToTimeStamp(bill.date),
+        //     // user: getUserID().toString(),
+        // }
+        // if (bill.monthlyBudget)
+        //     dataExtension.monthlyBudget = bill.monthlyBudget;
+        // else
+        //     dataExtension.actual = bill.actual
+        // const addReturnExtension = await addData('billsExtension', dataExtension)
+        // console.log('Bills Extension Message: ', addReturnExtension.message)
+    })
+}
+export async function deleteAllDataController() {
+    try {
+        console.log('Delete All Data Controller')
+        const userID = getUserID();
+        if (!userID)
+            return errorMsg('No LoggedIn User Found.')
+
+        const tables = [
+            'income',
+            'bills',
+            'billsExtension',
+            'expenses',
+            'expensesExtension',
+            'expensesTracker',
+            'savings',
+            'savingsTracker',
+            'wallets',
+            'collectedData',
+            'expensesDefault'
+        ];
+
+        const promises = tables.map(table => deleteAllData(table, userID));
+        await Promise.all(promises);
+        console.log('All data deleted successfully.')
+        return successMsg('All data deleted successfully.');
+    } catch (error) {
+        console.error("Error in deleteAllDataController:", error);
+        return errorMsg('Failed to delete all data. Check console for error.');
+    }
 }

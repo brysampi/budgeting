@@ -1,7 +1,7 @@
 import { Link, useLocation, useParams, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import Cookies from 'js-cookie';
-import { logout } from '../firebase/controller';
+import { logout, deleteAllDataController, transferOldBills } from '../firebase/controller';
 import '../css/sidenav.css';
 import { LuIndentDecrease, LuIndentIncrease, LuCalendarDays, LuCoins, LuHandCoins, LuClipboardList, LuNewspaper, LuShoppingBag, LuSettings, LuLogOut, LuCircleUserRound, LuWallet } from "react-icons/lu";
 import { LiaCalendar, LiaCoinsSolid, LiaUserCogSolid } from "react-icons/lia";
@@ -93,6 +93,12 @@ export default function SideNav({ hide, sidenavRef }) {
                             <span><LiaUserCogSolid /></span>
                             <span className={hideText}>Settings</span>
                         </li>
+                        {/* <li>
+                            <button onClick={transferOldBills}>Transfer Old Bills</button>
+                        </li>
+                        <li>
+                            <button onClick={deleteAllDataController}>Delete All Data</button>
+                        </li> */}
 
                     </ul>
                 </div >
