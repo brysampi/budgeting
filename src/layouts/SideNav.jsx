@@ -95,8 +95,8 @@ export default function SideNav({ hide, sidenavRef }) {
                         </li>
                         {/* <li>
                             <button onClick={transferOldBills}>Transfer Old Bills</button>
-                        </li>
-                        <li>
+                        </li> */}
+                        {/* <li>
                             <button onClick={deleteAllDataController}>Delete All Data</button>
                         </li> */}
 

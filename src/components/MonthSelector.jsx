@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { getCollectedDataRealTimeController, creteCollectedData } from '../firebase/controller'
-import { getMonthNames } from '../firebase/utils'
+import { convertToDate, getMonthNames } from '../firebase/utils'
 import Logout from '../components/Logout'
 import Navbar from '../layouts/Navbar'
 
 export default function MonthSelection({ onLogOut }) {
-    const [monthData, setMonthData] = useState('')
+    const [monthData, setMonthData] = useState(convertToDate(new Date()).slice(0, 7))
     const [monthCollectionData, setMonthCollectionData] = useState([])
     const [isFetching, setIsFetching] = useState(false)
-    const [addNewMonth, setAddNewMonth] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
+    const navigate = useNavigate()
 
     useEffect(() => {
         const returnData = async () => {
@@ -21,10 +22,14 @@ export default function MonthSelection({ onLogOut }) {
     }, [])
     const collectData = async (e) => {
         e.preventDefault();
-        setAddNewMonth(true)
-        const collected = await creteCollectedData(monthData);
-        // collected ? setAddNewMonth(false) : setAddNewMonth(true)
-        console.log(collected)
+        setIsLoading(true)
+        const collected = await creteCollectedData(monthData)
+        setIsLoading(false)
+        console.log('Collected ', collected)
+        if (collected.status === 'success') {
+            // alert('Month Data Created Successfully')
+            navigate(`/dashboard/${monthData}`)
+        }
     }
     const progress = (180 / 200) * 100;
     return (
@@ -36,7 +41,7 @@ export default function MonthSelection({ onLogOut }) {
                     Select Month
                 </div>
                 <div className='w-full justify-between items-center max-w-[400px] '>
-                    <div className=''>
+                    {/* <div className=''>
                         <div>
                             Balance
                         </div>
@@ -69,7 +74,7 @@ export default function MonthSelection({ onLogOut }) {
                                 200.00
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
                 <div>
                     {/* <div className='flex items-center mb-[1rem] sm:mb-0 sm:text-left text-2xl font-bold'> */}
@@ -94,7 +99,7 @@ export default function MonthSelection({ onLogOut }) {
                     </div>
 
                     <button className="btn btn-primary btn-select-month sm:min-w-[9rem] rounded-l-none text-[var(--color-dark)] pl-2 pr-2 sm:pl-6 sm:pr-6"
-                        disabled={addNewMonth}>{addNewMonth ? 'Loading' : 'Select Month'}
+                        disabled={isLoading}>{isLoading ? 'Loading' : 'Select Month'}
                     </button>
                 </form>
             </div>
@@ -118,9 +123,7 @@ export default function MonthSelection({ onLogOut }) {
                                         </div>
                                         <div className="details">
                                             Remaining Income: <span>{item.remainingIncome.toFixed(2)}</span>
-
                                         </div>
-
                                     </div>
                                 </Link>
                             </div>

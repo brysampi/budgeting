@@ -81,7 +81,7 @@ export async function collectedData(inputDate) {
             user: getUserID(),
         }
         console.log(data)
-        return data
+        return successMsg('Data Collected Successfully.', data)
     }
     catch (error) {
         console.log(error)
@@ -90,6 +90,7 @@ export async function collectedData(inputDate) {
 }
 export async function checkCollectedData(table, inputDate) {
     const getDataCollected = await getData(table, inputDate)
+    console.log('testtt: ', getDataCollected)
     if (getDataCollected.length === 0 || getDataCollected.length < 1 || !getDataCollected)
         return false
     else
@@ -99,40 +100,55 @@ export async function checkCollectedData(table, inputDate) {
 export async function addCollectedData(inputDate, arrayData) {
     const addReturn = await addData('collectedData', arrayData)
     await updateCollectedData(inputDate)
-    return successMsg('Successfully Added.', addReturn);
+    return addReturn;
 }
+
 export async function creteCollectedData(inputDate) {
-    const checked = await checkCollectedData('collectedData', inputDate);
-    if (!checked) {
-        const collect = await collectedData(inputDate);
-        if (collect) {
-            const addCollect = await addCollectedData(inputDate, collect)
-            // const expensesDefault = await getAllData('expensesDefault', inputDate);
-            // expensesDefault.forEach(async (exDefault) => {
-            //     await addData('expenses', {
-            //         category: exDefault.description,
-            //         budget: exDefault.budget,
-            //         date: convertToTimeStamp(inputDate),
-            //         defaultCreatedId: exDefault.id,
-            //         user: getUserID(),
-            //     })
-            // })
-            // Object.entries(expensesDefault).forEach(async ([key, value]) => {
-            //     await addData('expenses', {
-            //         category: key,
-            //         budget: value,
-            //         date: convertToTimeStamp(inputDate),
-            //         user: getUserID(),
-            //     })
-            // })
-            // const addReturn = await addData('expenses', data)
-            return successMsg('Successfully Added.', addCollect);
+    try {
+        // console.log('inputDate: ', inputDate)
+        const checked = await checkCollectedData('collectedData', inputDate);
+        // console.log('checked: ', !checked)
+        if (!checked) {
+            const collect = await collectedData(inputDate);
+            // console.log('collect: ', collect)
+            if (collect.status === 'success') {
+                const addCollect = await addCollectedData(inputDate, collect.data)
+
+                // Dito kana open yung month ng na select
+
+
+                // console.log('addCollect: ', addCollect)
+                // const expensesDefault = await getAllData('expensesDefault', inputDate);
+                // expensesDefault.forEach(async (exDefault) => {
+                //     await addData('expenses', {
+                //         category: exDefault.description,
+                //         budget: exDefault.budget,
+                //         date: convertToTimeStamp(inputDate),
+                //         defaultCreatedId: exDefault.id,
+                //         user: getUserID(),
+                //     })
+                // })
+                // Object.entries(expensesDefault).forEach(async ([key, value]) => {
+                //     await addData('expenses', {
+                //         category: key,
+                //         budget: value,
+                //         date: convertToTimeStamp(inputDate),
+                //         user: getUserID(),
+                //     })
+                // })
+                // const addReturn = await addData('expenses', data)
+                // addCollect.status = 'wew'
+                return addCollect;
+            }
+            console.log('Failed to Add Data in Controller.')
+            return errorMsg('check console for error.')
         }
-        console.log('Failed to Add Data in Controller.')
-        return errorMsg('check console for error.')
+        console.log('Already Have Data.')
+        return successMsg('Already Have Data.')
+    } catch (error) {
+        console.error('Error in creteCollectedData:', error);
+        return errorMsg('An error occurred. Check console for details.');
     }
-    console.log('Already Have Data.')
-    return errorMsg('Already Have Data.')
 }
 export async function updateCollectedData(inputDate) {
     const getDataCollected = await getData('collectedData', inputDate)
