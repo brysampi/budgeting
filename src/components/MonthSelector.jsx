@@ -5,6 +5,8 @@ import { convertToDate, getMonthNames } from '../firebase/utils'
 import Logout from '../components/Logout'
 import Navbar from '../layouts/Navbar'
 
+import ReceiptForm from '../gemini/RecieptScanner'
+
 export default function MonthSelection({ onLogOut }) {
     const [monthData, setMonthData] = useState(convertToDate(new Date()).slice(0, 7))
     const [monthCollectionData, setMonthCollectionData] = useState([])
@@ -32,8 +34,18 @@ export default function MonthSelection({ onLogOut }) {
         }
     }
     const progress = (180 / 200) * 100;
+
+    const [formData11, setFormData11] = useState({ vendor: '', total: 0, items: [] });
+
+    const handleAiData = (data) => {
+        setFormData11(data); // This fills your form automatically!
+    };
+
+    // ... inside your JSX
+
     return (
         <>
+            <ReceiptForm onDataExtracted={handleAiData} />
             {/* <Loading onLoading={loading} /> */}
             {/* <Logout onLogout={onLogOut} /> */}
             <div className='card card-shadow card-no-hover flex flex-col justify-between my-[1rem]  sm:flex-row'>
