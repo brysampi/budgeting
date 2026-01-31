@@ -5,7 +5,7 @@ import { convertToDate, getMonthNames } from '../firebase/utils'
 import Logout from '../components/Logout'
 import Navbar from '../layouts/Navbar'
 
-import ReceiptForm from '../gemini/RecieptScanner'
+import { UploadImage } from '../gemini/RecieptScanner'
 
 export default function MonthSelection({ onLogOut }) {
     const [monthData, setMonthData] = useState(convertToDate(new Date()).slice(0, 7))
@@ -45,7 +45,7 @@ export default function MonthSelection({ onLogOut }) {
 
     return (
         <>
-            <ReceiptForm onDataExtracted={handleAiData} />
+            <UploadImage onDataExtracted={handleAiData} />
             {/* <Loading onLoading={loading} /> */}
             {/* <Logout onLogout={onLogOut} /> */}
             <div className='card card-shadow card-no-hover flex flex-col justify-between my-[1rem]  sm:flex-row'>
