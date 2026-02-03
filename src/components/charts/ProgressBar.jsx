@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 const defaultData = [
-    { name: 'Budget', value: 0, max: 100 },
+    { label: 'Budget', value: 0, max: 100 },
 ];
 
 function ProgressBar({
@@ -12,6 +12,9 @@ function ProgressBar({
     showPercentage = true,
     showWarning = false,
     showValues = false,
+    showLabel = true,
+    currentLabel = 'Current',
+    remainingLabel = 'Remaining',
 }) {
     const isMulti = Array.isArray(data) && data.length > 0 && data[0].data;
     const [showDropdown, setShowDropdown] = useState(false);
@@ -88,7 +91,7 @@ function ProgressBar({
                                             onChange={() => toggleVisibility(bar.id || idx)}
                                             className="cursor-pointer"
                                         />
-                                        <span>{bar.name}</span>
+                                        <span>{bar.label}</span>
                                     </label>
                                 ))}
                             </div>
@@ -101,7 +104,8 @@ function ProgressBar({
                             <SingleProgressBar
                                 key={bar.id || idx}
                                 data={bar.data}
-                                label={bar.name}
+                                label={bar.label}
+                                showLabel={showLabel}
                                 showPercentage={globalPercentage}
                                 showBreakdown={showBreakdown}
                                 displayWarning={globalWarning}
@@ -119,16 +123,20 @@ function ProgressBar({
     return <SingleProgressBar
         data={data}
         className={className}
+        showLabel={showLabel}
         showPercentage={showPercentage}
         showBreakdown={showBreakdown}
         currentLabel={currentLabel}
         remainingLabel={remainingLabel}
+        displayValues={showValues}
+        displayWarning={showWarning}
     />;
 }
 
 function SingleProgressBar({
     data = defaultData,
     label,
+    showLabel = true,
     showPercentage = true,
     showBreakdown = false,
     className = '',
@@ -149,7 +157,7 @@ function SingleProgressBar({
     const item = data[0] || defaultData[0];
     const current = item.value || 0;
     const max = item.max || 100;
-    const displayLabel = label || item.name || 'Progress';
+    const displayLabel = label || item.label || 'Progress';
     const remaining = Math.max(max - current, 0);
 
     // Calculate if over budget
@@ -184,38 +192,40 @@ function SingleProgressBar({
 
     return (
         <div className={`w-full ${className}`}>
-            <div className="flex items-center justify-between mb-2">
-                <div className="text-[var(--color-light)] font-medium">
-                    {displayLabel}
+            {showLabel && (
+                <div className="flex items-center justify-between mb-2">
+                    <div className="text-[var(--color-light)] font-medium">
+                        {displayLabel}
+                    </div>
                 </div>
-            </div>
-            {/* Display Controls */}
-            <div className="flex gap-4 text-xs mb-2">
-                {/* Local values toggle hidden if global control is present */}
-                {typeof displayValues === 'undefined' ? (
-                    <label className="flex items-center gap-1 cursor-pointer text-[var(--color-light)]">
-                        <input
-                            type="checkbox"
-                            checked={localValues}
-                            onChange={(e) => setLocalValues(e.target.checked)}
-                            className="cursor-pointer"
-                        />
-                        <span>Values</span>
-                    </label>
-                ) : null}
-                {/* Local warning toggle hidden if global control is present */}
-                {typeof displayWarning === 'undefined' ? (
-                    <label className="flex items-center gap-1 cursor-pointer text-[var(--color-light)]">
-                        <input
-                            type="checkbox"
-                            checked={localWarning}
-                            onChange={(e) => setLocalWarning(e.target.checked)}
-                            className="cursor-pointer"
-                        />
-                        <span>Warning</span>
-                    </label>
-                ) : null}
-            </div>
+            )}
+            {/* Display Controls - Only show if local toggles are needed */}
+            {(typeof displayValues === 'undefined' || typeof displayWarning === 'undefined') && (
+                <div className="flex gap-4 text-xs mb-2">
+                    {typeof displayValues === 'undefined' && (
+                        <label className="flex items-center gap-1 cursor-pointer text-[var(--color-light)]">
+                            <input
+                                type="checkbox"
+                                checked={localValues}
+                                onChange={(e) => setLocalValues(e.target.checked)}
+                                className="cursor-pointer"
+                            />
+                            <span>Values</span>
+                        </label>
+                    )}
+                    {typeof displayWarning === 'undefined' && (
+                        <label className="flex items-center gap-1 cursor-pointer text-[var(--color-light)]">
+                            <input
+                                type="checkbox"
+                                checked={localWarning}
+                                onChange={(e) => setLocalWarning(e.target.checked)}
+                                className="cursor-pointer"
+                            />
+                            <span>Warning</span>
+                        </label>
+                    )}
+                </div>
+            )}
 
             {/* Progress Bar */}
             <div className="flex items-center gap-3 mb-2">

@@ -2,8 +2,10 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useState, useEffect, lazy, Suspense } from 'react';
 import Cookies from 'js-cookie';
 import MainLayout from '../layouts/MainLayout';
+import SimplifiedLayout from '../layouts/v2/SimplifiedLayout';
 
 // Lazy load components
+const Simplified = lazy(() => import('../components/v2/Simplified'))
 const Income = lazy(() => import('../components/Income'));
 const MonthSelection = lazy(() => import('../components/MonthSelector'));
 const Savings = lazy(() => import('../components/Savings'));
@@ -33,7 +35,10 @@ const AppRoutes = () => {
                 {!loggedIn && (<Route path="/" element={<LoginPage onLogin={() => setLoggedIn(true)} />} />)}
                 {loggedIn && (
                     <>
-                        <Route path="/" element={<MonthSelection onLogOut={() => setLoggedIn(false)} />} />
+                        <Route element={<SimplifiedLayout />} >
+                            <Route path="/" element={<Simplified />} />
+                        </Route>
+                        <Route path="/monthSelector" element={<MonthSelection onLogOut={() => setLoggedIn(false)} />} />
                         <Route element={<MainLayout />}>
                             <Route path="dashboard/:paramMonth" element={<Dashboard />} />
                             <Route path="wallets/:paramMonth" element={<Wallets />} />
@@ -44,7 +49,6 @@ const AppRoutes = () => {
                             <Route path="billsSettings/:paramMonth" element={<BillsSettings />} />
                             <Route path="expenses/:paramMonth" element={<Expenses />} />
                             <Route path="expensestracker/:paramMonth" element={<ExpensesTracker />} />
-                            {/* <Route path="expensesdefault/:paramMonth" element={<ExpensesDefault />} /> */}
                             <Route path="expensesSettings/:paramMonth" element={<ExpensesSettings />} />
                         </Route>
                     </>

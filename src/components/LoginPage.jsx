@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { login } from "../firebase/controller";
-import '../css/login.css';
+// import '../css/login.css';
 export default function LoginPage({ onLogin }) {
     const [user, setUser] = useState('');
     const [pass, setPass] = useState('');

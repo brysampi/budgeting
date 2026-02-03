@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactModal from 'react-modal';
-import '../css/modal.css';
+// import '../css/modal.css';
 import { LuX } from "react-icons/lu";
 
 ReactModal.setAppElement('#root'); // For accessibility

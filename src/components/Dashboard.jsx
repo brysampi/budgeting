@@ -7,9 +7,9 @@ import ProgressBar from './charts/ProgressBar';
 const Dashboard = () => {
     // Progress bar configuration
     const progressBars = [
-        { id: 'budget', name: 'Monthly Budget', data: [{ name: 'Monthly Budget', value: 3800, max: 5000 }] },
-        { id: 'savings', name: 'Savings Goal', data: [{ name: 'Savings Goal', value: 5000, max: 5000 }] },
-        { id: 'expenses', name: 'Monthly Expenses', data: [{ name: 'Monthly Expenses', value: 5500, max: 5000 }] }
+        { id: 'budget', label: 'Monthly Budget', data: [{ label: 'Monthly Budget', value: 3800, max: 5000 }] },
+        { id: 'savings', label: 'Savings Goal', data: [{ label: 'Savings Goal', value: 5000, max: 5000 }] },
+        { id: 'expenses', label: 'Monthly Expenses', data: [{ label: 'Monthly Expenses', value: 5500, max: 5000 }] }
     ];
 
     const incomeData = [

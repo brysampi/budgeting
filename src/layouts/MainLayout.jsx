@@ -3,7 +3,7 @@ import SideNav from '../layouts/SideNav';
 import Navbar from '../layouts/Navbar';
 import Logout from '../components/Logout';
 import { useState, useRef, useEffect, useMemo } from 'react';
-
+// import '../css/main.css';
 const routes = [
     { path: "/", title: "Bell Budgeting App" },
     { path: "/wallets/:paraMonth", title: "Wallets" },

@@ -122,10 +122,10 @@ const Navbar = ({
                     <ProgressBar data={[
                         {
                             id: 'balance',
-                            name: 'Remaining Balance',
+                            label: 'Remaining Balance',
                             currentLabel: "Current Balance",
                             remainingLabel: "Remaining Balance",
-                            data: [{ name: 'Remaining Balance', value: 3800, max: 5000 }],
+                            data: [{ label: 'Remaining Balance', value: 3800, max: 5000 }],
                         }
                     ]}
                         enableDropdown={false}

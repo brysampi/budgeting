@@ -2,7 +2,7 @@ import { Link, useLocation, useParams, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { logout, deleteAllDataController, transferOldBills } from '../firebase/controller';
-import '../css/sidenav.css';
+// import '../css/sidenav.css';
 import { LuIndentDecrease, LuIndentIncrease, LuCalendarDays, LuCoins, LuHandCoins, LuClipboardList, LuNewspaper, LuShoppingBag, LuSettings, LuLogOut, LuCircleUserRound, LuWallet } from "react-icons/lu";
 import { LiaCalendar, LiaCoinsSolid, LiaUserCogSolid } from "react-icons/lia";
 
