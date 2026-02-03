@@ -3,7 +3,7 @@ import { deleteDataController, getExpenses_v2 } from '../firebase/controller';
 import { useParams, Link } from 'react-router-dom';
 import { getMonthNamesSingleDigit } from '../firebase/utils';
 import { LuPlus, LuArrowLeft, LuTrash2, LuSquarePen } from "react-icons/lu";
-import Modal from '../layouts/Modal';
+import Modal from '../layouts/modal/Modal';
 import ModalForms from './ModalForms';
 
 const ExpensesSettings = () => {

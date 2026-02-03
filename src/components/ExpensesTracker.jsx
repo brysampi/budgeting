@@ -3,7 +3,7 @@ import { expensesTracker, getExpensesTracker, getExpenses, expensesTrackerUpdate
 import { useParams, useOutletContext } from 'react-router-dom';
 import { LuPlus, LuArrowBigUpDash, LuArrowBigDownDash, LuTrash2, LuSquarePen } from "react-icons/lu";
 import { convertToDate, getLastDayOfTheMonth } from '../firebase/utils';
-import Modal from '../layouts/Modal';
+import Modal from '../layouts/modal/Modal';
 import ModalForms from './ModalForms';
 
 const ExpensesTracker = () => {

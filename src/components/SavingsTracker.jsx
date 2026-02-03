@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getSavingsTracker, deleteDataController } from '../firebase/controller';
 import { useParams, Link, useOutletContext } from 'react-router-dom';
 import { LuPlus, LuClipboardList, LuTrash2, LuSquarePen } from "react-icons/lu";
-import Modal from '../layouts/Modal';
+import Modal from '../layouts/modal/Modal';
 import ModalForms from './ModalForms';
 
 const SavingsTracker = () => {

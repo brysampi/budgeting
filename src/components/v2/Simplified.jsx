@@ -3,12 +3,18 @@ import Transaction from './Transaction';
 import Stats from './Stats';
 import Category from './Category';
 import Card from '../cards/Card';
+import Modal from '../../layouts/modal/Modal';
+import BottomSheet from '../../layouts/modal/BottomSheetModal';
+import ModalForms from '../ModalForms';
 import {
     NotificationIcon as FaBell,
     SettingsIcon as FaGear,
     SunIcon as FaSun,
-    MoonIcon as FaMoon
+    MoonIcon as FaMoon,
+    Icons,
+    Icon
 } from '../../assets/Icons';
+const LuPlus = Icons.LuPlus;
 
 const statsData = [
     {
@@ -64,7 +70,15 @@ const transactionsData = [
 
 const Simplified = () => {
     const [isDarkMode, setIsDarkMode] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [isUpdate, setIsUpdate] = useState(false);
+    const [updateData, setUpdateData] = useState([]);
+
     const toggleTheme = () => setIsDarkMode(!isDarkMode);
+
+    const paramMonth = new Date().toISOString().slice(0, 7); // Default to current YYYY-MM
 
     useEffect(() => {
         if (!isDarkMode) {
@@ -75,7 +89,7 @@ const Simplified = () => {
     }, [isDarkMode]);
 
     return (
-        <div className="w-full max-w-5xl mx-auto p-4 md:p-8 flex flex-col gap-8 min-h-screen relative font-sans">
+        <div className="w-full max-w-5xl mx-auto p-4 md:p-8 flex flex-col gap-8 min-h-screen relative font-sans pb-32">
 
             {/* Header */}
             <header className="flex justify-between items-center px-1">
@@ -140,11 +154,122 @@ const Simplified = () => {
             </div>
 
             {/* FAB */}
-            <button className="fixed bottom-8 right-8 w-14 h-14 rounded-full bg-[#34A853] text-white flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all z-50 group">
-                <span className="text-3xl font-light transform group-hover:rotate-90 transition-transform duration-300">+</span>
+            <button
+                onClick={() => setIsModalOpen(true)}
+                className="fixed bottom-10 right-10 w-16 h-16 rounded-full bg-[var(--color-theme-important)] text-white flex items-center justify-center shadow-[0_12px_40px_rgba(52,168,83,0.3)] hover:scale-110 active:scale-95 transition-all z-50 group border-[6px] border-white/5 hover:border-white/20"
+            >
+                <LuPlus size={32} strokeWidth={3} className="transform group-hover:rotate-90 transition-transform duration-300 origin-center" />
             </button>
+
+            {/* Full Screen Modal */}
+            <Modal
+                title="Add New Transaction"
+                isModalOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                fullscreen={true}
+            >
+                <div className="max-w-xl mx-auto w-full pt-8 flex flex-col gap-6">
+                    <button
+                        onClick={() => setIsBottomSheetOpen(true)}
+                        className="w-full p-4 rounded-2xl bg-[var(--color-theme-secondary)] border border-white/5 flex items-center justify-between group hover:bg-white/5 transition-all"
+                    >
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-xl bg-[var(--color-theme-important)]/10 flex items-center justify-center text-[var(--color-theme-important)]">
+                                <Icons.LuShoppingBag size={20} />
+                            </div>
+                            <div className="text-left">
+                                <div className="text-[var(--color-light)] font-bold">Quick Select Category</div>
+                                <div className="text-[var(--color-theme-secondary-text)] text-xs">Choose from frequently used</div>
+                            </div>
+                        </div>
+                        <Icons.LuArrowLeft className="rotate-180 opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                    </button>
+
+                    <button
+                        onClick={() => setIsSettingsOpen(true)}
+                        className="w-full p-4 rounded-2xl bg-[var(--color-theme-secondary)] border border-white/5 flex items-center justify-between group hover:bg-white/5 transition-all text-left"
+                    >
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500">
+                                <Icons.LuSettings size={20} />
+                            </div>
+                            <div>
+                                <div className="text-[var(--color-light)] font-bold">Advanced Settings</div>
+                                <div className="text-[var(--color-theme-secondary-text)] text-xs">Fixed modal demo</div>
+                            </div>
+                        </div>
+                        <Icons.LuArrowLeft className="rotate-180 opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                    </button>
+
+                    <div className="h-[1px] bg-white/5 w-full my-2" />
+
+                    <ModalForms
+                        paramMonth={paramMonth}
+                        isModalOpen={isModalOpen}
+                        setIsModalOpen={setIsModalOpen}
+                        formType="expensesTracker"
+                        isUpdate={isUpdate}
+                        setIsUpdate={setIsUpdate}
+                        updateData={updateData}
+                        setUpdateData={setUpdateData}
+                    />
+                </div>
+            </Modal>
+
+            {/* Bottom Sheet Modal */}
+            <BottomSheet
+                isVisible={isBottomSheetOpen}
+                onClose={() => setIsBottomSheetOpen(false)}
+                title="Select Category"
+            >
+                {/* ... existing categories grid ... */}
+                <div className="grid grid-cols-2 gap-4">
+                    {categoriesData.map(cat => (
+                        <button
+                            key={cat.id}
+                            onClick={() => setIsBottomSheetOpen(false)}
+                            className="flex flex-col items-center gap-3 p-6 rounded-3xl bg-white/[0.03] hover:bg-white/[0.08] transition-all border border-white/5"
+                        >
+                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${cat.colorClass} ${cat.iconColorClass}`}>
+                                <Icon name={cat.iconName} size={24} />
+                            </div>
+                            <span className="text-sm font-bold text-[var(--color-light)]">{cat.title}</span>
+                        </button>
+                    ))}
+                </div>
+            </BottomSheet>
+
+            {/* Non-Draggable Modal */}
+            <BottomSheet
+                isVisible={isSettingsOpen}
+                onClose={() => setIsSettingsOpen(false)}
+                title="Advanced Settings"
+                isDraggable={false}
+                closeOnOverlay={false}
+            >
+                <div className="flex flex-col gap-6 py-4">
+                    <p className="text-[var(--color-theme-secondary-text)] text-sm leading-relaxed">
+                        This modal is non-draggable and cannot be closed by clicking the background. You must use the "X" button to exit.
+                    </p>
+                    <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5">
+                        <div className="flex justify-between items-center">
+                            <span className="font-bold text-[var(--color-light)]">Lock Controls</span>
+                            <div className="w-12 h-6 bg-[var(--color-theme-important)] rounded-full relative">
+                                <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full" />
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => setIsSettingsOpen(false)}
+                        className="w-full py-4 rounded-xl bg-[var(--color-theme-important)] text-white font-bold shadow-lg active:scale-95 transition-all"
+                    >
+                        Save & Close
+                    </button>
+                </div>
+            </BottomSheet>
         </div>
     );
 };
 
 export default Simplified;
+

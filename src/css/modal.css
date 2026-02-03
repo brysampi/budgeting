@@ -29,7 +29,8 @@
   padding-bottom: 15px;
   margin-bottom: 10px;
 }
-.modal-header .modal-title{
+
+.modal-header .modal-title {
   color: var(--color-light);
   font-weight: bold;
 }
@@ -43,4 +44,54 @@
 
 .modal-body {
   padding-top: 10px;
+}
+
+/* Full Screen Modal */
+.modal-overlay-fullscreen {
+  background: rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: blur(12px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000 !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content-fullscreen {
+  background: var(--color-theme-primary) !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 0 !important;
+  padding: 2rem !important;
+  overflow-y: auto;
+  position: relative;
+  border: none !important;
+  box-shadow: none !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-content-fullscreen .modal-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+}
+
+.modal-content-fullscreen .modal-title {
+  font-size: 1.5rem !important;
+  font-weight: 800 !important;
+}
+
+.modal-content-fullscreen .modal-header button {
+  color: var(--color-light);
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.modal-content-fullscreen .modal-header button:hover {
+  opacity: 1;
 }

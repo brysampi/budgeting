@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { getExpenses, deleteDataController } from '../firebase/controller';
 import { useParams, Link } from 'react-router-dom';
 import { LuPlus, LuTrash2, LuSquarePen, LuSettings } from "react-icons/lu";
-import Modal from '../layouts/Modal';
+import Modal from '../layouts/modal/Modal';
 import ModalForms from './ModalForms';
 
 const Expenses = () => {

@@ -3,7 +3,7 @@ import { getDataRealTimeController, getBillsDataRealTimeController, deleteDataCo
 import { convertToDate, getMonthNamesSingleDigit } from '../firebase/utils';
 import { useParams, useOutletContext, Link } from 'react-router-dom';
 import { LuPlus, LuTrash2, LuSquarePen, LuArrowLeft } from 'react-icons/lu';
-import Modal from '../layouts/Modal';
+import Modal from '../layouts/modal/Modal';
 import ModalForms from './ModalForms';
 
 const BillsSettings = () => {

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { getSavings, deleteDataController } from '../firebase/controller';
 import { useParams, useOutletContext, Link } from 'react-router-dom';
 import { LuPlus, LuArrowLeft, LuTrash2, LuSquarePen } from "react-icons/lu";
-import Modal from '../layouts/Modal';
+import Modal from '../layouts/modal/Modal';
 import ModalForms from './ModalForms';
 
 const Savings = () => {
