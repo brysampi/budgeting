@@ -1,6 +1,6 @@
 /* App.css */
 .modal-overlay {
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.4);
   position: fixed;
   top: 0;
   left: 0;
@@ -13,19 +13,19 @@
 }
 
 .modal-content {
-  background: var(--color-theme-tertiary-light);
+  background: var(--color-theme-secondary);
   padding: 20px;
   width: 400px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* border-bottom: 1px solid var(--color-theme-important); */
-  box-shadow: 0px 10px 10px -6px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.06);
   padding-bottom: 15px;
   margin-bottom: 10px;
 }
@@ -40,6 +40,12 @@
   border: none;
   font-size: 16px;
   cursor: pointer;
+  color: var(--color-theme-secondary-text);
+  transition: color 0.2s;
+}
+
+.modal-header button:hover {
+  color: var(--color-light);
 }
 
 .modal-body {
@@ -48,7 +54,7 @@
 
 /* Full Screen Modal */
 .modal-overlay-fullscreen {
-  background: rgba(0, 0, 0, 0.8) !important;
+  background: rgba(0, 0, 0, 0.6) !important;
   backdrop-filter: blur(12px);
   position: fixed;
   top: 0;
@@ -76,7 +82,7 @@
 }
 
 .modal-content-fullscreen .modal-header {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   margin-bottom: 2rem;
   padding-bottom: 1rem;
 }

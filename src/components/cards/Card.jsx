@@ -14,13 +14,13 @@ export const Card = ({
     const baseStyles = "relative rounded-[2rem] transition-all duration-300";
 
     const variants = {
-        main: "bg-white dark:bg-[var(--color-theme-secondary)] shadow-sm border border-black/[0.03] dark:border-white/[0.03]",
-        glass: "bg-white/70 dark:bg-[var(--color-theme-secondary)]/70 backdrop-blur-xl border border-white/20 dark:border-white/5 shadow-lg",
-        outline: "bg-transparent border border-black/[0.08] dark:border-white/[0.08]"
+        main: "bg-[var(--color-theme-secondary)] shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-black/[0.08]",
+        glass: "bg-[var(--color-theme-secondary)]/70 backdrop-blur-xl border border-black/[0.1] shadow-lg",
+        outline: "bg-transparent border-2 border-black/[0.12]"
     };
 
     const hoverStyles = !noHover
-        ? "hover:shadow-md hover:-translate-y-1 cursor-pointer active:scale-[0.99] hover:z-10"
+        ? "hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] hover:-translate-y-1 cursor-pointer active:scale-[0.99] hover:z-10 hover:border-black/[0.12]"
         : "";
 
     return (

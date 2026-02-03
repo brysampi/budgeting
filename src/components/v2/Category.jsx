@@ -8,7 +8,7 @@ const Category = ({ title, spent, total, icon, iconName, colorClass, iconColorCl
     const isOver = spent > total;
 
     return (
-        <Card padding="p-5" noHover={true} className={`group ${categoryId} border border-black/[0.01]`}>
+        <Card padding="p-5" noHover={true} className={`group ${categoryId}`}>
             {/* 1. Custom Header (Icon | Title/Budget | Status) */}
             <div className="flex items-start justify-between w-full mb-2">
                 <div className="flex items-center gap-4">

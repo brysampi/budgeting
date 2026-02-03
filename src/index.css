@@ -44,25 +44,42 @@ body {
 }
 
 html.light-mode {
-  --color-theme-primary: #ffffff;
+  /* Premium Light Mode - Soft Neutrals with Vibrant Accents */
+  --color-theme-primary: #f8f9fa;
+  /* Soft Off-White Background */
   --color-theme-secondary: #ffffff;
-  --color-theme-tertiary: #f8f9fa;
-  --color-theme-tertiary-light: #e9ecef;
+  /* Pure White Cards */
+  --color-theme-tertiary: #e9ecef;
+  /* Subtle Gray for Hover States */
+  --color-theme-tertiary-light: #dee2e6;
+  /* Slightly Darker Gray */
 
-  --color-light: #1a1a1a;
+  --color-light: #1f2937;
+  /* Dark Gray Text (Better Readability) */
   --color-dark: #ffffff;
+  /* White for Dark Backgrounds */
   --color-theme-secondary-text: #6b7280;
+  /* Medium Gray for Secondary Text */
 
-  --color-theme-important: #34A853;
-  --color-theme-important-low: #34a8531a;
+  --color-theme-important: #10b981;
+  /* Vibrant Emerald Green (More Modern) */
+  --color-theme-important-light: #34d399;
+  /* Light Emerald */
+  --color-theme-important-dark: #059669;
+  /* Dark Emerald */
+  --color-theme-important-low: #10b9811a;
+  /* Transparent Emerald */
 
-  --color-success: #34A853;
-  /* Google Green */
-  --color-danger: #ea4335;
-  /* Google Red */
-  --color-warning: #fbbc05;
-  /* Google Yellow */
-  --color-pink: #db2777;
-  --color-info: #4285f4;
-  /* Google Blue */
+  --color-success: #10b981;
+  /* Emerald Green */
+  --color-danger: #ef4444;
+  /* Modern Red */
+  --color-warning: #f59e0b;
+  /* Amber */
+  --color-pink: #ec4899;
+  /* Pink 500 */
+  --color-info: #3b82f6;
+  /* Blue 500 */
+  --color-semi-transparent-black: #00000015;
+  /* Very Light Shadow */
 }
