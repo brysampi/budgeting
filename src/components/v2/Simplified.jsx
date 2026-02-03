@@ -3,6 +3,7 @@ import Transaction from './Transaction';
 import Stats from './Stats';
 import Category from './Category';
 import Card from '../cards/Card';
+import WalletCardsSection from './WalletCardsSection';
 import Modal from '../../layouts/modal/Modal';
 import BottomSheet from '../../layouts/modal/BottomSheetModal';
 import ModalForms from '../ModalForms';
@@ -76,6 +77,13 @@ const Simplified = () => {
     const [isUpdate, setIsUpdate] = useState(false);
     const [updateData, setUpdateData] = useState([]);
 
+    // Sample wallet cards data
+    const walletCards = [
+        { name: 'Main Card', balance: 5420.50 },
+        { name: 'Savings', balance: 12350.00 },
+        { name: 'Business', balance: 8900.25 },
+    ];
+
     const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
     const paramMonth = new Date().toISOString().slice(0, 7); // Default to current YYYY-MM
@@ -89,7 +97,7 @@ const Simplified = () => {
     }, [isDarkMode]);
 
     return (
-        <div className="w-full max-w-5xl mx-auto p-4 md:p-8 flex flex-col gap-8 min-h-screen relative font-sans pb-32">
+        <div className="w-full max-w-[768px] mx-auto p-4 md:p-8 flex flex-col gap-8 min-h-screen relative font-sans pb-32">
 
             {/* Header */}
             <header className="flex justify-between items-center px-1">
@@ -113,8 +121,15 @@ const Simplified = () => {
                 </div>
             </header>
 
+            {/* Wallet Cards Section */}
+            <WalletCardsSection
+                cards={walletCards}
+                onAddCard={() => console.log('Add new card')}
+                onSelectCard={(card) => console.log('Selected card:', card)}
+            />
+
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-2 min-[600px]:grid-cols-4 gap-3">
                 {statsData.map(stat => (
                     <Stats key={stat.id} {...stat} />
                 ))}

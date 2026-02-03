@@ -8,32 +8,32 @@ const Category = ({ title, spent, total, icon, iconName, colorClass, iconColorCl
     const isOver = spent > total;
 
     return (
-        <Card padding="p-5" noHover={true} className={`group ${categoryId}`}>
+        <Card padding="p-4" noHover={true} className={`group ${categoryId} h-[110px] flex flex-col justify-between`}>
             {/* 1. Custom Header (Icon | Title/Budget | Status) */}
             <div className="flex items-start justify-between w-full mb-2">
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
                     {/* Premium Icon Container */}
                     <IconCard
                         name={iconName || "FaHouse"}
                         colorClass={colorClass}
                         iconColorClass={iconColorClass}
-                        className="!w-12 !h-12 shadow-sm"
-                        size={22}
+                        className="!w-9 !h-9 shadow-sm"
+                        size={18}
                     />
 
                     <div className="flex flex-col">
-                        <span className="text-base md:text-lg font-bold text-[var(--color-light)] group-hover:text-[var(--color-theme-important)] transition-all leading-tight">
+                        <span className="text-sm font-bold text-[var(--color-light)] group-hover:text-[var(--color-theme-important)] transition-all leading-tight">
                             {title}
                         </span>
-                        <span className="text-[12px] md:text-[13px] text-[var(--color-theme-secondary-text)] font-semibold mt-1 opacity-50">
+                        <span className="text-[10px] text-[var(--color-theme-secondary-text)] font-semibold mt-0.5 opacity-50">
                             ${spent.toLocaleString()} of ${total.toLocaleString()}
                         </span>
                     </div>
                 </div>
 
                 {/* Right Aligned Status Label */}
-                <div className="pt-1">
-                    <span className="text-[12px] md:text-[13px] text-[var(--color-theme-secondary-text)] font-bold opacity-70">
+                <div className="pt-0.5">
+                    <span className="text-[10px] text-[var(--color-theme-secondary-text)] font-bold opacity-70">
                         ${Math.abs(remaining).toLocaleString()} {isOver ? 'over' : 'left'}
                     </span>
                 </div>

@@ -3,38 +3,40 @@ import { IconCard } from '../../assets/Icons';
 
 const Stats = ({ title, amount, icon, iconName, badgeValue, subtext, iconColorClass, badgeColorClass, amountColorClass }) => {
     return (
-        <Card padding="p-5" className="group flex flex-col h-full min-h-[140px]">
-            <div className="flex justify-between items-start mb-auto">
+        <Card padding="p-3.5" className="group h-[130px] flex flex-col justify-between">
+            <div className="flex justify-between items-center mb-3">
                 {/* Circular Icon Container */}
                 <IconCard
                     name={iconName || "FaWallet"}
                     iconColorClass={iconColorClass}
+                    className="!w-10 !h-10"
+                    size={18}
                 />
 
                 {/* Optional Percentage Badge */}
                 {badgeValue && (
-                    <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${badgeColorClass} shadow-sm border border-black/[0.02]`}>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${badgeColorClass}`}>
                         {badgeValue}
                     </span>
                 )}
             </div>
 
-            <div className="mt-4">
-                {/* Title - Highlights on hover */}
-                <p className="text-[var(--color-theme-secondary-text)] text-xs font-medium mb-1 group-hover:text-[var(--color-theme-important)] transition-colors uppercase tracking-wider">
-                    {title}
+            {/* Title */}
+            <p className="text-[var(--color-theme-secondary-text)] text-[11px] font-normal mb-1 group-hover:text-[var(--color-theme-important)] transition-colors">
+                {title}
+            </p>
+
+            {/* Amount */}
+            <h3 className={`text-xl font-bold tracking-tight leading-none ${amountColorClass || 'text-[var(--color-light)]'}`}>
+                {amount}
+            </h3>
+
+            {/* Subtext */}
+            {subtext && (
+                <p className="text-[10px] text-[var(--color-theme-secondary-text)] font-normal opacity-60 mt-0.5">
+                    {subtext}
                 </p>
-                <div className="flex flex-col">
-                    <h3 className={`text-2xl font-extrabold tracking-tight ${amountColorClass || 'text-[var(--color-light)]'}`}>
-                        {amount}
-                    </h3>
-                    {subtext && (
-                        <p className="text-[10px] text-[var(--color-theme-secondary-text)] mt-1 font-medium opacity-70">
-                            {subtext}
-                        </p>
-                    )}
-                </div>
-            </div>
+            )}
         </Card>
     );
 };
