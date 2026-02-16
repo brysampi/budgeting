@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getDataRealTimeController, deleteDataController } from '../firebase/controller';
+import { getDataRealTimeController, deleteDataController, getBillsDataRealTimeController } from '../firebase/controller';
 import { convertToDate } from '../firebase/utils';
 import { useParams, useOutletContext } from 'react-router-dom';
 import { LuPlus, LuTrash2, LuSquarePen } from 'react-icons/lu';
@@ -18,12 +18,14 @@ const Bills = () => {
     useEffect(() => {
         const returnBills = async () => {
             setIsFetching(true);
-            return await getDataRealTimeController('bills', paramMonth, setBillsData, setIsFetching, selectedWallet);
+            return await getBillsDataRealTimeController(paramMonth, setBillsData, setIsFetching, selectedWallet);
         }
         returnBills();
 
     }, [selectedWallet]);
-
+    // useEffect(() => {
+    //     console.log(billsData);
+    // }, [billsData]);
     const updateSetData = (arrayData) => {
         setUpdateStatus(true);
         setUpdateData(arrayData)

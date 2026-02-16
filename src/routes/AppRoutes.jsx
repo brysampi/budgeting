@@ -19,7 +19,7 @@ const ExpensesSettings = lazy(() => import('../components/ExpensesSettings'));
 const LoginPage = lazy(() => import('../components/LoginPage'));
 const Wallets = lazy(() => import('../components/Wallets'));
 const Dashboard = lazy(() => import('../components/Dashboard'));
-
+const IconLibrary = lazy(() => import('../components/v2/IconLibrary'));
 
 const AppRoutes = () => {
     const location = useLocation();
@@ -37,6 +37,7 @@ const AppRoutes = () => {
                     <>
                         <Route element={<SimplifiedLayout />} >
                             <Route path="/" element={<Simplified />} />
+                            <Route path="/icons" element={<IconLibrary />} />
                         </Route>
                         <Route path="/monthSelector" element={<MonthSelection onLogOut={() => setLoggedIn(false)} />} />
                         <Route element={<MainLayout />}>

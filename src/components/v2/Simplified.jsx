@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Transaction from './Transaction';
 import Stats from './Stats';
-import Category from './Category';
+import ExpensesCategory from './ExpensesCategory';
 import Card from '../cards/Card';
 import WalletCardsSection from './WalletCardsSection';
+import DateSelector from './DateSelector';
 import Modal from '../../layouts/modal/Modal';
 import BottomSheet from '../../layouts/modal/BottomSheetModal';
 import ModalForms from '../ModalForms';
+import { getAllDataRealTimeController, logout, collectedData_v2 } from '../../firebase/controller';
+import Dropdown from '../../layouts/v2/Dropdown';
+// icon import removed
 import {
     NotificationIcon as FaBell,
     SettingsIcon as FaGear,
@@ -15,51 +19,12 @@ import {
     Icons,
     Icon
 } from '../../assets/Icons';
+import Cookies from 'js-cookie';
 const LuPlus = Icons.LuPlus;
 
-const statsData = [
-    {
-        id: 1,
-        title: 'Total Balance',
-        amount: '$12,450',
-        iconName: 'FaWallet',
-        badgeValue: '+12%',
-        iconColorClass: 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500',
-        badgeColorClass: 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500',
-    },
-    {
-        id: 2,
-        title: 'Savings',
-        amount: '$3,200',
-        subtext: 'Goal: $5,000',
-        iconName: 'FaPiggyBank',
-        iconColorClass: 'bg-pink-50 dark:bg-pink-500/10 text-pink-500',
-    },
-    {
-        id: 3,
-        title: 'Income',
-        amount: '$6,500',
-        iconName: 'FaArrowTrendUp',
-        iconColorClass: 'bg-cyan-50 dark:bg-cyan-500/10 text-cyan-500',
-    },
-    {
-        id: 4,
-        title: 'Expenses',
-        amount: '$4,320',
-        badgeValue: '8%',
-        iconName: 'FaArrowTrendDown',
-        iconColorClass: 'bg-red-50 dark:bg-red-500/10 text-red-500',
-        badgeColorClass: 'bg-red-50 dark:bg-red-500/10 text-red-500',
-    }
-];
 
-const categoriesData = [
-    { id: 1, title: 'Shopping', spent: 380, total: 500, iconName: 'FaBagShopping', colorClass: 'bg-pink-50 dark:bg-pink-500/10', iconColorClass: 'text-pink-500', barColor: '#34A853' },
-    { id: 2, title: 'Food & Dining', spent: 520, total: 600, iconName: 'FaMugHot', colorClass: 'bg-orange-50 dark:bg-orange-500/10', iconColorClass: 'text-orange-500', barColor: '#FBBC05' },
-    { id: 3, title: 'Transportation', spent: 180, total: 300, iconName: 'FaPlane', colorClass: 'bg-blue-50 dark:bg-blue-500/10', iconColorClass: 'text-blue-500', barColor: '#34A853' },
-    { id: 4, title: 'Housing', spent: 1500, total: 1500, iconName: 'FaHouse', colorClass: 'bg-emerald-50 dark:bg-emerald-500/10', iconColorClass: 'text-emerald-500', barColor: '#EA4335' },
-    { id: 5, title: 'Entertainment', spent: 220, total: 200, iconName: 'FaGamepad', colorClass: 'bg-purple-50 dark:bg-purple-500/10', iconColorClass: 'text-purple-500', barColor: '#EA4335' }
-];
+
+
 
 const transactionsData = [
     { id: 1, title: 'Starbucks', category: 'Food & Dining', amount: -5.75, date: 'Today', iconName: 'FaMugHot', colorClass: 'bg-orange-50 dark:bg-orange-500/10', iconColorClass: 'text-orange-500' },
@@ -76,18 +41,35 @@ const Simplified = () => {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [isUpdate, setIsUpdate] = useState(false);
     const [updateData, setUpdateData] = useState([]);
+    const [modalFormType, setModalFormType] = useState('expensesTracker');
 
-    // Sample wallet cards data
-    const walletCards = [
-        { name: 'Main Card', balance: 5420.50 },
-        { name: 'Savings', balance: 12350.00 },
-        { name: 'Business', balance: 8900.25 },
-    ];
+
+
 
     const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
-    const paramMonth = new Date().toISOString().slice(0, 7); // Default to current YYYY-MM
+    const handleLogout = async () => {
+        const response = await logout();
+        if (response.status === 'success') {
+            window.location.href = '/login';
+        }
+    };
 
+    const settingItems = [
+        { label: 'General Settings', icon: <Icons.LuSettings size={18} />, onClick: () => console.log('Settings clicked') },
+        { label: 'Security', icon: <Icons.LuLock size={18} />, onClick: () => console.log('Security clicked') },
+        { label: 'Help & Support', icon: <Icons.LuCircleHelp size={18} />, onClick: () => console.log('Help clicked') },
+    ];
+
+    const profileItems = [
+        { label: 'View Profile', icon: <Icons.LuUser size={18} />, onClick: () => console.log('Profile clicked') },
+        { label: 'Settings', icon: <Icons.LuSettings size={18} />, onClick: () => console.log('Settings clicked') },
+        { label: 'Logout', icon: <Icons.LuLogOut size={18} />, onClick: handleLogout, type: 'danger' },
+    ];
+
+    const paramMonth = new Date().toISOString().slice(0, 7); // Default to current YYYY-MM
+    // const paramMonth = '2025-11';
+    console.log(paramMonth);
     useEffect(() => {
         if (!isDarkMode) {
             document.documentElement.classList.add('light-mode');
@@ -95,15 +77,23 @@ const Simplified = () => {
             document.documentElement.classList.remove('light-mode');
         }
     }, [isDarkMode]);
-
+    useEffect(() => {
+        // async function fetchData() {
+        //     await collectedData_v2(paramMonth);
+        // }
+        // fetchData();
+    }, []);
+    const addData = async () => {
+        await collectedData_v2(paramMonth);
+    }
     return (
         <div className="w-full max-w-[768px] mx-auto p-4 md:p-8 flex flex-col gap-8 min-h-screen relative font-sans pb-32">
-
+            <button onClick={addData}>Add Data</button>
             {/* Header */}
             <header className="flex justify-between items-center px-1">
                 <div>
                     <h2 className="text-[var(--color-theme-secondary-text)] text-xs md:text-sm font-medium">Welcome back,</h2>
-                    <h1 className="text-xl md:text-2xl font-extrabold text-[var(--color-light)] mt-1">Alex Johnson</h1>
+                    <h1 className="text-xl md:text-2xl font-extrabold text-[var(--color-light)] mt-1">{Cookies.get('name')}</h1>
                 </div>
                 <div className="flex items-center gap-3">
                     <button onClick={toggleTheme} className="w-10 h-10 rounded-full bg-white dark:bg-[var(--color-theme-secondary)] flex items-center justify-center text-[var(--color-theme-secondary-text)] hover:text-[var(--color-theme-important)] transition-all shadow-sm border border-black/5">
@@ -112,47 +102,50 @@ const Simplified = () => {
                     <button className="w-10 h-10 rounded-full bg-white dark:bg-[var(--color-theme-secondary)] flex items-center justify-center text-[var(--color-theme-secondary-text)] hover:shadow-md transition-all border border-black/5">
                         <FaBell size={16} />
                     </button>
-                    <button className="w-10 h-10 rounded-full bg-white dark:bg-[var(--color-theme-secondary)] flex items-center justify-center text-[var(--color-theme-secondary-text)] hover:shadow-md transition-all border border-black/5">
-                        <FaGear size={16} />
-                    </button>
-                    <div className="w-10 h-10 rounded-full bg-[#34A853] text-white flex items-center justify-center font-bold text-xs shadow-md border-2 border-white/20">
-                        AJ
-                    </div>
+
+                    <Dropdown
+                        items={settingItems}
+                        trigger={
+                            <button className="w-10 h-10 rounded-full bg-white dark:bg-[var(--color-theme-secondary)] flex items-center justify-center text-[var(--color-theme-secondary-text)] hover:shadow-md transition-all border border-black/5">
+                                <FaGear size={16} />
+                            </button>
+                        }
+                    />
+
+                    <Dropdown
+                        items={profileItems}
+                        trigger={
+                            <div className="w-10 h-10 rounded-full bg-[#34A853] text-white flex items-center justify-center font-bold text-xs shadow-md border-2 border-white/20 hover:scale-105 transition-transform">
+                                {Cookies.get('name')?.slice(0, 2).toUpperCase() || 'AJ'}
+                            </div>
+                        }
+                    />
                 </div>
             </header>
 
             {/* Wallet Cards Section */}
-            <WalletCardsSection
-                cards={walletCards}
-                onAddCard={() => console.log('Add new card')}
-                onSelectCard={(card) => console.log('Selected card:', card)}
-            />
+            <WalletCardsSection />
+
+            {/* Date Selector */}
+            {/* <DateSelector onChange={(val) => console.log('Date changed to:', val)} /> */}
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-2 min-[600px]:grid-cols-4 gap-3">
-                {statsData.map(stat => (
-                    <Stats key={stat.id} {...stat} />
-                ))}
-            </div>
+            <Stats />
 
             {/* Budget Categories */}
-            <div className="flex flex-col gap-4">
-                <div className="flex justify-between items-center px-1">
-                    <h2 className="text-xl font-bold text-[var(--color-light)] tracking-tight">Budget Categories</h2>
-                    <button className="text-[#34A853] hover:underline text-xs md:text-sm font-semibold">See all</button>
-                </div>
-                <div className="flex flex-col gap-3">
-                    {categoriesData.map(cat => (
-                        <Category key={cat.id} {...cat} />
-                    ))}
-                </div>
-            </div>
+            <ExpensesCategory
+                paramMonth={paramMonth}
+                onClick={() => {
+                    setModalFormType('expenses');
+                    setIsModalOpen(true);
+                }}
+            />
 
             {/* Recent Transactions */}
             <div className="flex flex-col gap-4">
                 <div className="flex justify-between items-center px-1">
                     <h2 className="text-xl font-bold text-[var(--color-light)] tracking-tight">Recent Transactions</h2>
-                    <button className="text-[#34A853] hover:underline text-xs md:text-sm font-semibold">See all</button>
+                    {/* <button className="text-[#34A853] hover:underline text-xs md:text-sm font-semibold">See all</button> */}
                 </div>
                 <Card noHover={true} padding="p-2 md:p-4">
                     <div className="flex flex-col gap-1">
@@ -170,15 +163,18 @@ const Simplified = () => {
 
             {/* FAB */}
             <button
-                onClick={() => setIsModalOpen(true)}
+                onClick={() => {
+                    setModalFormType('expensesTracker');
+                    setIsModalOpen(true);
+                }}
                 className="fixed bottom-10 right-10 w-16 h-16 rounded-full bg-[var(--color-theme-important)] text-white flex items-center justify-center shadow-[0_12px_40px_rgba(52,168,83,0.3)] hover:scale-110 active:scale-95 transition-all z-50 group border-[6px] border-white/5 hover:border-white/20"
             >
-                <LuPlus size={32} strokeWidth={3} className="transform group-hover:rotate-90 transition-transform duration-300 origin-center" />
+                <Icons.LuPlus size={32} strokeWidth={3} className="transform group-hover:rotate-90 transition-transform duration-300 origin-center" />
             </button>
 
             {/* Full Screen Modal */}
             <Modal
-                title="Add New Transaction"
+                title={modalFormType === 'expenses' ? 'Add New Expenses Category' : 'Add New Transaction'}
                 isModalOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 fullscreen={true}
@@ -193,7 +189,7 @@ const Simplified = () => {
                                 <Icons.LuShoppingBag size={20} />
                             </div>
                             <div className="text-left">
-                                <div className="text-[var(--color-light)] font-bold">Quick Select Category</div>
+                                <div className="text-[var(--color-light)] font-bold">Quick Select Expenses Category</div>
                                 <div className="text-[var(--color-theme-secondary-text)] text-xs">Choose from frequently used</div>
                             </div>
                         </div>
@@ -222,7 +218,7 @@ const Simplified = () => {
                         paramMonth={paramMonth}
                         isModalOpen={isModalOpen}
                         setIsModalOpen={setIsModalOpen}
-                        formType="expensesTracker"
+                        formType={modalFormType}
                         isUpdate={isUpdate}
                         setIsUpdate={setIsUpdate}
                         updateData={updateData}
@@ -231,28 +227,7 @@ const Simplified = () => {
                 </div>
             </Modal>
 
-            {/* Bottom Sheet Modal */}
-            <BottomSheet
-                isVisible={isBottomSheetOpen}
-                onClose={() => setIsBottomSheetOpen(false)}
-                title="Select Category"
-            >
-                {/* ... existing categories grid ... */}
-                <div className="grid grid-cols-2 gap-4">
-                    {categoriesData.map(cat => (
-                        <button
-                            key={cat.id}
-                            onClick={() => setIsBottomSheetOpen(false)}
-                            className="flex flex-col items-center gap-3 p-6 rounded-3xl bg-white/[0.03] hover:bg-white/[0.08] transition-all border border-white/5"
-                        >
-                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${cat.colorClass} ${cat.iconColorClass}`}>
-                                <Icon name={cat.iconName} size={24} />
-                            </div>
-                            <span className="text-sm font-bold text-[var(--color-light)]">{cat.title}</span>
-                        </button>
-                    ))}
-                </div>
-            </BottomSheet>
+
 
             {/* Non-Draggable Modal */}
             <BottomSheet

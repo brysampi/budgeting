@@ -9,7 +9,8 @@ import {
     LuHandCoins, LuClipboardList, LuNewspaper, LuShoppingBag,
     LuSettings, LuLogOut, LuCircleUserRound, LuWallet,
     LuPlus, LuArrowBigUpDash, LuArrowBigDownDash, LuTrash2,
-    LuSquarePen, LuArrowLeft, LuX
+    LuSquarePen, LuArrowLeft, LuX, LuLoader, LuChevronLeft, LuChevronRight, LuCreditCard,
+    LuUser, LuCircleHelp, LuLock
 } from "react-icons/lu";
 import { LiaCalendar, LiaCoinsSolid, LiaUserCogSolid } from "react-icons/lia";
 
@@ -31,7 +32,8 @@ export const Icons = {
     LuHandCoins, LuClipboardList, LuNewspaper, LuShoppingBag,
     LuSettings, LuLogOut, LuCircleUserRound, LuWallet,
     LuPlus, LuArrowBigUpDash, LuArrowBigDownDash, LuTrash2,
-    LuSquarePen, LuArrowLeft, LuX,
+    LuSquarePen, LuArrowLeft, LuX, LuLoader, LuChevronLeft, LuChevronRight, LuCreditCard,
+    LuUser, LuCircleHelp, LuLock,
 
     // Additional Icons (Lia)
     LiaCalendar, LiaCoinsSolid, LiaUserCogSolid

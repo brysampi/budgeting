@@ -2,7 +2,7 @@ import { serverTimestamp } from 'firebase/firestore';
 import Cookies from 'js-cookie';
 import { successMsg, errorMsg, getUserID, convertToTimeStamp, convertToDate } from '../firebase/utils';
 import {
-    addData, updateData, deleteData, getData, getUser, getAllData, getAllDataRealtime, getDataById, getAllDataActiveRealTime,
+    addData, updateData, getDataSingle, deleteData, getData, getUser, getAllData, getAllDataRealtime, getDataById, getAllDataActiveRealTime,
     getDataRealTime,
     //  getExpensesTrackerDataRealTime, 
     getDataCategoryRealTime,
@@ -44,6 +44,70 @@ export async function login(user, password) {
 // -------------------------- Collected Data -----------------------------------
 export async function getCollectedDataRealTimeController(setData, isFetching) {
     await getCollectedDataRealTime('collectedData', setData, isFetching)
+}
+export async function collectedData_v2(inputDate, wallet, formType = null, value = 0) {
+    try {
+        const getDataCollected = await getDataSingle('collectedData', inputDate)
+        // console.log('getDataCollected: ', getDataCollected)
+        if (!getDataCollected) {
+            const data = {
+                remainingIncome: 0,
+                totalIncome: 0,
+                totalSavings: 0,
+                totalBills: 0,
+                totalExpenses: 0,
+                wallet: wallet,
+                date: convertToTimeStamp(inputDate),
+            }
+            const addCollect = await addData('collectedData', data)
+            console.log('addCollect: ', addCollect)
+            return data;
+        }
+        else {
+            if (formType == 'wallet') {
+                console.log('Form is already have data, this is not for updating collected data.')
+                return successMsg('Form is already have data, this is not for updating collected data.')
+            } else {
+                const data = {
+                    remainingIncome: getDataCollected.remainingIncome,
+                    totalIncome: getDataCollected.totalIncome,
+                    totalSavings: getDataCollected.totalSavings,
+                    totalBills: getDataCollected.totalBills,
+                    totalExpenses: getDataCollected.totalExpenses,
+                    wallet: wallet,
+                }
+                if (formType == 'income') {
+                    data.totalIncome = getDataCollected.totalIncome + value
+                    data.remainingIncome = getDataCollected.remainingIncome + value
+                }
+                if (formType == 'bills') {
+                    data.totalBills = getDataCollected.totalBills + value
+                    data.remainingIncome = getDataCollected.remainingIncome - value
+                }
+                if (formType == 'expensesTracker') {
+                    data.totalExpenses = getDataCollected.totalExpenses + value
+                    data.remainingIncome = getDataCollected.remainingIncome - value
+                }
+                if (formType == 'savingsTracker') {
+                    data.totalSavings = getDataCollected.totalSavings + value
+                    data.remainingIncome = getDataCollected.remainingIncome - value
+                }
+
+                if (Object.keys(data).length > 0) {
+                    // console.log('Object HAS data. Data Found.')
+                    const response = await updateData('collectedData', getDataCollected.id, data)
+                    // console.log('updateData: ', updateData)
+                    return response;
+                } else {
+                    console.log('Nothing to update.')
+                    return successMsg('Nothing to update.')
+                }
+            }
+        }
+    } catch (error) {
+        console.log(error)
+        return errorMsg('An error occurred during login');
+    }
 }
 export async function collectedData(inputDate) {
     if (!getUserID())
@@ -99,7 +163,7 @@ export async function checkCollectedData(table, inputDate) {
 
 export async function addCollectedData(inputDate, arrayData) {
     const addReturn = await addData('collectedData', arrayData)
-    await updateCollectedData(inputDate)
+    // await updateCollectedData(inputDate)
     return addReturn;
 }
 
@@ -806,4 +870,16 @@ export async function deleteAllDataController() {
         console.error("Error in deleteAllDataController:", error);
         return errorMsg('Failed to delete all data. Check console for error.');
     }
+}
+export function unsubscribeForAll(unsubPromise) {
+    return () => {
+        // console.log('Unsubscribing from all data...');
+        if (unsubPromise && typeof unsubPromise.then === 'function') {
+            unsubPromise.then(unsub => {
+                if (typeof unsub === 'function') {
+                    unsub();
+                }
+            });
+        }
+    };
 }

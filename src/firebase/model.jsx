@@ -83,6 +83,40 @@ export async function getData(table, inputDate) {
         return errorMsg('Failed to fetch data. Check console for error.');
     }
 }
+export async function getDataSingle(table, inputDate, debug = false) {
+    try {
+        const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
+        const collectionRef = collection(db, table);
+        const que = query(
+            collectionRef,
+            where("user", "==", getUserID()),
+            where("date", ">=", startOfMonth),
+            where("date", "<=", endOfMonth),
+            orderBy("date", "desc"),
+            orderBy("createdAt", "desc"),
+            limit(1)
+        );
+        const querySnapshot = await getDocs(que);
+        // console.log('querySnapshot: ', querySnapshot)
+        if (debug)
+            console.log(`Fetched ${querySnapshot.size} documents for billsId: ${billsId}`);
+
+        if (querySnapshot.empty) {
+            return null;
+        }
+
+        const docSnap = querySnapshot.docs[0];
+        // console.log('docSnap: ', docSnap)
+        return {
+            id: docSnap.id,
+            ...docSnap.data(),
+        };
+    } catch (error) {
+        console.error("Error fetching: ", error);
+        // return [];
+        return errorMsg('Failed to fetch data. Check console for error.');
+    }
+}
 export async function getDataRealTime(table, inputDate, setData, isFetching, wallet = '') {
     // console.log("Fetching data for month: ", inputDate, " and wallet: ", wallet);
     try {

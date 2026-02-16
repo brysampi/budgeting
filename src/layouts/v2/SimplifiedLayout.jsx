@@ -1,13 +1,10 @@
 import { Outlet } from 'react-router-dom';
-import Simplified from '../../components/v2/Simplified';
 // import '../css/v2/main.css';
 const SimplifiedLayout = () => {
     return (
-        <>
-            <div className="">
-                <Simplified />
-            </div>
-        </>
+        <div className="bg-[var(--color-theme-background)] min-h-screen">
+            <Outlet />
+        </div>
     )
 }
 
