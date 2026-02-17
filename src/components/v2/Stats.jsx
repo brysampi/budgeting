@@ -26,7 +26,7 @@ const Stats = () => {
             amount: currentData.remainingIncome !== undefined ? `$${currentData.remainingIncome.toLocaleString()}` : '$0',
             iconName: 'FaWallet',
             badgeValue: '+12%',
-            iconColorClass: 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500',
+            iconColor: 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500',
             badgeColorClass: 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500',
         },
         {
@@ -34,14 +34,14 @@ const Stats = () => {
             title: 'Savings',
             amount: currentData.totalSavings !== undefined ? `$${currentData.totalSavings.toLocaleString()}` : '$0',
             iconName: 'FaPiggyBank',
-            iconColorClass: 'bg-pink-50 dark:bg-pink-500/10 text-pink-500',
+            iconColor: 'bg-pink-50 dark:bg-pink-500/10 text-pink-500',
         },
         {
             id: 3,
             title: 'Bills',
             amount: currentData.totalBills !== undefined ? `$${currentData.totalBills.toLocaleString()}` : '$0',
             iconName: 'FaBolt',
-            iconColorClass: 'bg-cyan-50 dark:bg-cyan-500/10 text-cyan-500',
+            iconColor: 'bg-cyan-50 dark:bg-cyan-500/10 text-cyan-500',
         },
         {
             id: 4,
@@ -49,7 +49,7 @@ const Stats = () => {
             amount: currentData.totalExpenses !== undefined ? `$${currentData.totalExpenses.toLocaleString()}` : '$0',
             badgeValue: '8%',
             iconName: 'FaArrowTrendDown',
-            iconColorClass: 'bg-red-50 dark:bg-red-500/10 text-red-500',
+            iconColor: 'bg-red-50 dark:bg-red-500/10 text-red-500',
             badgeColorClass: 'bg-red-50 dark:bg-red-500/10 text-red-500',
         }
     ];
@@ -68,13 +68,13 @@ const Stats = () => {
     );
 };
 
-const StatCard = ({ title, amount, icon, iconName, badgeValue, subtext, iconColorClass, badgeColorClass, amountColorClass }) => {
+const StatCard = ({ title, amount, icon, iconName, badgeValue, subtext, iconColor, badgeColorClass, amountColorClass }) => {
     return (
         <Card padding="p-3.5" className="group h-[130px] flex flex-col justify-between">
             <div className="flex justify-between items-center mb-3">
                 <IconCard
                     name={iconName || "FaWallet"}
-                    iconColorClass={iconColorClass}
+                    iconColor={iconColor}
                     className="!w-10 !h-10"
                     size={18}
                 />

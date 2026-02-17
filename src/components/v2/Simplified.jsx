@@ -27,11 +27,11 @@ const LuPlus = Icons.LuPlus;
 
 
 const transactionsData = [
-    { id: 1, title: 'Starbucks', category: 'Food & Dining', amount: -5.75, date: 'Today', iconName: 'FaMugHot', colorClass: 'bg-orange-50 dark:bg-orange-500/10', iconColorClass: 'text-orange-500' },
-    { id: 2, title: 'Electric Bill', category: 'Utilities', amount: -124.50, date: 'Yesterday', iconName: 'FaBolt', colorClass: 'bg-yellow-50 dark:bg-yellow-500/10', iconColorClass: 'text-yellow-500' },
-    { id: 3, title: 'Salary Deposit', category: 'Income', amount: 3250.00, date: 'Jan 15', iconName: 'FaArrowTrendUp', colorClass: 'bg-green-50 dark:bg-green-500/10', iconColorClass: 'text-green-500' },
-    { id: 4, title: 'Amazon', category: 'Shopping', amount: -89.99, date: 'Jan 14', iconName: 'FaBagShopping', colorClass: 'bg-pink-50 dark:bg-pink-500/10', iconColorClass: 'text-pink-500' },
-    { id: 5, title: 'Flight Tickets', category: 'Travel', amount: -450.00, date: 'Jan 12', iconName: 'FaPlane', colorClass: 'bg-blue-50 dark:bg-blue-500/10', iconColorClass: 'text-blue-500' }
+    { id: 1, title: 'Starbucks', category: 'Food & Dining', amount: -5.75, date: 'Today', iconName: 'FaMugHot', iconColor: 'bg-orange-50 dark:bg-orange-500/10 text-orange-500' },
+    { id: 2, title: 'Electric Bill', category: 'Utilities', amount: -124.50, date: 'Yesterday', iconName: 'FaBolt', iconColor: 'bg-yellow-50 dark:bg-yellow-500/10 text-yellow-500' },
+    { id: 3, title: 'Salary Deposit', category: 'Income', amount: 3250.00, date: 'Jan 15', iconName: 'FaArrowTrendUp', iconColor: 'bg-green-50 dark:bg-green-500/10 text-green-500' },
+    { id: 4, title: 'Amazon', category: 'Shopping', amount: -89.99, date: 'Jan 14', iconName: 'FaBagShopping', iconColor: 'bg-pink-50 dark:bg-pink-500/10 text-pink-500' },
+    { id: 5, title: 'Flight Tickets', category: 'Travel', amount: -450.00, date: 'Jan 12', iconName: 'FaPlane', iconColor: 'bg-blue-50 dark:bg-blue-500/10 text-blue-500' }
 ];
 
 const Simplified = () => {

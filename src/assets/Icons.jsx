@@ -51,11 +51,11 @@ export const Icon = ({ name, size = 16, className = "" }) => {
 
 /**
  * Premium Icon Card (The circle icon container used in Categories/Transactions)
- * Usage: <IconCard name="FaMugHot" colorClass="bg-orange-500/10" iconColorClass="text-orange-500" />
+ * Usage: <IconCard name="FaMugHot" iconColor="bg-orange-500/10 text-orange-500" />
  */
-export const IconCard = ({ name, colorClass, iconColorClass, size = 18, className = "" }) => {
+export const IconCard = ({ name, iconColor, size = 18, className = "" }) => {
     return (
-        <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${colorClass} ${iconColorClass} shadow-sm transition-transform ${className}`}>
+        <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${iconColor} shadow-sm transition-transform ${className}`}>
             <Icon name={name} size={size} />
         </div>
     );

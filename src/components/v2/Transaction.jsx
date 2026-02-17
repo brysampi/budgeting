@@ -1,6 +1,6 @@
 import { IconCard } from '../../assets/Icons';
 
-const Transaction = ({ title, category, amount, date, icon, iconName, colorClass, iconColorClass }) => {
+const Transaction = ({ title, category, amount, date, icon, iconName, iconColor }) => {
     const isIncome = amount > 0;
     const formattedAmount = (isIncome ? '+' : '-') + '$' + Math.abs(amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -10,8 +10,7 @@ const Transaction = ({ title, category, amount, date, icon, iconName, colorClass
                 {/* Circular Icon Container */}
                 <IconCard
                     name={iconName || "FaWallet"}
-                    colorClass={colorClass}
-                    iconColorClass={iconColorClass}
+                    iconColor={iconColor}
                 />
 
                 {/* Details */}

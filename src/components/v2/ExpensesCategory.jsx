@@ -123,8 +123,7 @@ const ExpensesCategory = ({ paramMonth, onClick }) => {
                                                         {/* Premium Icon Container */}
                                                         <IconCard
                                                             name={cat.icon || "FaHouse"}
-                                                            colorClass={cat.iconBackground}
-                                                            iconColorClass={cat.iconColor}
+                                                            iconColor={cat.iconColor}
                                                             className="!w-9 !h-9 shadow-sm"
                                                             size={18}
                                                         />
