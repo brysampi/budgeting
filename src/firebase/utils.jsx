@@ -51,6 +51,12 @@ export function convertToDate(date) {
         return "";
     }
 }
+
+export function formatToYearMonth(date) {
+    const formattedDate = convertToDate(date);
+    if (!formattedDate) return "";
+    return formattedDate.slice(0, 7); // Returns YYYY-MM
+}
 export function getMonthRangeFromInput(inputDateString) {
     const inputDate = new Date(inputDateString); // e.g. "2025-06-01"
     const year = inputDate.getFullYear();

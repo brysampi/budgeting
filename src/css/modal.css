@@ -1,6 +1,6 @@
-/* App.css */
 .modal-overlay {
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
   position: fixed;
   top: 0;
   left: 0;
@@ -8,17 +8,22 @@
   height: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
-  z-index: 3;
+  align-items: flex-start;
+  padding-top: 5vh;
+  padding-bottom: 5vh;
+  overflow-y: auto;
+  z-index: 5000;
 }
 
 .modal-content {
   background: var(--color-theme-secondary);
-  padding: 20px;
-  width: 400px;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 24px;
+  width: 90%;
+  max-width: 550px;
+  border-radius: 28px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: 2vh;
 }
 
 .modal-header {

@@ -1,16 +1,17 @@
 import React from 'react';
 import ReactModal from 'react-modal';
-// import '../css/modal.css';
+import '../../css/modal.css';
 import { LuX } from "react-icons/lu";
 
 ReactModal.setAppElement('#root'); // For accessibility
 
-const Modal = ({ title, isModalOpen, onClose, children, fullscreen = false }) => {
+const Modal = ({ title, isModalOpen, onClose, children, fullscreen = false, maxWidth = '' }) => {
   return (
     <ReactModal
       isOpen={isModalOpen}
       onRequestClose={onClose}
       contentLabel="Modal"
+      // dito fix mo yung max width
       className={fullscreen ? "modal-content-fullscreen" : "modal-content"}
       overlayClassName={fullscreen ? "modal-overlay-fullscreen" : "modal-overlay"}
     >

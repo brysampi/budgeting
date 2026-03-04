@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import BottomSheet from '../../layouts/modal/BottomSheetModal';
 import { getExpenses, unsubscribeForAll } from '../../firebase/controller';
 
-const ExpensesCategory = ({ paramMonth, onClick }) => {
+const ExpensesCategory = ({ paramMonth, onClick = () => { } }) => {
     const [isCategoriesExpanded, setIsCategoriesExpanded] = useState(false);
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
     // const [categoriesData, setCategoriesData] = useState([
@@ -73,11 +73,11 @@ const ExpensesCategory = ({ paramMonth, onClick }) => {
 
         }
         return unsubscribeForAll(returnExpensesDefault());
-    }, []);
+    }, [paramMonth]);
 
-    useEffect(() => {
-        console.log('categoriesData2', categoriesData)
-    }, [categoriesData]);
+    // useEffect(() => {
+    //     console.log('categoriesData2', categoriesData)
+    // }, [categoriesData]);
     return (
         <>
             <div className="flex flex-col gap-4">
@@ -111,10 +111,13 @@ const ExpensesCategory = ({ paramMonth, onClick }) => {
                                     .sort((a, b) => (b.actual / (b.budget || 1)) - (a.actual / (a.budget || 1)))
                                     .slice(0, isCategoriesExpanded ? 10 : 3)
                                     .map(cat => {
-                                        const remaining = cat.budget - cat.actual;
+                                        const remaining = cat.actual ? cat.budget - cat.actual : cat.budget;
                                         const categoryId = `category-${cat.category.replace(/\s+/g, '-').toLowerCase()}`;
                                         const isOver = cat.actual > cat.budget;
-
+                                        // console.log('remaining', remaining)
+                                        // console.log('categoryId', categoryId)
+                                        // console.log('isOver', isOver)
+                                        // console.log('cat', cat)
                                         return (
                                             <Card padding="p-4" key={cat.id} noHover={true} className={`group ${categoryId} h-[110px] flex flex-col justify-between`}>
                                                 {/* 1. Custom Header (Icon | Title/Budget | Status) */}
@@ -143,6 +146,7 @@ const ExpensesCategory = ({ paramMonth, onClick }) => {
                                                         <div className="pt-0.5">
                                                             <span className="text-[10px] text-[var(--color-theme-secondary-text)] font-bold opacity-70">
                                                                 {Math.abs(remaining).toLocaleString()} {isOver ? 'over' : 'left'}
+                                                                {/* {remaining} */}
                                                             </span>
                                                         </div>
                                                     )}

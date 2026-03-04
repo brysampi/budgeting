@@ -42,9 +42,7 @@ const Simplified = () => {
     const [isUpdate, setIsUpdate] = useState(false);
     const [updateData, setUpdateData] = useState([]);
     const [modalFormType, setModalFormType] = useState('expensesTracker');
-
-
-
+    const [paramMonth, setParamMonth] = useState(new Date().toISOString().slice(0, 7));
 
     const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
@@ -67,9 +65,9 @@ const Simplified = () => {
         { label: 'Logout', icon: <Icons.LuLogOut size={18} />, onClick: handleLogout, type: 'danger' },
     ];
 
-    const paramMonth = new Date().toISOString().slice(0, 7); // Default to current YYYY-MM
+    // const paramMonth = new Date().toISOString().slice(0, 7); // Default to current YYYY-MM
     // const paramMonth = '2025-11';
-    console.log(paramMonth);
+    // console.log(paramMonth);
     useEffect(() => {
         if (!isDarkMode) {
             document.documentElement.classList.add('light-mode');
@@ -88,7 +86,7 @@ const Simplified = () => {
     }
     return (
         <div className="w-full max-w-[768px] mx-auto p-4 md:p-8 flex flex-col gap-8 min-h-screen relative font-sans pb-32">
-            <button onClick={addData}>Add Data</button>
+            {/* <button onClick={addData}>Add Data</button> */}
             {/* Header */}
             <header className="flex justify-between items-center px-1">
                 <div>
@@ -124,22 +122,22 @@ const Simplified = () => {
             </header>
 
             {/* Wallet Cards Section */}
-            <WalletCardsSection />
+            {/* <WalletCardsSection /> */}
 
             {/* Date Selector */}
             {/* <DateSelector onChange={(val) => console.log('Date changed to:', val)} /> */}
 
             {/* Stats Grid */}
-            <Stats />
+            <Stats setParamMonth={setParamMonth} />
 
             {/* Budget Categories */}
-            <ExpensesCategory
+            {/* <ExpensesCategory
                 paramMonth={paramMonth}
                 onClick={() => {
                     setModalFormType('expenses');
                     setIsModalOpen(true);
                 }}
-            />
+            /> */}
 
             {/* Recent Transactions */}
             <div className="flex flex-col gap-4">
@@ -178,6 +176,7 @@ const Simplified = () => {
                 isModalOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 fullscreen={true}
+                maxWidth='550px'
             >
                 <div className="max-w-xl mx-auto w-full pt-8 flex flex-col gap-6">
                     <button

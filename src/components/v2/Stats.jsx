@@ -1,29 +1,51 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Card from '../cards/Card';
 import { IconCard } from '../../assets/Icons';
 import { getCollectedDataRealTimeController, unsubscribeForAll } from '../../firebase/controller';
 import DateSelector from './DateSelector';
-const Stats = () => {
+import { convertToDate, formatToYearMonth } from '../../firebase/utils';
+const Stats = ({ setParamMonth }) => {
     const [monthCollectionData, setMonthCollectionData] = useState([]);
     const [isFetching, setIsFetching] = useState(true);
+    const [selectedIndex, setSelectedIndex] = useState(0);
+
+    const currentData = useMemo(() => {
+        return monthCollectionData[selectedIndex] || {};
+    }, [monthCollectionData, selectedIndex]);
 
     useEffect(() => {
         const fetchData = async () => {
             return await getCollectedDataRealTimeController(setMonthCollectionData, setIsFetching);
         };
-        return unsubscribeForAll(fetchData());
+        const unsubPromise = fetchData();
+        return unsubscribeForAll(unsubPromise);
     }, []);
-    // useEffect(() => {
-    //     console.log(monthCollectionData)
-    // }, [monthCollectionData]);
-    // Get the most recent collected data entry (assuming ordered by date desc)
-    const currentData = monthCollectionData[0] || {};
 
-    const statsData = [
+    // Effect to initialize setParamMonth when currentData changes
+    useEffect(() => {
+        if (currentData && currentData.date) {
+            setParamMonth(formatToYearMonth(currentData.date));
+        }
+    }, [currentData, setParamMonth]);
+    // useEffect(() => {
+    //     console.log('monthly Colected', monthCollectionData)
+    //     // monthCollectionData.map((collected) => {
+    //     //     console.log(collected)
+    //     // })
+    // }, [monthCollectionData]);
+
+    // Get the most recent collected data entry (assuming ordered by date desc)
+    // const currentData = monthCollectionData[0] || {};
+
+    const statsData = useMemo(() => [
         {
             id: 1,
             title: 'Total Balance',
-            amount: currentData.remainingIncome !== undefined ? `$${currentData.remainingIncome.toLocaleString()}` : '$0',
+            amount: (
+                currentData.remainingIncome !== undefined ?
+                    `$${currentData.remainingIncome.toLocaleString()}` :
+                    '$0'
+            ),
             iconName: 'FaWallet',
             badgeValue: '+12%',
             iconColor: 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500',
@@ -32,32 +54,50 @@ const Stats = () => {
         {
             id: 2,
             title: 'Savings',
-            amount: currentData.totalSavings !== undefined ? `$${currentData.totalSavings.toLocaleString()}` : '$0',
+            amount: (
+                currentData.totalSavings !== undefined ?
+                    `$${currentData.totalSavings.toLocaleString()}` :
+                    '$0'
+            ),
             iconName: 'FaPiggyBank',
             iconColor: 'bg-pink-50 dark:bg-pink-500/10 text-pink-500',
         },
         {
             id: 3,
             title: 'Bills',
-            amount: currentData.totalBills !== undefined ? `$${currentData.totalBills.toLocaleString()}` : '$0',
+            amount: (
+                currentData.totalBills !== undefined ?
+                    `$${currentData.totalBills.toLocaleString()}` :
+                    '$0'
+            ),
             iconName: 'FaBolt',
             iconColor: 'bg-cyan-50 dark:bg-cyan-500/10 text-cyan-500',
         },
         {
             id: 4,
             title: 'Expenses',
-            amount: currentData.totalExpenses !== undefined ? `$${currentData.totalExpenses.toLocaleString()}` : '$0',
+            amount: (
+                currentData.totalExpenses !== undefined ?
+                    `$${currentData.totalExpenses.toLocaleString()}` :
+                    '$0'
+            ),
             badgeValue: '8%',
             iconName: 'FaArrowTrendDown',
             iconColor: 'bg-red-50 dark:bg-red-500/10 text-red-500',
             badgeColorClass: 'bg-red-50 dark:bg-red-500/10 text-red-500',
         }
-    ];
+    ], [currentData]);
     const dates = [];
-
+    const dateSelector = (index) => {
+        setSelectedIndex(index);
+    }
     return (
         <>
-            <DateSelector dates={dates} onChange={(val) => console.log('Date changed to:', val)} />
+            <DateSelector
+                collectedData={monthCollectionData}
+                currentIndex={selectedIndex}
+                onChange={dateSelector}
+            />
 
             <div className="grid grid-cols-2 min-[600px]:grid-cols-4 gap-3">
                 {statsData.map(stat => (

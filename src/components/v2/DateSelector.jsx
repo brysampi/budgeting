@@ -1,33 +1,30 @@
 import React, { useState } from 'react';
 import { Icons } from '../../assets/Icons';
+import { convertToDate } from '../../firebase/utils';
 
-const DateSelector = ({ dates = [], onChange }) => {
-    const [currentIndex, setCurrentIndex] = useState(0);
+const DateSelector = ({ collectedData = [], currentIndex = 0, onChange }) => {
 
     const handlePrevious = () => {
-        if (currentIndex < dates.length - 1) {
-            const newIndex = currentIndex + 1;
-            setCurrentIndex(newIndex);
-            onChange(dates[newIndex]);
+        if (currentIndex < collectedData.length - 1) {
+            onChange(currentIndex + 1);
         }
     };
 
     const handleNext = () => {
         if (currentIndex > 0) {
-            const newIndex = currentIndex - 1;
-            setCurrentIndex(newIndex);
-            onChange(dates[newIndex]);
+            onChange(currentIndex - 1);
         }
     };
 
-    // Helper to format "5-2026" to "May 2026"
+    // Helper to format "2026-05" to "May 2026"
     const formatLabel = (dateStr) => {
-        const [month, year] = dateStr.split('-');
+        const [year, month] = dateStr.split('-');
         const monthNames = [
             "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"
         ];
-        return `${monthNames[parseInt(year) - 1]} ${month}`;
+        // console.log(parseInt(month) - 1)
+        return `${monthNames[parseInt(month) - 1]} ${year}`;
     };
 
     return (
@@ -36,14 +33,14 @@ const DateSelector = ({ dates = [], onChange }) => {
             <div className="flex items-center justify-center gap-6 mb-2">
                 <button
                     onClick={handlePrevious}
-                    disabled={currentIndex >= dates.length - 1}
+                    disabled={currentIndex >= collectedData.length - 1}
                     className="w-10 h-10 rounded-full flex items-center justify-center bg-[var(--color-theme-secondary)]/50 text-[var(--color-theme-secondary-text)] hover:bg-[var(--color-theme-secondary)] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                 >
                     <Icons.LuChevronLeft size={20} />
                 </button>
 
                 <span className="text-lg font-bold text-[var(--color-light)] min-w-[140px] text-center">
-                    {dates.length > 0 ? formatLabel(dates[currentIndex]) : 'No Transactions'}
+                    {collectedData.length > 0 ? formatLabel(convertToDate(collectedData[currentIndex].date)) : 'No Transactions'}
                 </span>
 
                 <button
