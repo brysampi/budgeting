@@ -758,6 +758,85 @@ export async function getExtensionByExpenses(expensesId, inputDate, debug = fals
     }
 }
 
+export function getAllTransactionsRealTime(inputDate, setData, wallet = '') {
+    const { startOfMonth, endOfMonth } = getMonthRangeFromInput(inputDate);
+    const userId = getUserID();
+    const collections = ["billsExtension", "expensesTracker", "savingsTracker", "income"];
+
+    let resultsMap = {
+        billsExtension: [],
+        expensesTracker: [],
+        savingsTracker: [],
+        income: [],
+    };
+
+    const unsubscribes = collections.map((col) => {
+        const constraints = [
+            where("user", "==", userId),
+            where("date", ">=", startOfMonth),
+            where("date", "<=", endOfMonth),
+        ];
+
+        if (wallet !== '') {
+            constraints.push(where("wallet", "==", wallet));
+        }
+
+        const que = query(collection(db, col), ...constraints);
+
+        return onSnapshot(que, async (snapshot) => {
+            const promises = snapshot.docs.map(async (docSnap) => {
+                const data = docSnap.data();
+                let categoryData = {};
+
+                // Fetch Category Data based on Collection Type
+                try {
+                    if (col === 'expensesTracker' && data.category) {
+                        const catRef = doc(db, 'expenses', data.category);
+                        const catSnap = await getDoc(catRef);
+                        if (catSnap.exists()) categoryData = catSnap.data();
+                    } else if (col === 'savingsTracker' && data.category) {
+                        const catRef = doc(db, 'savings', data.category);
+                        const catSnap = await getDoc(catRef);
+                        if (catSnap.exists()) categoryData = catSnap.data();
+                    } else if (col === 'billsExtension' && data.billsId) {
+                        const catRef = doc(db, 'bills', data.billsId);
+                        const catSnap = await getDoc(catRef);
+                        if (catSnap.exists()) categoryData = catSnap.data();
+                    }
+                } catch (err) {
+                    console.error(`Error fetching category for ${col}:`, err);
+                }
+
+                return {
+                    id: docSnap.id,
+                    type: col,
+                    ...data,
+                    // Standardize fields for the UI
+                    title: data.description || categoryData.category || categoryData.description || data.category || "Untitled",
+                    category: categoryData.category || categoryData.description || (col === 'income' ? 'Income' : 'General'),
+                    amount: col === 'billsExtension' ? data.actual : data.amount,
+                    date: convertToDate(data.date)
+                };
+            });
+
+            resultsMap[col] = await Promise.all(promises);
+
+            const combined = Object.values(resultsMap)
+                .flat()
+                .filter(t => t && t.date)
+                .sort((a, b) => {
+                    return new Date(b.date) - new Date(a.date);
+                });
+
+            if (setData) setData(combined);
+        }, (error) => {
+            console.error(`Error in real-time listener for ${col}:`, error);
+        });
+    });
+
+    return () => unsubscribes.forEach(unsub => unsub());
+}
+
 // --------------------------------------------------------------------
 export async function updateData(table, id, arrayData) {
     try {

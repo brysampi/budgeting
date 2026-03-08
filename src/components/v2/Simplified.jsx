@@ -22,18 +22,6 @@ import {
 import Cookies from 'js-cookie';
 const LuPlus = Icons.LuPlus;
 
-
-
-
-
-const transactionsData = [
-    { id: 1, title: 'Starbucks', category: 'Food & Dining', amount: -5.75, date: 'Today', iconName: 'FaMugHot', iconColor: 'bg-orange-50 dark:bg-orange-500/10 text-orange-500' },
-    { id: 2, title: 'Electric Bill', category: 'Utilities', amount: -124.50, date: 'Yesterday', iconName: 'FaBolt', iconColor: 'bg-yellow-50 dark:bg-yellow-500/10 text-yellow-500' },
-    { id: 3, title: 'Salary Deposit', category: 'Income', amount: 3250.00, date: 'Jan 15', iconName: 'FaArrowTrendUp', iconColor: 'bg-green-50 dark:bg-green-500/10 text-green-500' },
-    { id: 4, title: 'Amazon', category: 'Shopping', amount: -89.99, date: 'Jan 14', iconName: 'FaBagShopping', iconColor: 'bg-pink-50 dark:bg-pink-500/10 text-pink-500' },
-    { id: 5, title: 'Flight Tickets', category: 'Travel', amount: -450.00, date: 'Jan 12', iconName: 'FaPlane', iconColor: 'bg-blue-50 dark:bg-blue-500/10 text-blue-500' }
-];
-
 const Simplified = () => {
     const [isDarkMode, setIsDarkMode] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -128,36 +116,25 @@ const Simplified = () => {
             {/* <DateSelector onChange={(val) => console.log('Date changed to:', val)} /> */}
 
             {/* Stats Grid */}
-            <Stats setParamMonth={setParamMonth} />
+            {/* <Stats setParamMonth={setParamMonth} /> */}
 
             {/* Budget Categories */}
-            {/* <ExpensesCategory
+            <ExpensesCategory
                 paramMonth={paramMonth}
                 onClick={() => {
                     setModalFormType('expenses');
                     setIsModalOpen(true);
                 }}
-            /> */}
+            />
 
             {/* Recent Transactions */}
-            <div className="flex flex-col gap-4">
-                <div className="flex justify-between items-center px-1">
-                    <h2 className="text-xl font-bold text-[var(--color-light)] tracking-tight">Recent Transactions</h2>
-                    {/* <button className="text-[#34A853] hover:underline text-xs md:text-sm font-semibold">See all</button> */}
-                </div>
-                <Card noHover={true} padding="p-2 md:p-4">
-                    <div className="flex flex-col gap-1">
-                        {transactionsData.map((t, idx) => (
-                            <React.Fragment key={t.id}>
-                                <Transaction {...t} />
-                                {idx < transactionsData.length - 1 && (
-                                    <div className="mx-4 h-[1px] bg-black/[0.03] dark:bg-white/5" />
-                                )}
-                            </React.Fragment>
-                        ))}
-                    </div>
-                </Card>
-            </div>
+            {/* <Transaction
+                paramMonth={paramMonth}
+                onClick={() => {
+                    setModalFormType('expensesTracker');
+                    setIsModalOpen(true);
+                }}
+            /> */}
 
             {/* FAB */}
             <button

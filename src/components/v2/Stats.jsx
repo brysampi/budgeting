@@ -3,7 +3,7 @@ import Card from '../cards/Card';
 import { IconCard } from '../../assets/Icons';
 import { getCollectedDataRealTimeController, unsubscribeForAll } from '../../firebase/controller';
 import DateSelector from './DateSelector';
-import { convertToDate, formatToYearMonth } from '../../firebase/utils';
+import { convertToDate, formatToYearMonth, componentIcons } from '../../firebase/utils';
 const Stats = ({ setParamMonth }) => {
     const [monthCollectionData, setMonthCollectionData] = useState([]);
     const [isFetching, setIsFetching] = useState(true);
@@ -46,10 +46,9 @@ const Stats = ({ setParamMonth }) => {
                     `$${currentData.remainingIncome.toLocaleString()}` :
                     '$0'
             ),
-            iconName: 'FaWallet',
             badgeValue: '+12%',
-            iconColor: 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500',
-            badgeColorClass: 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500',
+            ...componentIcons('income', 'FaWallet'),
+            badgeColorClass: componentIcons('income').iconBackground,
         },
         {
             id: 2,
@@ -59,8 +58,7 @@ const Stats = ({ setParamMonth }) => {
                     `$${currentData.totalSavings.toLocaleString()}` :
                     '$0'
             ),
-            iconName: 'FaPiggyBank',
-            iconColor: 'bg-pink-50 dark:bg-pink-500/10 text-pink-500',
+            ...componentIcons('savings'),
         },
         {
             id: 3,
@@ -70,8 +68,7 @@ const Stats = ({ setParamMonth }) => {
                     `$${currentData.totalBills.toLocaleString()}` :
                     '$0'
             ),
-            iconName: 'FaBolt',
-            iconColor: 'bg-cyan-50 dark:bg-cyan-500/10 text-cyan-500',
+            ...componentIcons('bills'),
         },
         {
             id: 4,
@@ -82,9 +79,8 @@ const Stats = ({ setParamMonth }) => {
                     '$0'
             ),
             badgeValue: '8%',
-            iconName: 'FaArrowTrendDown',
-            iconColor: 'bg-red-50 dark:bg-red-500/10 text-red-500',
-            badgeColorClass: 'bg-red-50 dark:bg-red-500/10 text-red-500',
+            ...componentIcons('expenses'),
+            badgeColorClass: componentIcons('expenses').iconBackground,
         }
     ], [currentData]);
     const dates = [];
@@ -108,13 +104,13 @@ const Stats = ({ setParamMonth }) => {
     );
 };
 
-const StatCard = ({ title, amount, icon, iconName, badgeValue, subtext, iconColor, badgeColorClass, amountColorClass }) => {
+const StatCard = ({ title, amount, icon, badgeValue, subtext, iconBackground, badgeColorClass, amountColorClass }) => {
     return (
         <Card padding="p-3.5" className="group h-[130px] flex flex-col justify-between">
             <div className="flex justify-between items-center mb-3">
                 <IconCard
-                    name={iconName || "FaWallet"}
-                    iconColor={iconColor}
+                    name={icon || "FaWallet"}
+                    iconColor={iconBackground}
                     className="!w-10 !h-10"
                     size={18}
                 />

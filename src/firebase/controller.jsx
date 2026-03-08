@@ -1,6 +1,6 @@
 import { serverTimestamp } from 'firebase/firestore';
 import Cookies from 'js-cookie';
-import { successMsg, errorMsg, getUserID, convertToTimeStamp, convertToDate } from '../firebase/utils';
+import { successMsg, errorMsg, getUserID, convertToTimeStamp, convertToDate, componentIcons } from '../firebase/utils';
 import {
     addData, updateData, getDataSingle, deleteData, getData, getUser, getAllData, getAllDataRealtime, getDataById, getAllDataActiveRealTime,
     getDataRealTime,
@@ -11,6 +11,7 @@ import {
     getCollectedDataRealTime,
     getSavingsDataRealTime,
     deleteAllData,
+    getAllTransactionsRealTime,
 } from '../firebase/model';
 
 export async function checkStaticData(inputDate) {
@@ -472,12 +473,15 @@ export async function expenses(arrayData) {
     return successMsg('Successfully Added.', addReturn)
 }
 export async function getExpenses(inputDate, setExpensesData, isFetching, dropdownData = false) {
+    // const handleSetData = (data) => {
+    //     const enrichedData = data.map(cat => ({
+    //         ...cat,
+    //         ...componentIcons('expenses', cat.icon || cat.iconName, cat.iconBackground)
+    //     }));
+    //     setExpensesData(enrichedData);
+    // };
     try {
         await getExpensesDataRealTime_v2(inputDate, setExpensesData, isFetching, dropdownData)
-        // if (dropdownData)
-        //     await getExpensesDataRealTime_v2(setExpensesData, isFetching)
-        // else
-        //     await getExpensesDataRealTime(inputDate, setExpensesData, isFetching)
     } catch (error) {
         console.error("Error fetching expenses in Controller:", error);
     }
@@ -755,6 +759,18 @@ export async function getAllDataActiveRealTimeController(table, setData, isFetch
     } catch (error) {
         console.error(`Error fetching data from ${table} in Controller:`, error);
     }
+}
+
+
+export function getAllTransactions(inputDate, setData, wallet = '') {
+    const handleSetData = (data) => {
+        const enrichedData = data.map(t => ({
+            ...t,
+            ...componentIcons(t.type)
+        }));
+        setData(enrichedData);
+    };
+    return getAllTransactionsRealTime(inputDate, handleSetData, wallet);
 }
 // --------------------------------------------------------------------
 // Not Used Anymore

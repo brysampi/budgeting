@@ -58,9 +58,17 @@ export function formatToYearMonth(date) {
     return formattedDate.slice(0, 7); // Returns YYYY-MM
 }
 export function getMonthRangeFromInput(inputDateString) {
-    const inputDate = new Date(inputDateString); // e.g. "2025-06-01"
+    // If no input provided, default to today
+    const inputDate = inputDateString ? new Date(inputDateString) : new Date();
+
+    // Check if the date is actually valid
+    if (isNaN(inputDate.getTime())) {
+        console.warn(`Invalid date input: ${inputDateString}. Defaulting to current month.`);
+        return getMonthRangeFromInput(new Date());
+    }
+
     const year = inputDate.getFullYear();
-    const month = inputDate.getMonth(); // 0-based: Jan = 0, June = 5
+    const month = inputDate.getMonth();
 
     const startOfMonth = new Date(year, month, 1);
     const endOfMonth = new Date(year, month + 1, 0, 23, 59, 59, 999);
@@ -94,4 +102,33 @@ export function getLastDayOfTheMonth(paramMonth) {
     // Note: month is 1-indexed in the input, so we use it directly 
     const lastDayDate = new Date(year, month, 1).toISOString().split('T')[0];
     return lastDayDate;
+}
+
+export function componentIcons(type, customIcon = null, customColor = null) {
+    const colors = {
+        income: 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500',
+        savings: 'bg-pink-50 dark:bg-pink-500/10 text-pink-500',
+        savingsTracker: 'bg-pink-50 dark:bg-pink-500/10 text-pink-500',
+        bills: 'bg-cyan-50 dark:bg-cyan-500/10 text-cyan-500',
+        billsExtension: 'bg-cyan-50 dark:bg-cyan-500/10 text-cyan-500',
+        expenses: 'bg-red-50 dark:bg-red-500/10 text-red-500',
+        expensesTracker: 'bg-red-50 dark:bg-red-500/10 text-red-500',
+        wallet: 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500',
+    };
+
+    const icons = {
+        income: 'LuHandCoins',
+        savings: 'FaPiggyBank',
+        savingsTracker: 'FaPiggyBank',
+        bills: 'FaBolt',
+        billsExtension: 'FaBolt',
+        expenses: 'FaArrowTrendDown',
+        expensesTracker: 'LuCoins',
+        wallet: 'FaWallet',
+    };
+
+    return {
+        icon: customIcon || icons[type] || 'FaWallet',
+        iconBackground: customColor || colors[type] || 'bg-gray-100 dark:bg-white/10 text-gray-500'
+    };
 }

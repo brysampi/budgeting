@@ -75,9 +75,9 @@ const ExpensesCategory = ({ paramMonth, onClick = () => { } }) => {
         return unsubscribeForAll(returnExpensesDefault());
     }, [paramMonth]);
 
-    // useEffect(() => {
-    //     console.log('categoriesData2', categoriesData)
-    // }, [categoriesData]);
+    useEffect(() => {
+        console.log('categoriesData2', categoriesData)
+    }, [categoriesData]);
     return (
         <>
             <div className="flex flex-col gap-4">
@@ -126,7 +126,7 @@ const ExpensesCategory = ({ paramMonth, onClick = () => { } }) => {
                                                         {/* Premium Icon Container */}
                                                         <IconCard
                                                             name={cat.icon || "FaHouse"}
-                                                            iconColor={cat.iconColor}
+                                                            iconColor={cat.iconBackground}
                                                             className="!w-9 !h-9 shadow-sm"
                                                             size={18}
                                                         />
@@ -206,7 +206,7 @@ const ExpensesCategory = ({ paramMonth, onClick = () => { } }) => {
                             className="flex flex-col items-center gap-3 p-6 rounded-3xl bg-white/[0.03] hover:bg-white/[0.08] transition-all border border-white/5"
                         >
                             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${cat.colorClass} ${cat.iconColorClass}`}>
-                                <Icon name={cat.iconName} size={24} />
+                                <Icon name={cat.icon} size={24} />
                             </div>
                             <span className="text-sm font-bold text-[var(--color-light)]">{cat.title}</span>
                         </button>
