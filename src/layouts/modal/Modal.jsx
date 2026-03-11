@@ -5,21 +5,45 @@ import { LuX } from "react-icons/lu";
 
 ReactModal.setAppElement('#root'); // For accessibility
 
-const Modal = ({ title, isModalOpen, onClose, children, fullscreen = false, maxWidth = '' }) => {
+const Modal = ({
+  title,
+  isModalOpen,
+  onClose,
+  children,
+  fullscreen = false,
+  maxWidth = '550px',
+  closeOnOverlay = true,
+  zIndex = 5000
+}) => {
   return (
     <ReactModal
       isOpen={isModalOpen}
       onRequestClose={onClose}
-      contentLabel="Modal"
-      // dito fix mo yung max width
-      className={fullscreen ? "modal-content-fullscreen" : "modal-content"}
-      overlayClassName={fullscreen ? "modal-overlay-fullscreen" : "modal-overlay"}
+      shouldCloseOnOverlayClick={closeOnOverlay}
+      contentLabel={title || "Action Modal"}
+      className={fullscreen ? "modal-content modal-content--fullscreen" : "modal-content"}
+      overlayClassName={fullscreen ? "modal-overlay modal-overlay--fullscreen" : "modal-overlay"}
+      style={{
+        overlay: { zIndex: zIndex },
+        content: !fullscreen ? { maxWidth: maxWidth } : {}
+      }}
+      closeTimeoutMS={200}
     >
-      <div className="modal-header">
-        <h2 className="modal-title">{title}</h2>
-        <button onClick={onClose} className="hover:scale-110 transition-transform flex items-center justify-center p-2 rounded-full hover:bg-white/5"><LuX size={24} /></button>
+      <div className="modal-inner">
+        <div className="modal-header">
+          <h2 className="modal-title">{title}</h2>
+          <button
+            onClick={onClose}
+            className="modal-close-btn"
+            aria-label="Close modal"
+          >
+            <LuX size={24} />
+          </button>
+        </div>
+        <div className="modal-body">
+          {children}
+        </div>
       </div>
-      <div className="modal-body">{children}</div>
     </ReactModal>
   );
 };

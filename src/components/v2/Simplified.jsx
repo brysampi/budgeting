@@ -20,11 +20,13 @@ import {
     Icon
 } from '../../assets/Icons';
 import Cookies from 'js-cookie';
+import UploadImage from '../../gemini/RecieptScanner';
 const LuPlus = Icons.LuPlus;
 
 const Simplified = () => {
     const [isDarkMode, setIsDarkMode] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpenAI, setIsModalOpenAI] = useState(false);
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [isUpdate, setIsUpdate] = useState(false);
@@ -72,6 +74,11 @@ const Simplified = () => {
     const addData = async () => {
         await collectedData_v2(paramMonth);
     }
+    const [formData11, setFormData11] = useState({ vendor: '', total: 0, items: [] });
+
+    const handleAiData = (data) => {
+        setFormData11(data); // This fills your form automatically!
+    };
     return (
         <div className="w-full max-w-[768px] mx-auto p-4 md:p-8 flex flex-col gap-8 min-h-screen relative font-sans pb-32">
             {/* <button onClick={addData}>Add Data</button> */}
@@ -110,7 +117,7 @@ const Simplified = () => {
             </header>
 
             {/* Wallet Cards Section */}
-            {/* <WalletCardsSection /> */}
+            <WalletCardsSection />
 
             {/* Date Selector */}
             {/* <DateSelector onChange={(val) => console.log('Date changed to:', val)} /> */}
@@ -119,13 +126,13 @@ const Simplified = () => {
             {/* <Stats setParamMonth={setParamMonth} /> */}
 
             {/* Budget Categories */}
-            <ExpensesCategory
+            {/* <ExpensesCategory
                 paramMonth={paramMonth}
                 onClick={() => {
                     setModalFormType('expenses');
                     setIsModalOpen(true);
                 }}
-            />
+            /> */}
 
             {/* Recent Transactions */}
             {/* <Transaction
@@ -146,47 +153,75 @@ const Simplified = () => {
             >
                 <Icons.LuPlus size={32} strokeWidth={3} className="transform group-hover:rotate-90 transition-transform duration-300 origin-center" />
             </button>
-
+            {/* <UploadImage onDataExtracted={handleAiData} /> */}
             {/* Full Screen Modal */}
+
             <Modal
-                title={modalFormType === 'expenses' ? 'Add New Expenses Category' : 'Add New Transaction'}
+                title={modalFormType === 'expenses' ? 'Add New Expenses Category' : 'Add New Entry'}
                 isModalOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                fullscreen={true}
+                fullscreen={false}
                 maxWidth='550px'
+                closeOnOverlay={!isBottomSheetOpen}
             >
-                <div className="max-w-xl mx-auto w-full pt-8 flex flex-col gap-6">
-                    <button
-                        onClick={() => setIsBottomSheetOpen(true)}
-                        className="w-full p-4 rounded-2xl bg-[var(--color-theme-secondary)] border border-white/5 flex items-center justify-between group hover:bg-white/5 transition-all"
-                    >
-                        <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-xl bg-[var(--color-theme-important)]/10 flex items-center justify-center text-[var(--color-theme-important)]">
-                                <Icons.LuShoppingBag size={20} />
-                            </div>
-                            <div className="text-left">
-                                <div className="text-[var(--color-light)] font-bold">Quick Select Expenses Category</div>
-                                <div className="text-[var(--color-theme-secondary-text)] text-xs">Choose from frequently used</div>
-                            </div>
+                {/* <button
+                    onClick={() => setIsBottomSheetOpen(true)}
+                    className="w-full p-4 rounded-2xl bg-[var(--color-theme-secondary)] border border-white/5 flex items-center justify-between group hover:bg-white/5 transition-all"
+                >
+                    <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-xl bg-[var(--color-theme-important)]/10 flex items-center justify-center text-[var(--color-theme-important)]">
+                            <Icons.LuShoppingBag size={20} />
                         </div>
-                        <Icons.LuArrowLeft className="rotate-180 opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                    </button>
+                        <div className="text-left">
+                            <div className="text-[var(--color-light)] font-bold">Quick Select Expenses Category</div>
+                            <div className="text-[var(--color-theme-secondary-text)] text-xs">Choose from frequently used</div>
+                        </div>
+                    </div>
+                    <Icons.LuArrowLeft className="rotate-180 opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                </button> */}
+                <button
+                    // onClick={() => setIsSettingsOpen(true)}
+                    onClick={() => setIsModalOpenAI(true)}
+                    className="w-full p-4 rounded-2xl bg-[var(--color-theme-secondary)] border border-white/5 flex items-center justify-between group hover:bg-white/5 transition-all text-left"
+                >
+                    <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-500">
+                            <Icons.LuSparkles size={20} />
+                        </div>
+                        <div>
+                            <div className="text-[var(--color-light)] font-bold">AI Receipt Scanner</div>
+                            <div className="text-[var(--color-theme-secondary-text)] text-xs">Auto-extract details from photos</div>
+                        </div>
+                    </div>
+                    <Icons.LuArrowLeft className="rotate-180 opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                </button>
 
-                    <button
-                        onClick={() => setIsSettingsOpen(true)}
-                        className="w-full p-4 rounded-2xl bg-[var(--color-theme-secondary)] border border-white/5 flex items-center justify-between group hover:bg-white/5 transition-all text-left"
-                    >
-                        <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500">
-                                <Icons.LuSettings size={20} />
-                            </div>
-                            <div>
-                                <div className="text-[var(--color-light)] font-bold">Advanced Settings</div>
-                                <div className="text-[var(--color-theme-secondary-text)] text-xs">Fixed modal demo</div>
-                            </div>
-                        </div>
-                        <Icons.LuArrowLeft className="rotate-180 opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                    </button>
+                {/* Modern Segmented Tab Bar for Transactions */}
+                {!isUpdate && ['expensesTracker', 'income', 'bills', 'savingsTracker'].includes(modalFormType) && (
+                    <div className="flex p-1 bg-black/20 dark:bg-white/[0.03] rounded-2xl border border-white/5 mb-6 gap-1 w-full">
+                        {[
+                            { label: 'Expenses', type: 'expensesTracker', icon: 'LuShoppingBag' },
+                            { label: 'Income', type: 'income', icon: 'LuHandCoins' },
+                            { label: 'Bills', type: 'bills', icon: 'FaBolt' },
+                            { label: 'Savings', type: 'savingsTracker', icon: 'FaPiggyBank' }
+                        ].map(tab => (
+                            <button
+                                key={tab.type}
+                                onClick={() => setModalFormType(tab.type)}
+                                className={`flex-1 py-2.5 px-1 rounded-xl text-[9px] xs:text-[10px] sm:text-[11px] uppercase tracking-wider font-extrabold transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 ${modalFormType === tab.type
+                                    ? 'bg-[var(--color-theme-important)] text-white shadow-lg'
+                                    : 'text-[var(--color-theme-secondary-text)] hover:text-[var(--color-light)] hover:bg-white/5'
+                                    }`}
+                            >
+                                <Icon name={tab.icon} size={14} />
+                                <span className="whitespace-nowrap">{tab.label}</span>
+                            </button>
+                        ))}
+                    </div>
+                )}
+
+                {/* {modalFormType === 'expensesTracker' && !isUpdate && ( */}
+                <div className="flex flex-col gap-6">
 
                     <div className="h-[1px] bg-white/5 w-full my-2" />
 
@@ -201,9 +236,20 @@ const Simplified = () => {
                         setUpdateData={setUpdateData}
                     />
                 </div>
+                {/* )} */}
             </Modal>
 
-
+            <Modal
+                title={'AI Receipt Scanner'}
+                isModalOpen={isModalOpenAI}
+                onClose={() => setIsModalOpenAI(false)}
+                fullscreen={false}
+                maxWidth='550px'
+                closeOnOverlay={!isBottomSheetOpen}
+                zIndex={6000}
+            >
+                <UploadImage onDataExtracted={handleAiData} />
+            </Modal>
 
             {/* Non-Draggable Modal */}
             <BottomSheet

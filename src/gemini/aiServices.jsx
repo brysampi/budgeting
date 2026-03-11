@@ -21,8 +21,8 @@ export const analyzeReceipt = async (base64String, mimeType = "image/jpeg") => {
           parts: [
             {
               text: `Extract receipt data. Return ONLY JSON: 
-                     { "vendor": "string", "total": 0.00, 
-                       "items": [{ "name": "string", "price": 0.00 }] }`
+                     { "vendor": "string", "total": 0.00, excludingSalesVat: 0.00, salesVat: 0.00, 
+                       "items": [{ "name": "string", "price": 0.00, "quantity": 0, "discount":0 }] }`
             },
             { inlineData: { data: base64String, mimeType: mimeType } }
           ]

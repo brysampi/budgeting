@@ -2,107 +2,144 @@
   background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(8px);
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 5vh;
-  padding-bottom: 5vh;
+  padding: 5vh 1rem;
   overflow-y: auto;
   z-index: 5000;
+  transition: all 0.2s ease-in-out;
 }
 
 .modal-content {
   background: var(--color-theme-secondary);
-  padding: 24px;
-  width: 90%;
-  max-width: 550px;
+  width: 100%;
+  margin: auto;
   border-radius: 28px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  margin-top: 2vh;
+  outline: none;
+  position: relative;
+  padding: 1.5rem;
+  /* Restored padding here */
 }
 
+/* React Modal Animation Classes */
+.ReactModal__Overlay {
+  opacity: 0;
+}
+
+.ReactModal__Overlay--after-open {
+  opacity: 1;
+}
+
+.ReactModal__Overlay--before-close {
+  opacity: 0;
+}
+
+/* Internal Layout */
+.modal-inner {
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 1rem 0;
+  /* Vertical internal spacing */
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Tab Bar Utilities */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Mobile Responsive & Forced Fullscreen */
+@media (max-width: 480px) {
+  .modal-overlay {
+    padding: 0;
+    align-items: stretch;
+    background: var(--color-theme-primary);
+  }
+
+  .modal-content {
+    min-height: 100vh;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    padding: 0 !important;
+    /* Ensure content touches edges in mobile */
+  }
+
+  .modal-inner {
+    padding: 1.25rem 1.25rem 4rem;
+  }
+}
+
+/* Forced Fullscreen (Prop) */
+.modal-overlay-fullscreen {
+  padding: 0;
+  align-items: stretch;
+  background: var(--color-theme-primary);
+}
+
+.modal-content-fullscreen {
+  min-height: 100vh;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  padding: 0 !important;
+}
+
+.modal-content-fullscreen .modal-inner {
+  padding: 2rem;
+}
+
+/* Header & Body Styles */
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.06);
-  padding-bottom: 15px;
-  margin-bottom: 10px;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.modal-header .modal-title {
+.modal-title {
   color: var(--color-light);
-  font-weight: bold;
+  font-weight: 800;
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
 }
 
-.modal-header button {
-  background-color: transparent;
+.modal-close-btn {
+  background: transparent;
   border: none;
-  font-size: 16px;
+  color: var(--color-light);
+  opacity: 0.6;
   cursor: pointer;
-  color: var(--color-theme-secondary-text);
-  transition: color 0.2s;
+  padding: 0.5rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  background: rgba(255, 255, 255, 0.05);
 }
 
-.modal-header button:hover {
-  color: var(--color-light);
+.modal-close-btn:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.05);
 }
 
 .modal-body {
-  padding-top: 10px;
-}
-
-/* Full Screen Modal */
-.modal-overlay-fullscreen {
-  background: rgba(0, 0, 0, 0.6) !important;
-  backdrop-filter: blur(12px);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1000 !important;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content-fullscreen {
-  background: var(--color-theme-primary) !important;
-  width: 100% !important;
-  height: 100% !important;
-  border-radius: 0 !important;
-  padding: 2rem !important;
-  overflow-y: auto;
-  position: relative;
-  border: none !important;
-  box-shadow: none !important;
   display: flex;
   flex-direction: column;
-}
-
-.modal-content-fullscreen .modal-header {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-}
-
-.modal-content-fullscreen .modal-title {
-  font-size: 1.5rem !important;
-  font-weight: 800 !important;
-}
-
-.modal-content-fullscreen .modal-header button {
-  color: var(--color-light);
-  opacity: 0.5;
-  transition: opacity 0.2s;
-}
-
-.modal-content-fullscreen .modal-header button:hover {
-  opacity: 1;
+  gap: 1.5rem;
 }

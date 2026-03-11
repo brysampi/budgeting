@@ -41,8 +41,6 @@ export default function MonthSelection({ onLogOut }) {
         setFormData11(data); // This fills your form automatically!
     };
 
-    // ... inside your JSX
-
     return (
         <>
             <UploadImage onDataExtracted={handleAiData} />

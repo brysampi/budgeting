@@ -80,56 +80,58 @@ const BottomSheet = ({
 
     const overlayContent = (
         <div
-            className={`fixed inset-0 z-[9999] flex flex-col justify-end transition-opacity duration-300 ${animateIn ? 'opacity-100' : 'opacity-0'}`}
-            style={{ backgroundColor: 'rgba(0,0,0,0.6)' }}
+            className={`fixed inset-0 z-[9999] transition-opacity duration-300 ${animateIn ? 'opacity-100' : 'opacity-0'}`}
+            style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}
             onClick={() => closeOnOverlay && onClose()}
         >
-            <div
-                ref={sheetRef}
-                className={`bg-[var(--color-theme-secondary)] w-full rounded-t-[32px] shadow-2xl overflow-hidden relative ${isDraggable ? 'touch-none' : ''}`}
-                style={{
-                    maxHeight: '90vh',
-                    transform: `translateY(${!animateIn ? '100%' : dragY + 'px'})`,
-                    transition: isDragging ? 'none' : 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
-                }}
-                onClick={(e) => e.stopPropagation()}
-                onPointerDown={handlePointerDown}
-            >
-                {/* Drag Handle Container */}
-                {isDraggable && (
-                    <div className="w-full flex justify-center p-4 cursor-grab active:cursor-grabbing drag-handle touch-none">
-                        <div className={`w-12 h-1.5 rounded-full transition-colors duration-200 ${isDragging ? 'bg-[var(--color-theme-important)]' : 'bg-white/10'}`} />
+            <div className="max-w-[768px] mx-auto h-full flex flex-col justify-end">
+                <div
+                    ref={sheetRef}
+                    className={`bg-[var(--color-theme-secondary)] w-full rounded-t-[32px] shadow-2xl overflow-hidden relative ${isDraggable ? 'touch-none' : ''}`}
+                    style={{
+                        maxHeight: '90vh',
+                        transform: `translateY(${!animateIn ? '100%' : dragY + 'px'})`,
+                        transition: isDragging ? 'none' : 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                    onPointerDown={handlePointerDown}
+                >
+                    {/* Drag Handle Container */}
+                    {isDraggable && (
+                        <div className="w-full flex justify-center p-4 cursor-grab active:cursor-grabbing drag-handle touch-none">
+                            <div className={`w-12 h-1.5 rounded-full transition-colors duration-200 ${isDragging ? 'bg-[var(--color-theme-important)]' : 'bg-white/10'}`} />
+                        </div>
+                    )}
+
+                    {/* Close Button - Absolute if no title or if dragging is disabled */}
+                    {showCloseButton && !title && (
+                        <button
+                            onClick={onClose}
+                            className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-[var(--color-theme-secondary-text)] hover:text-[var(--color-light)] transition-colors z-10"
+                        >
+                            <LuX size={20} />
+                        </button>
+                    )}
+
+                    {/* Header Container */}
+                    {title && (
+                        <div className={`px-6 pb-4 flex justify-between items-center border-b border-white/5 ${isDraggable ? 'drag-handle touch-none' : ''} ${!isDraggable ? 'pt-6' : ''}`}>
+                            <h2 className="text-xl font-extrabold text-[var(--color-light)] tracking-tight">{title}</h2>
+                            {showCloseButton && (
+                                <button
+                                    onClick={onClose}
+                                    className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-[var(--color-theme-secondary-text)] hover:text-[var(--color-light)] transition-colors"
+                                >
+                                    <LuX size={20} />
+                                </button>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Content */}
+                    <div className="p-6 overflow-y-auto pointer-events-auto" style={{ maxHeight: 'calc(90vh - 100px)' }}>
+                        {children}
                     </div>
-                )}
-
-                {/* Close Button - Absolute if no title or if dragging is disabled */}
-                {showCloseButton && !title && (
-                    <button
-                        onClick={onClose}
-                        className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-[var(--color-theme-secondary-text)] hover:text-[var(--color-light)] transition-colors z-10"
-                    >
-                        <LuX size={20} />
-                    </button>
-                )}
-
-                {/* Header Container */}
-                {title && (
-                    <div className={`px-6 pb-4 flex justify-between items-center border-b border-white/5 ${isDraggable ? 'drag-handle touch-none' : ''} ${!isDraggable ? 'pt-6' : ''}`}>
-                        <h2 className="text-xl font-extrabold text-[var(--color-light)] tracking-tight">{title}</h2>
-                        {showCloseButton && (
-                            <button
-                                onClick={onClose}
-                                className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-[var(--color-theme-secondary-text)] hover:text-[var(--color-light)] transition-colors"
-                            >
-                                <LuX size={20} />
-                            </button>
-                        )}
-                    </div>
-                )}
-
-                {/* Content */}
-                <div className="p-6 overflow-y-auto pointer-events-auto" style={{ maxHeight: 'calc(90vh - 100px)' }}>
-                    {children}
                 </div>
             </div>
         </div>
