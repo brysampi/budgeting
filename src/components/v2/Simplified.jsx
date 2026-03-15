@@ -21,6 +21,10 @@ import {
 } from '../../assets/Icons';
 import Cookies from 'js-cookie';
 import UploadImage from '../../gemini/RecieptScanner';
+import ExpensesForm from './forms/ExpensesForm';
+import IncomeForm from './forms/IncomeForm';
+import BillsForm from './forms/BillsForm';
+import SavingsForm from './forms/SavingsForm';
 const LuPlus = Icons.LuPlus;
 
 const Simplified = () => {
@@ -179,22 +183,27 @@ const Simplified = () => {
                     </div>
                     <Icons.LuArrowLeft className="rotate-180 opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                 </button> */}
-                <button
-                    // onClick={() => setIsSettingsOpen(true)}
-                    onClick={() => setIsModalOpenAI(true)}
-                    className="w-full p-4 rounded-2xl bg-[var(--color-theme-secondary)] border border-white/5 flex items-center justify-between group hover:bg-white/5 transition-all text-left"
-                >
-                    <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-500">
-                            <Icons.LuSparkles size={20} />
-                        </div>
-                        <div>
-                            <div className="text-[var(--color-light)] font-bold">AI Receipt Scanner</div>
-                            <div className="text-[var(--color-theme-secondary-text)] text-xs">Auto-extract details from photos</div>
-                        </div>
-                    </div>
-                    <Icons.LuArrowLeft className="rotate-180 opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                </button>
+                {modalFormType === 'expensesTracker' && (
+                    <>
+                        <button
+                            // onClick={() => setIsSettingsOpen(true)}
+                            onClick={() => setIsModalOpenAI(true)}
+                            className="w-full p-4 rounded-2xl bg-[var(--color-theme-secondary)] border border-white/5 flex items-center justify-between group hover:bg-white/5 transition-all text-left"
+                        >
+                            <div className="flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-500">
+                                    <Icons.LuSparkles size={20} />
+                                </div>
+                                <div>
+                                    <div className="text-[var(--color-light)] font-bold">AI Receipt Scanner</div>
+                                    <div className="text-[var(--color-theme-secondary-text)] text-xs">Auto-extract details from photos</div>
+                                </div>
+                            </div>
+                            <Icons.LuArrowLeft className="rotate-180 opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                        </button>
+                        <div className="h-[1px] bg-white/5 w-full my-2" />
+                    </>
+                )}
 
                 {/* Modern Segmented Tab Bar for Transactions */}
                 {!isUpdate && ['expensesTracker', 'income', 'bills', 'savingsTracker'].includes(modalFormType) && (
@@ -223,18 +232,41 @@ const Simplified = () => {
                 {/* {modalFormType === 'expensesTracker' && !isUpdate && ( */}
                 <div className="flex flex-col gap-6">
 
-                    <div className="h-[1px] bg-white/5 w-full my-2" />
+                    {modalFormType === 'expensesTracker' && (
+                        <ExpensesForm onFinish={() => setIsModalOpen(false)} />
+                    )}
 
-                    <ModalForms
-                        paramMonth={paramMonth}
-                        isModalOpen={isModalOpen}
-                        setIsModalOpen={setIsModalOpen}
-                        formType={modalFormType}
-                        isUpdate={isUpdate}
-                        setIsUpdate={setIsUpdate}
-                        updateData={updateData}
-                        setUpdateData={setUpdateData}
-                    />
+                    {modalFormType === 'income' && (
+                        <IncomeForm onFinish={() => setIsModalOpen(false)} />
+                    )}
+
+                    {modalFormType === 'bills' && (
+                        <BillsForm onFinish={() => setIsModalOpen(false)} />
+                    )}
+
+                    {modalFormType === 'savingsTracker' && (
+                        <SavingsForm onFinish={() => setIsModalOpen(false)} />
+                    )}
+                    {/* <div className="flex flex-col"> */}
+                    <button
+                        className="btn-cancel"
+                        onClick={() => setIsModalOpen(false)}
+                    >
+                        Cancel
+                    </button>
+                    {/* </div> */}
+                    {/* {isUpdate && (
+                        <ModalForms
+                            paramMonth={paramMonth}
+                            isModalOpen={isModalOpen}
+                            setIsModalOpen={setIsModalOpen}
+                            formType={modalFormType}
+                            isUpdate={isUpdate}
+                            setIsUpdate={setIsUpdate}
+                            updateData={updateData}
+                            setUpdateData={setUpdateData}
+                        />
+                    )} */}
                 </div>
                 {/* )} */}
             </Modal>

@@ -184,11 +184,11 @@ export const CameraView = ({ onDataExtracted, cameraActive = false, setCameraAct
           </button>
         </div>
 
-        <div className="absolute bottom-4 inset-x-0 flex justify-center">
+        {/* <div className="absolute bottom-4 inset-x-0 flex justify-center">
           <span className="text-white/70 text-[10px] font-bold uppercase tracking-[0.2em] bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">
             Align receipt within frame
           </span>
-        </div>
+        </div> */}
       </div>
       <canvas ref={canvasRef} className="hidden" />
     </div>
