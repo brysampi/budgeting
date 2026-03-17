@@ -23,7 +23,9 @@ export const analyzeReceipt = async (base64String, mimeType = "image/jpeg", cate
               text: `Extract receipt data. Return ONLY JSON: 
               ${categoryData.length > 0 ? `use this data to map the categoryId and categoryName if its string and no value only do '' and for number do 0: ${JSON.stringify(categoryData, null, 2)}` : ''}
                      { "vendor": "", "total": 0.00, excludingSalesVat: 0.00, salesVat: 0.00, 
-                       "items": [{categoryId: "",categoryName: "", "name": "", "price": 0.00, "quantity": 0, "discount":0 }] }`
+                       "items": [{categoryId: "",categoryName: "", "name": "", "price": 0.00, "quantity": 0, "discount":0 }] }
+                       item name is in another laguage add a translation to english [Translated (Original)] Ex. 'Milk (لبن)'
+                       `
             },
             { inlineData: { data: base64String, mimeType: mimeType } }
           ]
