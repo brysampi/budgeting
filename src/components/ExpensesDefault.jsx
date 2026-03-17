@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { expensesDefault, getAllDataRealTimeController, deleteDataController } from '../firebase/controller';
+import { expensesDefault, getAllDataRealTimeController, deleteDataController } from '../library/firebase/controller';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const ExpensesDefault = () => {

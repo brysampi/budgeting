@@ -42,7 +42,7 @@ const Dropdown = ({ trigger, items = [], position = 'right' }) => {
                                     item.onClick?.();
                                     setIsOpen(false);
                                 }}
-                                className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium transition-colors ${item.type === 'danger'
+                                className={`flex items-center text-left gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium transition-colors ${item.type === 'danger'
                                     ? 'text-red-500 hover:bg-red-500/10'
                                     : 'text-[var(--color-theme-secondary-text)] hover:bg-black/[0.03] dark:hover:bg-white/[0.03] hover:text-[var(--color-light)]'
                                     }`}

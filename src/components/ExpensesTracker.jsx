@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { expensesTracker, getExpensesTracker, getExpenses, expensesTrackerUpdate, deleteDataController, checkStaticData } from '../firebase/controller';
+import { expensesTracker, getExpensesTracker, getExpenses, expensesTrackerUpdate, deleteDataController, checkStaticData } from '../library/firebase/controller';
 import { useParams, useOutletContext } from 'react-router-dom';
 import { LuPlus, LuArrowBigUpDash, LuArrowBigDownDash, LuTrash2, LuSquarePen } from "react-icons/lu";
-import { convertToDate, getLastDayOfTheMonth } from '../firebase/utils';
+import { convertToDate, getLastDayOfTheMonth } from '../library/firebase/utils';
 import Modal from '../layouts/modal/Modal';
 import ModalForms from './ModalForms';
 

@@ -8,7 +8,7 @@ const ai = new GoogleGenAI({
 /**
  * Analyzes a receipt image and returns structured JSON data.
  */
-export const analyzeReceipt = async (base64String, mimeType = "image/jpeg") => {
+export const analyzeReceipt = async (base64String, mimeType = "image/jpeg", categoryData) => {
   if (!base64String) throw new Error("No image data provided");
 
   try {
@@ -21,8 +21,9 @@ export const analyzeReceipt = async (base64String, mimeType = "image/jpeg") => {
           parts: [
             {
               text: `Extract receipt data. Return ONLY JSON: 
-                     { "vendor": "string", "total": 0.00, excludingSalesVat: 0.00, salesVat: 0.00, 
-                       "items": [{ "name": "string", "price": 0.00, "quantity": 0, "discount":0 }] }`
+              ${categoryData.length > 0 ? `use this data to map the categoryId and categoryName if its string and no value only do '' and for number do 0: ${JSON.stringify(categoryData, null, 2)}` : ''}
+                     { "vendor": "", "total": 0.00, excludingSalesVat: 0.00, salesVat: 0.00, 
+                       "items": [{categoryId: "",categoryName: "", "name": "", "price": 0.00, "quantity": 0, "discount":0 }] }`
             },
             { inlineData: { data: base64String, mimeType: mimeType } }
           ]

@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { getCollectedDataRealTimeController, creteCollectedData } from '../firebase/controller'
+import { getCollectedDataRealTimeController, creteCollectedData } from '../library/firebase/controller'
 import { convertToDate, getMonthNames } from '../firebase/utils'
 import Logout from '../components/Logout'
 import Navbar from '../layouts/Navbar'
 
-import { UploadImage } from '../gemini/RecieptScanner'
+import { UploadImage } from '../library/gemini/RecieptScanner'
 
 export default function MonthSelection({ onLogOut }) {
     const [monthData, setMonthData] = useState(convertToDate(new Date()).slice(0, 7))

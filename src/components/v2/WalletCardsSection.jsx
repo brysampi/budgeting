@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Icons } from '../../assets/Icons';
-import { getAllDataRealTimeController } from '../../firebase/controller';
+import { getAllDataRealTimeController } from '../../library/firebase/controller';
 
 const WalletCard = ({ name, balance, isAddCard, onClick }) => {
     if (isAddCard) {

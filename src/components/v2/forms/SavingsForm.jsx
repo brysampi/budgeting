@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { LuPlus, LuMinus, LuCheck, LuWallet, LuCalendar, LuPiggyBank } from "react-icons/lu";
 import { useParams } from 'react-router-dom';
-import { savingsTracker, getSavings, getAllDataActiveRealTimeController } from '../../../firebase/controller';
-import { getTodayDate } from '../../../firebase/utils';
+import { savingsTracker, getSavings, getAllDataActiveRealTimeController } from '../../../library/firebase/controller';
+import { getTodayDate } from '../../../library/firebase/utils';
 import '../../../css/v2/v2-form.css';
 
 const SavingsForm = ({ onFinish }) => {

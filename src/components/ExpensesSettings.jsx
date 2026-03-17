@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { deleteDataController, getExpenses_v2 } from '../firebase/controller';
+import { deleteDataController, getExpenses_v2 } from '../library/firebase/controller';
 import { useParams, Link } from 'react-router-dom';
 import { getMonthNamesSingleDigit } from '../firebase/utils';
 import { LuPlus, LuArrowLeft, LuTrash2, LuSquarePen } from "react-icons/lu";

@@ -5,9 +5,9 @@ import {
     getSavings, getExpenses,
     getAllDataActiveRealTimeController,
     updateDataController, updateBills, updateExpenses_extension, expensesTrackerUpdate,
-} from '../firebase/controller'
-import { getMonthNamesSingleDigit } from "../firebase/utils";
-import { convertToDate, convertToTimeStamp, getLastDayOfTheMonth } from '../firebase/utils';
+} from '../library/firebase/controller'
+import { getMonthNamesSingleDigit } from "../library/firebase/utils";
+import { convertToDate, convertToTimeStamp, getLastDayOfTheMonth } from '../library/firebase/utils';
 
 const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selectedWallet, isUpdate, setIsUpdate, updateData, setUpdateData }) => {
     const [updateId, setUpdateId] = useState('');

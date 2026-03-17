@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { savings, getSavings, deleteDataController } from '../firebase/controller';
+import { savings, getSavings, deleteDataController } from '../library/firebase/controller';
 import { useParams, useNavigate } from 'react-router-dom';
 
 

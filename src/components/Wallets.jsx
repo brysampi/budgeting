@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { addWallets, getAllDataRealTimeController, updateDataController, deleteDataController } from '../firebase/controller';
+import { addWallets, getAllDataRealTimeController, updateDataController, deleteDataController } from '../library/firebase/controller';
 import { LuPlus, LuTrash2, LuSquarePen } from "react-icons/lu";
 import Modal from '../layouts/modal/Modal';
 import ModalForms from './ModalForms';

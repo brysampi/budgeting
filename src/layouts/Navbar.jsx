@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useLocation, matchPath, useOutletContext } from "react-router-dom";
-import { getDataRealTimeController, getAllDataRealTimeController, getAllDataActiveRealTimeController } from '../firebase/controller'
+import { getDataRealTimeController, getAllDataRealTimeController, getAllDataActiveRealTimeController } from '../library/firebase/controller'
 import ProgressBar from '../components/charts/ProgressBar'
 const Navbar = ({
     title,

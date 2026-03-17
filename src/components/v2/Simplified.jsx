@@ -8,8 +8,9 @@ import DateSelector from './DateSelector';
 import Modal from '../../layouts/modal/Modal';
 import BottomSheet from '../../layouts/modal/BottomSheetModal';
 import ModalForms from '../ModalForms';
-import { getAllDataRealTimeController, logout, collectedData_v2 } from '../../firebase/controller';
+import { getAllDataRealTimeController, logout, collectedData_v2 } from '../../library/firebase/controller';
 import Dropdown from '../../layouts/v2/Dropdown';
+import '../../css/v2/main.css';
 // icon import removed
 import {
     NotificationIcon as FaBell,
@@ -20,7 +21,7 @@ import {
     Icon
 } from '../../assets/Icons';
 import Cookies from 'js-cookie';
-import UploadImage from '../../gemini/RecieptScanner';
+import UploadImage from '../../library/gemini/RecieptScanner';
 import ExpensesForm from './forms/ExpensesForm';
 import IncomeForm from './forms/IncomeForm';
 import BillsForm from './forms/BillsForm';
@@ -65,8 +66,10 @@ const Simplified = () => {
     useEffect(() => {
         if (!isDarkMode) {
             document.documentElement.classList.add('light-mode');
+            document.documentElement.style.colorScheme = 'light';
         } else {
             document.documentElement.classList.remove('light-mode');
+            document.documentElement.style.colorScheme = 'dark';
         }
     }, [isDarkMode]);
     useEffect(() => {
@@ -130,13 +133,13 @@ const Simplified = () => {
             {/* <Stats setParamMonth={setParamMonth} /> */}
 
             {/* Budget Categories */}
-            {/* <ExpensesCategory
+            <ExpensesCategory
                 paramMonth={paramMonth}
                 onClick={() => {
                     setModalFormType('expenses');
                     setIsModalOpen(true);
                 }}
-            /> */}
+            />
 
             {/* Recent Transactions */}
             {/* <Transaction
@@ -166,7 +169,7 @@ const Simplified = () => {
                 onClose={() => setIsModalOpen(false)}
                 fullscreen={false}
                 maxWidth='550px'
-                closeOnOverlay={!isBottomSheetOpen}
+                closeOnOverlay={false}
             >
                 {/* <button
                     onClick={() => setIsBottomSheetOpen(true)}
@@ -183,7 +186,7 @@ const Simplified = () => {
                     </div>
                     <Icons.LuArrowLeft className="rotate-180 opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                 </button> */}
-                {modalFormType === 'expensesTracker' && (
+                {/* {modalFormType === 'expensesTracker' && (
                     <>
                         <button
                             // onClick={() => setIsSettingsOpen(true)}
@@ -203,7 +206,7 @@ const Simplified = () => {
                         </button>
                         <div className="h-[1px] bg-white/5 w-full my-2" />
                     </>
-                )}
+                )} */}
 
                 {/* Modern Segmented Tab Bar for Transactions */}
                 {!isUpdate && ['expensesTracker', 'income', 'bills', 'savingsTracker'].includes(modalFormType) && (
@@ -271,7 +274,7 @@ const Simplified = () => {
                 {/* )} */}
             </Modal>
 
-            <Modal
+            {/* <Modal
                 title={'AI Receipt Scanner'}
                 isModalOpen={isModalOpenAI}
                 onClose={() => setIsModalOpenAI(false)}
@@ -281,7 +284,7 @@ const Simplified = () => {
                 zIndex={6000}
             >
                 <UploadImage onDataExtracted={handleAiData} />
-            </Modal>
+            </Modal> */}
 
             {/* Non-Draggable Modal */}
             <BottomSheet

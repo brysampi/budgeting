@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { IconCard, Icons } from '../../assets/Icons';
 import Card from '../cards/Card';
-import { getAllTransactions } from '../../firebase/controller';
-import { getTodayDate, convertToDate } from '../../firebase/utils';
+import { getAllTransactions } from '../../library/firebase/controller';
+import { getTodayDate, convertToDate } from '../../library/firebase/utils';
 
 const Transaction = ({ paramMonth = new Date().toISOString().slice(0, 7), onClick = () => { } }) => {
     const [transactionsData, setTransactionsData] = useState([]);

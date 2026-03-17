@@ -1,4 +1,4 @@
-import { logout, collectedData } from "../firebase/controller";
+import { logout, collectedData } from "../library/firebase/controller";
 export default function Logout({ onLogout }) {
     const clickLogout = () => {
         try {

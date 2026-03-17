@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Card from '../cards/Card';
 import { IconCard } from '../../assets/Icons';
-import { getCollectedDataRealTimeController, unsubscribeForAll } from '../../firebase/controller';
+import { getCollectedDataRealTimeController, unsubscribeForAll } from '../../library/firebase/controller';
 import DateSelector from './DateSelector';
-import { convertToDate, formatToYearMonth, componentIcons } from '../../firebase/utils';
+import { convertToDate, formatToYearMonth, componentIcons } from '../../library/firebase/utils';
 const Stats = ({ setParamMonth }) => {
     const [monthCollectionData, setMonthCollectionData] = useState([]);
     const [isFetching, setIsFetching] = useState(true);

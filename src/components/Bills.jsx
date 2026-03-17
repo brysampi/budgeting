@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getDataRealTimeController, deleteDataController, getBillsDataRealTimeController } from '../firebase/controller';
+import { getDataRealTimeController, deleteDataController, getBillsDataRealTimeController } from '../library/firebase/controller';
 import { convertToDate } from '../firebase/utils';
 import { useParams, useOutletContext } from 'react-router-dom';
 import { LuPlus, LuTrash2, LuSquarePen } from 'react-icons/lu';

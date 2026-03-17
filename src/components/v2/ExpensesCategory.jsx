@@ -3,11 +3,15 @@ import ProgressBar from '../charts/ProgressBar';
 import { IconCard, Icons, Icon } from '../../assets/Icons';
 import { useState, useEffect } from 'react';
 import BottomSheet from '../../layouts/modal/BottomSheetModal';
-import { getExpenses, unsubscribeForAll } from '../../firebase/controller';
+import { getExpenses, unsubscribeForAll } from '../../library/firebase/controller';
+import { expensesCategoryStore } from '../../library/zustand/storage';
 
 const ExpensesCategory = ({ paramMonth, onClick = () => { } }) => {
+    const [categoriesData, setCategoriesData] = useState([]);
+    const [isFetching, setIsFetching] = useState(false);
     const [isCategoriesExpanded, setIsCategoriesExpanded] = useState(false);
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+    const storeExpensesCategory = expensesCategoryStore((state) => state);
     // const [categoriesData, setCategoriesData] = useState([
     //     {
     //         id: 1,
@@ -64,8 +68,7 @@ const ExpensesCategory = ({ paramMonth, onClick = () => { } }) => {
     //         iconColor: 'bg-green-500/10 text-green-500',
     //     },
     // ]);
-    const [categoriesData, setCategoriesData] = useState([]);
-    const [isFetching, setIsFetching] = useState(false);
+
     useEffect(() => {
         const returnExpensesDefault = async () => {
             setIsFetching(true);
@@ -76,7 +79,8 @@ const ExpensesCategory = ({ paramMonth, onClick = () => { } }) => {
     }, [paramMonth]);
 
     useEffect(() => {
-        console.log('categoriesData2', categoriesData)
+        // console.log('categoriesData2', categoriesData)
+        storeExpensesCategory.setData(categoriesData);
     }, [categoriesData]);
     return (
         <>

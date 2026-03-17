@@ -3,7 +3,7 @@ import {
     orderBy, query, where, serverTimestamp, getDoc, doc, deleteDoc
 } from "firebase/firestore";
 import { db } from "./firebase";
-import { successMsg, errorMsg, getMonthRangeFromInput, getUserID, convertToDate, convertToTimeStamp } from '../firebase/utils';
+import { successMsg, errorMsg, getMonthRangeFromInput, getUserID, convertToDate, convertToTimeStamp } from './utils';
 
 export async function getUser(user, password) {
     try {

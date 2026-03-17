@@ -1,6 +1,6 @@
 import { serverTimestamp } from 'firebase/firestore';
 import Cookies from 'js-cookie';
-import { successMsg, errorMsg, getUserID, convertToTimeStamp, convertToDate, componentIcons } from '../firebase/utils';
+import { successMsg, errorMsg, getUserID, convertToTimeStamp, convertToDate, componentIcons } from './utils';
 import {
     addData, updateData, getDataSingle, deleteData, getData, getUser, getAllData, getAllDataRealtime, getDataById, getAllDataActiveRealTime,
     getDataRealTime,
@@ -12,7 +12,7 @@ import {
     getSavingsDataRealTime,
     deleteAllData,
     getAllTransactionsRealTime,
-} from '../firebase/model';
+} from './model';
 
 export async function checkStaticData(inputDate) {
     const getDataCollected = await getData('collectedData', inputDate)
@@ -518,15 +518,17 @@ export async function expensesTracker(arrayData) {
         price: arrayData.price,
         discount: discountPrice,
         amount: arrayData.price - discountPrice,
+        wallet: arrayData.wallet,
         date: arrayData.date === null ? serverTimestamp() : convertToTimeStamp(arrayData.date),
         user: getUserID(),
     }
     // console.log('date to ano ba asdsadasd : ', arrayData.date)
     // console.log(data)
     // console.log(convertToDate(data.date))
-    const addReturn = addData('expensesTracker', data)
-    updateCollectedData(arrayData.date)
-    return successMsg('Successfully Added.', addReturn)
+    const addReturn = await addData('expensesTracker', data)
+    if (addReturn.status === 'success')
+        collectedData_v2(arrayData.date, arrayData.wallet, 'expensesTracker', data.amount)
+    return addReturn;
 }
 export async function getExpensesTracker(inputDate, setExpensesData, isFetching, wallet = '') {
     try {

@@ -1,12 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { analyzeReceipt } from './aiServices';
-import { Icons } from '../assets/Icons';
-
+import { Icons } from '../../assets/Icons';
+import { expensesCategoryStore } from '../zustand/storage';
 // Shared helper function to handle API calls
 const processImage = async (base64, type, setLoading, onDataExtracted) => {
   setLoading(true);
+
+  const storedCategories = expensesCategoryStore.getState().data || [];
+  const fetchedData = [];
+  for (const store of storedCategories) {
+    fetchedData.push({ id: store.id, name: store.category });
+  }
   try {
-    const result = await analyzeReceipt(base64, type);
+    const result = await analyzeReceipt(base64, type, fetchedData);
     console.log('result', result);
     if (onDataExtracted) {
       onDataExtracted(result);
@@ -19,14 +25,20 @@ const processImage = async (base64, type, setLoading, onDataExtracted) => {
   }
 };
 
-export const UploadImage = ({ onDataExtracted, loading = false, setLoading }) => {
+export const UploadImage = ({ onImageSelected, loading = false, setLoading }) => {
   const fileInputRef = useRef(null);
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onloadend = () => processImage(reader.result.split(',')[1], file.type, setLoading, onDataExtracted);
+    reader.onloadend = () => {
+      onImageSelected({
+        base64: reader.result.split(',')[1],
+        type: file.type,
+        url: reader.result
+      });
+    };
     reader.readAsDataURL(file);
   };
 
@@ -61,7 +73,7 @@ export const UploadImage = ({ onDataExtracted, loading = false, setLoading }) =>
   );
 };
 
-export const CameraView = ({ onDataExtracted, cameraActive = false, setCameraActive, loading = false, setLoading }) => {
+export const CameraView = ({ onImageSelected, cameraActive = false, setCameraActive, loading = false, setLoading }) => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
@@ -143,9 +155,10 @@ export const CameraView = ({ onDataExtracted, cameraActive = false, setCameraAct
     canvas.height = video.videoHeight;
     canvas.getContext('2d').drawImage(video, 0, 0);
 
-    const base64 = canvas.toDataURL('image/jpeg').split(',')[1];
+    const dataUrl = canvas.toDataURL('image/jpeg');
+    const base64 = dataUrl.split(',')[1];
     stopCamera();
-    processImage(base64, 'image/jpeg', setLoading, onDataExtracted);
+    onImageSelected({ base64, type: 'image/jpeg', url: dataUrl });
   };
 
   return (
@@ -198,11 +211,25 @@ export const CameraView = ({ onDataExtracted, cameraActive = false, setCameraAct
 export default function ReceiptScanner({ onDataExtracted }) {
   const [loading, setLoading] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
+  const [preview, setPreview] = useState(null);
 
   const handleAiData = (data) => {
     if (onDataExtracted) {
       onDataExtracted(data);
     }
+  };
+
+  const handleImageSelected = (imageData) => {
+    setPreview(imageData);
+  };
+
+  const handleConfirmImage = async () => {
+    await processImage(preview.base64, preview.type, setLoading, handleAiData);
+    setPreview(null);
+  };
+
+  const handleRetake = () => {
+    setPreview(null);
   };
 
   return (
@@ -236,6 +263,31 @@ export default function ReceiptScanner({ onDataExtracted }) {
             </p>
           </div>
         </div>
+      ) : preview ? (
+        <div className="flex flex-col gap-6 animate-fade-in text-[var(--color-light)]">
+          <div className="flex flex-col gap-2 items-center text-center">
+            <h3 className="text-xl font-bold">Image Preview</h3>
+            <p className="text-sm text-[var(--color-theme-secondary-text)]">Check if the receipt is clear before analyzing.</p>
+          </div>
+          <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden bg-[var(--color-theme-secondary)] border border-[var(--color-theme-tertiary-light)] shadow-sm">
+            <img src={preview.url} alt="Receipt Preview" className="w-full h-full object-contain" />
+          </div>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={handleRetake}
+              className="px-6 py-4 rounded-xl font-bold bg-[var(--color-theme-secondary)] text-[var(--color-theme-secondary-text)] hover:bg-[var(--color-theme-tertiary)] hover:text-[var(--color-light)] transition-all w-1/3 flex items-center justify-center border border-[var(--color-theme-tertiary-light)]"
+            >
+              Retake
+            </button>
+            <button
+              onClick={handleConfirmImage}
+              className="flex-1 py-4 rounded-xl font-bold bg-[var(--color-theme-important)] text-white hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg"
+            >
+              <Icons.LuSparkles size={18} />
+              Analyze
+            </button>
+          </div>
+        </div>
       ) : (
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-3">
@@ -256,7 +308,7 @@ export default function ReceiptScanner({ onDataExtracted }) {
               </button>
 
               <UploadImage
-                onDataExtracted={handleAiData}
+                onImageSelected={handleImageSelected}
                 loading={loading}
                 setLoading={setLoading}
               />
@@ -271,7 +323,7 @@ export default function ReceiptScanner({ onDataExtracted }) {
 
           {cameraActive && (
             <CameraView
-              onDataExtracted={handleAiData}
+              onImageSelected={handleImageSelected}
               cameraActive={cameraActive}
               setCameraActive={setCameraActive}
               loading={loading}

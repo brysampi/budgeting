@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { LuPlus, LuMinus, LuCheck, LuWallet, LuCalendar, LuBolt } from "react-icons/lu";
 import { useParams } from 'react-router-dom';
-import { bills, getAllDataActiveRealTimeController } from '../../../firebase/controller';
-import { getTodayDate } from '../../../firebase/utils';
+import { bills, getAllDataActiveRealTimeController } from '../../../library/firebase/controller';
+import { getTodayDate } from '../../../library/firebase/utils';
 import '../../../css/v2/v2-form.css';
 
 const BillsForm = ({ onFinish }) => {

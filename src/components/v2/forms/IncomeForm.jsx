@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { LuPlus, LuMinus, LuCheck, LuWallet, LuCalendar, LuHandCoins } from "react-icons/lu";
 import { useParams } from 'react-router-dom';
-import { income, getAllDataActiveRealTimeController } from '../../../firebase/controller';
-import { getTodayDate } from '../../../firebase/utils';
+import { income, getAllDataActiveRealTimeController } from '../../../library/firebase/controller';
+import { getTodayDate } from '../../../library/firebase/utils';
 import '../../../css/v2/v2-form.css';
 
 const IncomeForm = ({ onFinish }) => {

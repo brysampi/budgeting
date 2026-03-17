@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Icons } from '../../assets/Icons';
-import { convertToDate } from '../../firebase/utils';
+import { convertToDate } from '../../library/firebase/utils';
 
 const DateSelector = ({ collectedData = [], currentIndex = 0, onChange }) => {
 
