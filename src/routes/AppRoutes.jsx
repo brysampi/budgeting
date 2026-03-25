@@ -1,25 +1,25 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useState, useEffect, lazy, Suspense } from 'react';
 import Cookies from 'js-cookie';
-import MainLayout from '../layouts/MainLayout';
+import MainLayout from '../layouts/v1/MainLayout';
 import SimplifiedLayout from '../layouts/v2/SimplifiedLayout';
 
 // Lazy load components
-const Simplified = lazy(() => import('../components/v2/Simplified'))
-const Income = lazy(() => import('../components/Income'));
-const MonthSelection = lazy(() => import('../components/MonthSelector'));
-const Savings = lazy(() => import('../components/Savings'));
-const SavingsTracker = lazy(() => import('../components/SavingsTracker'));
-const Bills = lazy(() => import('../components/Bills'));
-const BillsSettings = lazy(() => import('../components/BillsSettings'));
-const Expenses = lazy(() => import('../components/Expenses'));
-const ExpensesTracker = lazy(() => import('../components/ExpensesTracker'));
-// const ExpensesDefault = lazy(() => import('../components/ExpensesDefault'));
-const ExpensesSettings = lazy(() => import('../components/ExpensesSettings'));
-const LoginPage = lazy(() => import('../components/LoginPage'));
-const Wallets = lazy(() => import('../components/Wallets'));
-const Dashboard = lazy(() => import('../components/Dashboard'));
-const IconLibrary = lazy(() => import('../components/v2/IconLibrary'));
+const Simplified = lazy(() => import('../pages/v2/Simplified'))
+const Income = lazy(() => import('../pages/v1/Income'));
+const MonthSelection = lazy(() => import('../pages/v1/MonthSelector'));
+const Savings = lazy(() => import('../pages/v1/Savings'));
+const SavingsTracker = lazy(() => import('../pages/v1/SavingsTracker'));
+const Bills = lazy(() => import('../pages/v1/Bills'));
+const BillsSettings = lazy(() => import('../pages/v1/BillsSettings'));
+const Expenses = lazy(() => import('../pages/v1/Expenses'));
+const ExpensesTracker = lazy(() => import('../pages/v1/ExpensesTracker'));
+// const ExpensesDefault = lazy(() => import('../pages/v1/ExpensesDefault'));
+const ExpensesSettings = lazy(() => import('../pages/v1/ExpensesSettings'));
+const LoginPage = lazy(() => import('../pages/v1/LoginPage'));
+const Wallets = lazy(() => import('../pages/v1/Wallets'));
+const Dashboard = lazy(() => import('../pages/v1/Dashboard'));
+const IconLibrary = lazy(() => import('../pages/v2/IconLibrary'));
 
 const AppRoutes = () => {
     const location = useLocation();
@@ -36,21 +36,21 @@ const AppRoutes = () => {
                 {loggedIn && (
                     <>
                         <Route element={<SimplifiedLayout />} >
-                            <Route path="/" element={<Simplified />} />
-                            <Route path="/icons" element={<IconLibrary />} />
+                            <Route path="v2" element={<Simplified />} />
+                            <Route path="icons" element={<IconLibrary />} />
                         </Route>
-                        <Route path="/monthSelector" element={<MonthSelection onLogOut={() => setLoggedIn(false)} />} />
+                        <Route path="v1" element={<MonthSelection onLogOut={() => setLoggedIn(false)} />} />
                         <Route element={<MainLayout />}>
-                            <Route path="dashboard/:paramMonth" element={<Dashboard />} />
-                            <Route path="wallets/:paramMonth" element={<Wallets />} />
-                            <Route path="income/:paramMonth" element={<Income />} />
-                            <Route path="savings/:paramMonth" element={<Savings />} />
-                            <Route path="savingsTracker/:paramMonth" element={<SavingsTracker />} />
-                            <Route path="bills/:paramMonth" element={<Bills />} />
-                            <Route path="billsSettings/:paramMonth" element={<BillsSettings />} />
-                            <Route path="expenses/:paramMonth" element={<Expenses />} />
-                            <Route path="expensestracker/:paramMonth" element={<ExpensesTracker />} />
-                            <Route path="expensesSettings/:paramMonth" element={<ExpensesSettings />} />
+                            <Route path="v1/dashboard/:paramMonth" element={<Dashboard />} />
+                            <Route path="v1/wallets/:paramMonth" element={<Wallets />} />
+                            <Route path="v1/income/:paramMonth" element={<Income />} />
+                            <Route path="v1/savings/:paramMonth" element={<Savings />} />
+                            <Route path="v1/savingsTracker/:paramMonth" element={<SavingsTracker />} />
+                            <Route path="v1/bills/:paramMonth" element={<Bills />} />
+                            <Route path="v1/billsSettings/:paramMonth" element={<BillsSettings />} />
+                            <Route path="v1/expenses/:paramMonth" element={<Expenses />} />
+                            <Route path="v1/expensestracker/:paramMonth" element={<ExpensesTracker />} />
+                            <Route path="v1/expensesSettings/:paramMonth" element={<ExpensesSettings />} />
                         </Route>
                     </>
                 )}
