@@ -73,18 +73,18 @@ const ExpensesTracker = () => {
                     setUpdateData={setUpdateData}
                 />
             </Modal >
-            {/* <div className="card-container">
-                <div className="card card-main ">
+            {/* <div className="card-container-v1">
+                <div className="card-v1 card-main-v1 ">
                     Total: {allTotal.toFixed(2)}
                 </div>
             </div> */}
-            {/* <div className="card card-main ">
+            {/* <div className="card-v1 card-main-v1 ">
                 Total Expenses: {allTotal.toFixed(2)}
             </div> */}
 
-            <div className="card card-main">
-                <div className='table-container'>
-                    <div className='table-header'>
+            <div className="card-v1 card-main-v1">
+                <div className='table-container-v1'>
+                    <div className='table-header-v1'>
                         <div>
                             {/* Table Title Here */}
                             OverAll Total: <span className='text-[var(--color-theme-important)] font-extrabold'>{allTotal.toFixed(2)}</span>
@@ -97,23 +97,23 @@ const ExpensesTracker = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className='multi-btn'>
+                        <div className='multi-btn-v1'>
                             <button
-                                className='btn btn-primary'
+                                className='btn-v1 btn-primary-v1'
                                 onClick={() => setIsModalOpen(true)}>
                                 <span><LuPlus /></span>
                                 <span>Add</span>
                             </button>
                             {/* <Link to={`/expenses/${paramMonth}`}>
                             <button
-                                className='btn btn-primary'>
+                                className='btn-v1 btn-primary-v1'>
                                 <span><LuClipboardList /></span>
                                 <span>Catergory</span>
                             </button>
                         </Link> */}
                             {/* <Link to={`/expensesSettings/${paramMonth}`}>
                             <button
-                                className='btn btn-primary'>
+                                className='btn-v1 btn-primary-v1'>
                                 <span><LuSettings /></span>
                                 <span>Settings</span>
                             </button>
@@ -122,7 +122,7 @@ const ExpensesTracker = () => {
                     </div>
                     <div className='table-body'>
                         <div className='w-full overflow-x-auto'>
-                            <table className="table">
+                            <table className="table-v1">
                                 <thead>
                                     <tr>
                                         {/* <th>wallet</th> */}
@@ -153,7 +153,7 @@ const ExpensesTracker = () => {
                                             return (
                                                 <tbody key={key}>
                                                     <tr
-                                                        className="tr-header"
+                                                        className="tr-header-v1"
                                                         onClick={toggleDay}
                                                     ><td colSpan={2}
                                                     // style={{
@@ -168,8 +168,8 @@ const ExpensesTracker = () => {
                                                                 <span>{isOpen ? <LuArrowBigUpDash /> : <LuArrowBigDownDash />} </span>
                                                             </div>
                                                         </td>
-                                                        <td className="tr-header-important ">Total: </td>
-                                                        <td className="tr-header-important">{total.toFixed(2)}</td>
+                                                        <td className="tr-header-important-v1 ">Total: </td>
+                                                        <td className="tr-header-important-v1">{total.toFixed(2)}</td>
                                                     </tr>
                                                     {isOpen &&
                                                         value.map((item, index) => {
@@ -189,15 +189,15 @@ const ExpensesTracker = () => {
                                                                 // }}>Delete</button>
                                                             </td> */}
                                                                     <td>
-                                                                        <div className="multi-btn-evenly">
+                                                                        <div className="multi-btn-evenly-v1">
                                                                             <button
-                                                                                className="btn btn-cancel"
+                                                                                className="btn-v1 btn-cancel-v1"
                                                                                 onClick={async () => {
                                                                                     await deleteDataController('expensesTracker', item.id)
                                                                                 }}><LuTrash2 />
                                                                             </button>
                                                                             <button
-                                                                                className="btn btn-cancel"
+                                                                                className="btn-v1 btn-cancel-v1"
                                                                                 onClick={() => updateSetData(
                                                                                     {
                                                                                         id: item.id,

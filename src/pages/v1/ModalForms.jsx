@@ -349,9 +349,9 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
                     (formType === 'savingsTracker' || formType === 'expensesTracker') &&
                     (
                         <>
-                            <div className="floating-label-wrapper">
+                            <div className="floating-label-wrapper-v1">
                                 <select
-                                    className="input"
+                                    className="input-v1"
                                     value={formCategory}
                                     onChange={(e) => { setFormCategory(e.target.value) }}
                                     name="formCategory"
@@ -380,7 +380,7 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
                     (formType === 'savings' || formType === 'expenses' || formType === 'expensesSettings') &&
                     (
                         <>
-                            <div className='floating-label-wrapper'>
+                            <div className='floating-label-wrapper-v1'>
                                 <input
                                     type="text"
                                     id="formCategoryText"
@@ -404,7 +404,7 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
                     ) &&
                     (
                         <>
-                            <div className="floating-label-wrapper">
+                            <div className="floating-label-wrapper-v1">
                                 <input
                                     type="text"
                                     id="formDescription"
@@ -421,7 +421,7 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
                     (formType === 'expensesTracker') &&
                     (
                         <>
-                            <div className="floating-label-wrapper">
+                            <div className="floating-label-wrapper-v1">
                                 <input
                                     type="text"
                                     id="priceExpensesTracker"
@@ -431,7 +431,7 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
                                 />
                                 <label htmlFor="priceExpensesTracker">Price</label>
                             </div>
-                            <div className="floating-label-wrapper">
+                            <div className="floating-label-wrapper-v1">
                                 <input
                                     type="text"
                                     id="formDiscount"
@@ -448,7 +448,7 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
                     (formType === 'bills' || formType === 'billsSettings') &&
                     (
                         <>
-                            <div className="floating-label-wrapper">
+                            <div className="floating-label-wrapper-v1">
                                 <input
                                     type="date"
                                     id="dueDateBills"
@@ -470,7 +470,7 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
                     ) &&
                     (
                         <>
-                            <div className="floating-label-wrapper">
+                            <div className="floating-label-wrapper-v1">
                                 <input
                                     type="text"
                                     id="formExpected"
@@ -493,7 +493,7 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
                     ) &&
                     (
                         <>
-                            <div className="floating-label-wrapper">
+                            <div className="floating-label-wrapper-v1">
                                 <input
                                     type='text'
                                     id="monthlyBudgetExpenses"
@@ -514,7 +514,7 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
                     ) &&
                     (
                         <>
-                            <div className="floating-label-wrapper">
+                            <div className="floating-label-wrapper-v1">
                                 <input
                                     type="text"
                                     id="formAmount"
@@ -535,11 +535,11 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
                     (formType !== 'expenses' && formType !== 'savings' && formType !== 'savingsSettings' && formType !== 'expensesSettings' && formType !== 'wallets') &&
                     (
                         <>
-                            <div className="floating-label-wrapper">
+                            <div className="floating-label-wrapper-v1">
                                 <select
                                     id="selectWallet"
                                     placeholder="Select Wallet"
-                                    className='input'
+                                    className='input-v1'
                                     value={formWallet}
                                     onChange={(e) => setFormWallet(e.target.value)}
                                 >
@@ -558,11 +558,11 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
                     (isUpdate && (formType === 'wallets' || formType === 'savings' || formType === 'expensesSettings')) &&
                     (
                         <>
-                            <div className='floating-label-wrapper'>
+                            <div className='floating-label-wrapper-v1'>
                                 <select
                                     id="formStatus"
                                     placeholder="Status"
-                                    className='input'
+                                    className='input-v1'
                                     value={formStatus}
                                     onChange={(e) => setFormStatus(e.target.value)}
                                 >
@@ -583,7 +583,7 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
                             <input type="checkBox" name="changeDate" id="changeDate" value={changeDateIsChecked} onChange={(e) => setChangeDateIsChecked(e.target.checked)} />
                             <label htmlFor="changeDate">Change Date</label>
                             {changeDateIsChecked && (
-                                <div className="floating-label-wrapper">
+                                <div className="floating-label-wrapper-v1">
                                     <input
                                         type="date"
                                         id="dateExpensesTracker"
@@ -597,7 +597,7 @@ const ModalForms = ({ paramMonth, isModalOpen, setIsModalOpen, formType, selecte
                         </>
                     )
                 }
-                <div className="multi-btn">
+                <div className="multi-btn-v1">
                     <button
                         className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
                         type="submit"

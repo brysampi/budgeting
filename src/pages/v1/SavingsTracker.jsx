@@ -43,28 +43,28 @@ const SavingsTracker = () => {
                     setUpdateData={setUpdateData}
                 />
             </Modal >
-            <div className="card card-main">
-                <div className='table-header'>
+            <div className="card-v1 card-main-v1">
+                <div className='table-header-v1'>
                     <div>
                         {/* Table Title Here */}
                     </div>
-                    <div className='multi-btn'>
+                    <div className='multi-btn-v1'>
                         <button
-                            className='btn btn-primary'
+                            className='btn-v1 btn-primary-v1'
                             onClick={() => setIsModalOpen(true)}>
                             <span><LuPlus /></span>
                             <span>Add</span>
                         </button>
                         <Link to={`/v1/savings/${paramMonth}`}>
                             <button
-                                className='btn btn-primary'>
+                                className='btn-v1 btn-primary-v1'>
                                 <span><LuClipboardList /></span>
                                 <span>Add Catergory</span>
                             </button>
                         </Link>
                     </div>
                 </div>
-                <table className="table">
+                <table className="table-v1">
                     <thead>
                         <tr>
                             <th>Category</th>
@@ -97,15 +97,15 @@ const SavingsTracker = () => {
                                                             <td>{item.description}</td>
                                                             <td>{item.amount.toFixed(2)}</td>
                                                             <td>
-                                                                <div className="multi-btn-evenly">
+                                                                <div className="multi-btn-evenly-v1">
                                                                     <button
-                                                                        className='btn btn-cancel'
+                                                                        className='btn-v1 btn-cancel-v1'
                                                                         onClick={async () => {
                                                                             await deleteDataController('savingsTracker', item.id)
                                                                         }}><LuTrash2 /></button>
 
                                                                     <button
-                                                                        className='btn btn-cancel'
+                                                                        className='btn-v1 btn-cancel-v1'
                                                                         onClick={() => updateSetData(
                                                                             {
                                                                                 id: item.id,

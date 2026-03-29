@@ -82,7 +82,7 @@ const Wallets = () => {
         <>
             {/* <div>
                 <button
-                    className='btn btn-primary'
+                    className='btn-v1 btn-primary-v1'
                     onClick={() => setIsModalOpen(true)}>
                     <span><LuPlus /></span>
                     <span>Add</span>
@@ -90,7 +90,7 @@ const Wallets = () => {
             </div> */}
             {/* <Modal title='Wallet' isOpen={isModalOpen} onClose={closeModal}>
                 <form onSubmit={!updateDataStatus ? fromSubmit : updateFormSubmit}>
-                    <div className="floating-label-wrapper">
+                    <div className="floating-label-wrapper-v1">
                         <input
                             type="text"
                             id="descBills"
@@ -102,11 +102,11 @@ const Wallets = () => {
                     </div>
                     {
                         updateDataStatus &&
-                        <div className='floating-label-wrapper'>
+                        <div className='floating-label-wrapper-v1'>
                             <select
                                 id="statusSavings"
                                 placeholder="Status"
-                                className='input'
+                                className='input-v1'
                                 value={formStatus}
                                 onChange={(e) => setFormStatus(e.target.value)}
                             >
@@ -117,7 +117,7 @@ const Wallets = () => {
                         </div>
 
                     }
-                    <div className="multi-btn">
+                    <div className="multi-btn-v1">
                         <button
                             className={`btn btn-primary ${loading ? 'cursor-not-allowed' : ''}`}
                             type="submit"
@@ -150,28 +150,28 @@ const Wallets = () => {
                     setUpdateData={setUpdateData}
                 />
             </Modal >
-            <div className="card-container">
-                <div className="card card-no-bg flex-1"></div>
-                <div className="card card-main">
+            <div className="card-container-v1">
+                <div className="card-v1 card-no-bg-v1 flex-1"></div>
+                <div className="card-v1 card-main-v1">
 
                 </div>
             </div>
 
-            <div className="card card-main">
-                <div className='table-header'>
+            <div className="card-v1 card-main-v1">
+                <div className='table-header-v1'>
                     <div>
                         {/* Table Title Here */}
                     </div>
                     <div>
                         <button
-                            className='btn btn-primary'
+                            className='btn-v1 btn-primary-v1'
                             onClick={() => setIsModalOpen(true)}>
                             <span><LuPlus /></span>
                             <span>Add</span>
                         </button>
                     </div>
                 </div>
-                <table className="table">
+                <table className="table-v1">
                     <thead>
                         <tr>
                             {/* <th>#</th> */}

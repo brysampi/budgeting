@@ -10,14 +10,14 @@
     }
 }
 
-.shared-form-container {
+.shared-form-container-v2 {
     width: 100%;
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
 }
 
-.shared-form-row {
+.shared-form-row-v2 {
     padding-top: 0.5rem;
     display: flex;
     gap: 0.5rem;
@@ -26,7 +26,7 @@
     animation: slideIn 0.3s cubic-bezier(0, 0, 0.2, 1) forwards;
 }
 
-.shared-form-input-group {
+.shared-form-input-group-v2 {
     flex: 1;
     display: flex;
     background: rgba(255, 255, 255, 0.02);
@@ -35,7 +35,7 @@
     overflow: hidden;
 }
 
-.shared-form-field {
+.shared-form-field-v2 {
     background: transparent;
     border: none;
     padding: 0.7rem 0.6rem;
@@ -48,21 +48,21 @@
     overflow: hidden;
 }
 
-.shared-form-field:focus {
+.shared-form-field-v2:focus {
     background: rgba(255, 255, 255, 0.03);
 }
 
-.shared-form-field::placeholder {
+.shared-form-field-v2::placeholder {
     color: var(--color-theme-secondary-text);
     opacity: 0.4;
 }
 
-.shared-form-field+.shared-form-field {
+.shared-form-field-v2+.shared-form-field-v2 {
     border-left: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* Flex ratios for compact layout */
-.field-category {
+.field-category-v2 {
     flex: 1;
     cursor: pointer;
     appearance: none;
@@ -76,23 +76,23 @@
     text-overflow: ellipsis;
 }
 
-.shared-form-container select option {
+.shared-form-container-v2 select option {
     background-color: var(--color-theme-secondary, #1a1a1a) !important;
     color: var(--color-light, #ffffff) !important;
 }
 
-.field-description {
+.field-description-v2 {
     flex: 1.6;
 }
 
-.field-qty {
+.field-qty-v2 {
     flex: 0.4;
     text-align: center;
     font-weight: 700;
     /* color: var(--color-success); */
 }
 
-.field-price {
+.field-price-v2 {
     flex: 0.7;
     text-align: center;
     font-weight: 700;
@@ -100,7 +100,7 @@
     color: var(--color-success);
 }
 
-.field-discount {
+.field-discount-v2 {
     flex: 0.6;
     text-align: center;
     font-weight: 600;
@@ -108,13 +108,13 @@
     background: rgba(248, 113, 113, 0.03) !important;
 }
 
-.shared-form-actions {
+.shared-form-actions-v2 {
     display: flex;
     gap: 0.35rem;
     flex-shrink: 0;
 }
 
-.shared-form-action-btn {
+.shared-form-action-btn-v2 {
     border-radius: 12px;
     width: 36px;
     height: 36px;
@@ -127,44 +127,44 @@
     flex-shrink: 0;
 }
 
-.shared-form-action-btn.btn-remove {
+.shared-form-action-btn-v2.btn-remove-v2 {
     border: 1px solid rgba(255, 255, 255, 0.05);
     /* color: var(--color-theme-secondary-text); */
     color: var(--color-danger);
 }
 
-.shared-form-action-btn.btn-remove:hover {
+.shared-form-action-btn-v2.btn-remove-v2:hover {
     background: rgba(248, 113, 113, 0.1);
     color: var(--color-danger);
     border-color: rgba(248, 113, 113, 0.2);
 }
 
-.shared-form-action-btn.btn-discount {
+.shared-form-action-btn-v2.btn-discount-v2 {
     border: 1px solid rgba(255, 255, 255, 0.05);
     /* color: var(--color-theme-secondary-text); */
     color: var(--color-info);
 }
 
-.shared-form-action-btn.btn-discount:hover,
-.shared-form-action-btn.btn-discount.active {
+.shared-form-action-btn-v2.btn-discount-v2:hover,
+.shared-form-action-btn-v2.btn-discount-v2.active-v2 {
     color: var(--color-info);
     background: rgba(59, 130, 246, 0.1);
     border-color: rgba(59, 130, 246, 0.3);
 }
 
-.shared-form-action-btn.btn-submit {
+.shared-form-action-btn-v2.btn-submit-v2 {
     background: var(--color-theme-important);
     color: var(--color-dark);
     box-shadow: 0 4px 12px var(--color-theme-important-low);
     border: none;
 }
 
-.shared-form-action-btn.btn-submit:hover {
+.shared-form-action-btn-v2.btn-submit-v2:hover {
     transform: scale(1.05);
     box-shadow: 0 0 15px var(--color-theme-important-low);
 }
 
-.shared-form-header {
+.shared-form-header-v2 {
     display: flex;
     gap: 0.75rem;
     margin-bottom: 2rem;
@@ -174,7 +174,7 @@
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.header-field {
+.header-field-v2 {
     flex: 1;
     background: transparent;
     border: none;
@@ -184,11 +184,11 @@
     outline: none;
 }
 
-.header-field:first-child {
+.header-field-v2:first-child {
     border-right: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.shared-form-add-more {
+.shared-form-add-more-v2 {
     width: 100%;
     background: rgba(255, 255, 255, 0.015);
     border: 1px dashed rgba(255, 255, 255, 0.1);
@@ -206,19 +206,19 @@
     margin-top: 0.75rem;
 }
 
-.shared-form-add-more:hover {
+.shared-form-add-more-v2:hover {
     border-color: var(--color-theme-important);
     color: var(--color-theme-important);
     background: var(--color-theme-important-low);
     border-style: solid;
 }
 
-.shared-form-footer {
+.shared-form-footer-v2 {
     display: flex;
     margin-top: 3rem;
 }
 
-.shared-form-submit-all {
+.shared-form-submit-all-v2 {
     width: 100%;
     background: var(--color-theme-important);
     color: var(--color-dark);
@@ -234,23 +234,23 @@
     box-shadow: 0 10px 30px var(--color-theme-important-low);
 }
 
-.shared-form-submit-all:hover:not(:disabled) {
+.shared-form-submit-all-v2:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 15px 40px var(--color-theme-important-low);
 }
 
-.shared-form-submit-all:active:not(:disabled) {
+.shared-form-submit-all-v2:active:not(:disabled) {
     transform: translateY(0) scale(0.98);
 }
 
-.shared-form-submit-all:disabled {
+.shared-form-submit-all-v2:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     background: var(--color-theme-tertiary);
     color: var(--color-theme-secondary-text);
 }
 
-.btn-cancel {
+.btn-cancel-v2 {
     width: 100%;
     height: 52px;
     background: rgba(255, 255, 255, 0.03);
@@ -269,30 +269,30 @@
     margin-top: 0.5rem;
 }
 
-.btn-cancel:hover {
+.btn-cancel-v2:hover {
     background: rgba(255, 255, 255, 0.07);
     border-color: rgba(255, 255, 255, 0.15);
     color: var(--color-light);
     transform: translateY(-2px);
 }
 
-.btn-cancel:active {
+.btn-cancel-v2:active {
     transform: translateY(0) scale(0.98);
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .shared-form-header {
+    .shared-form-header-v2 {
         flex-direction: column;
         gap: 0;
     }
 
-    .header-field:first-child {
+    .header-field-v2:first-child {
         border-right: none;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    .shared-form-row {
+    .shared-form-row-v2 {
         flex-direction: column;
         align-items: stretch;
         background: rgba(255, 255, 255, 0.01);
@@ -301,7 +301,7 @@
         margin-bottom: 0.5rem;
     }
 
-    .shared-form-input-group {
+    .shared-form-input-group-v2 {
         flex-direction: column;
         background: transparent;
         border: none;
@@ -309,7 +309,7 @@
         gap: 0.4rem;
     }
 
-    .shared-form-field {
+    .shared-form-field-v2 {
         background: rgba(255, 255, 255, 0.03);
         border: 1px solid rgba(255, 255, 255, 0.05);
         border-radius: 10px !important;
@@ -317,21 +317,21 @@
         padding: 0.6rem;
     }
 
-    .shared-form-actions {
+    .shared-form-actions-v2 {
         width: 100%;
         margin-top: 0.2rem;
     }
 
-    .shared-form-action-btn {
+    .shared-form-action-btn-v2 {
         flex: 1;
         height: 42px;
     }
 
-    .shared-form-footer {
+    .shared-form-footer-v2 {
         margin-top: 2rem;
     }
 
-    .shared-form-submit-all {
+    .shared-form-submit-all-v2 {
         height: 56px;
     }
 }

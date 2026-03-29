@@ -1,10 +1,10 @@
-import Card from '../../components/cards/Card';
-import ProgressBar from '../../components/charts/ProgressBar';
-import { IconCard, Icons, Icon } from '../../assets/Icons';
+import Card from '../../../components/cards/Card';
+import ProgressBar from '../../../components/charts/ProgressBar';
+import { IconCard, Icons, Icon } from '../../../assets/Icons';
 import { useState, useEffect } from 'react';
-import BottomSheet from '../../components/modal/BottomSheetModal';
-import { getExpenses, unsubscribeForAll } from '../../library/firebase/controller';
-import { expensesCategoryStore } from '../../library/zustand/storage';
+import BottomSheet from '../../../components/modal/BottomSheetModal';
+import { getExpenses, unsubscribeForAll } from '../../../library/firebase/controller';
+import { expensesCategoryStore } from '../../../library/zustand/storage';
 
 const ExpensesCategory = ({ paramMonth, onClick = () => { } }) => {
     const [categoriesData, setCategoriesData] = useState([]);

@@ -64,11 +64,12 @@
   --color-info: #7dd3fc;
   /* Sky 300 - Income Blue */
   --color-semi-transparent-black: #00000099;
+  --size-page: 768px;
 }
 
-body {
+/* body {
   background-color: var(--color-theme-primary);
-}
+} */
 
 html.light-mode {
   /* Premium Light Mode - Soft Neutrals with Vibrant Accents */

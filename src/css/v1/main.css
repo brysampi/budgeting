@@ -10,7 +10,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
     filter: invert(100%) sepia(100%) saturate(500%) hue-rotate(200deg);
 }
 
-/* .app-container {
+/* .app-container-v1 {
     position: relative;
 }
 
@@ -21,265 +21,265 @@ body {
     @apply bg-[var(--color-theme-primary)] text-black text-[var(--color-light)];
 }
 
-.app-container {
+.app-container-v1 {
     @apply relative
 } */
 
-.app-container {
+.app-container-v1 {
     padding: 0;
     margin: 0;
     @apply relative
 }
 
-.floating-label-wrapper {
+.floating-label-wrapper-v1 {
     @apply relative w-full;
 }
 
-.floating-label-wrapper input,
-.floating-label-wrapper .input {
+.floating-label-wrapper-v1 input,
+.floating-label-wrapper-v1 .input-v1 {
     @apply border-[var(--color-theme-tertiary)] text-[var(--color-light)] border-x-0 border-t-0 border-[1px] p-[10px_10px] bg-transparent w-full focus:outline-none;
 }
 
-.floating-label-wrapper input::placeholder,
-.floating-label-wrapper .input::placeholder {
+.floating-label-wrapper-v1 input::placeholder,
+.floating-label-wrapper-v1 .input-v1::placeholder {
     color: transparent;
 }
 
-.floating-label-wrapper label {
+.floating-label-wrapper-v1 label {
     @apply text-[var(--color-theme-secondary)] font-bold absolute left-[10px] top-[20px] text-[0.9rem] transition-all duration-200 ease-in-out pointer-events-none;
 }
 
-.floating-label-wrapper input:focus,
-.floating-label-wrapper .input:focus,
-.floating-label-wrapper input:not(:placeholder-shown),
-.floating-label-wrapper .input:not(:placeholder-shown) {
+.floating-label-wrapper-v1 input:focus,
+.floating-label-wrapper-v1 .input-v1:focus,
+.floating-label-wrapper-v1 input:not(:placeholder-shown),
+.floating-label-wrapper-v1 .input-v1:not(:placeholder-shown) {
     @apply border-[var(--color-theme-secondary)];
 }
 
-.floating-label-wrapper input:focus+label,
-.floating-label-wrapper .input:focus+label,
-.floating-label-wrapper input:not(:placeholder-shown)+label,
-.floating-label-wrapper .input:not(:placeholder-shown)+label {
+.floating-label-wrapper-v1 input:focus+label,
+.floating-label-wrapper-v1 .input-v1:focus+label,
+.floating-label-wrapper-v1 input:not(:placeholder-shown)+label,
+.floating-label-wrapper-v1 .input-v1:not(:placeholder-shown)+label {
     @apply text-[var(--color-theme-secondary)] top-[0px] left-[10px] text-[0.9rem] px-[2px] py-0;
 }
 
 /* Change Border and Text when Focused */
-.floating-label-wrapper input:focus {
+.floating-label-wrapper-v1 input:focus {
     @apply border-[var(--color-theme-important)];
 }
 
-.floating-label-wrapper input:focus+label {
+.floating-label-wrapper-v1 input:focus+label {
     @apply text-[var(--color-theme-important)];
 }
 
 /* Inputs in Login page */
-.floating-label-wrapper.input-login input {
+.floating-label-wrapper-v1.input-login-v1 input {
     @apply text-[var(--color-light)] border-[var(--color-theme-tertiary)]
 }
 
-.floating-label-wrapper.input-login label {
+.floating-label-wrapper-v1.input-login-v1 label {
     @apply text-[var(--color-light)];
 }
 
-.floating-label-wrapper.input-login input:focus+label,
-.floating-label-wrapper.input-login input:not(:placeholder-shown)+label {
+.floating-label-wrapper-v1.input-login-v1 input:focus+label,
+.floating-label-wrapper-v1.input-login-v1 input:not(:placeholder-shown)+label {
     @apply bg-[var(--color-theme-secondary)] text-[var(--color-theme-light)];
 }
 
-.floating-label-wrapper select option {
+.floating-label-wrapper-v1 select option {
     @apply bg-[var(--color-theme-secondary)] text-[var(--color-light)];
 }
 
-/* .floating-label-wrapper input:not(:placeholder-shown) {
+/* .floating-label-wrapper-v1 input:not(:placeholder-shown) {
     @apply border-[var(--theme-one-primary)] border-solid border-[2px];
   } */
 
-form:not(.form-select-month)>* {
+form:not(.form-select-month-v1)>* {
     @apply py-[10px];
 }
 
-.form-pannel {
+.form-pannel-v1 {
     @apply min-w-[300px] w-full sm:w-auto
 }
 
-.btn {
+.btn-v1 {
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
     @apply rounded-lg py-2 px-6 border-[1px] border-solid border-transparent;
 }
 
-.multi-btn {
+.multi-btn-v1 {
     @apply flex flex-row gap-2 justify-between;
 }
 
-.multi-btn-evenly {
+.multi-btn-evenly-v1 {
     @apply flex flex-row gap-2 justify-evenly;
 }
 
-.btn-primary {
+.btn-primary-v1 {
     @apply bg-[var(--color-theme-important)] text-[var(--color-dark)] cursor-pointer;
 }
 
-.btn-primary:hover {
+.btn-primary-v1:hover {
     @apply bg-[var(--color-theme-important-dark)] border-[var(--color-theme-important-dark)] text-[var(--color-light)];
 }
 
-.btn-primary-gradient {
+.btn-primary-gradient-v1 {
     @apply bg-gradient-to-r from-[var(--color-theme-important)] to-[var(--color-theme-important-dark)] text-[var(--theme-one-dark)];
 }
 
-.btn-cancel {
+.btn-cancel-v1 {
     @apply bg-transparent text-[var(--color-light)] cursor-pointer border-[1px] border-solid border-[var(--color-theme-important)];
 }
 
-.btn-cancel:hover {
+.btn-cancel-v1:hover {
     @apply bg-[var(--color-theme-important-low)] text-[var(--color-theme-important)];
 }
 
-.multi-card>.card {
+.multi-card-v1>.card-v1 {
     @apply mb-[1rem]
 }
 
-.card {
+.card-v1 {
     @apply flex flex-col justify-center rounded-lg min-w-[12.5rem] p-[.5rem] sm:p-[1.5rem_2rem]
 }
 
-.card .title {
+.card-v1 .title-v1 {
     @apply text-[var(--theme-one-three)] font-bold text-[1rem] mb-2
 }
 
-.card .details {
+.card-v1 .details-v1 {
     /* @apply text-[var(--theme-one-four)] font-semibold text-sm mb-2 */
     @apply text-[.7rem]
 }
 
-.card-login {
+.card-login-v1 {
     @apply h-full w-full sm:h-auto sm:max-w-[500px] py-0 px-0 bg-[var(--color-theme-secondary)] mb-[30px] sm:py-[60px] sm:px-[20px]
 }
 
-.card-main {
+.card-main-v1 {
     @apply bg-[var(--color-theme-secondary)]
 }
 
-.card-shadow {
+.card-shadow-v1 {
     @apply p-[1.5rem_2rem] m-[1rem] bg-[var(--color-theme-secondary)]
 }
 
-.card-shadow:hover:not(.card-no-hover) {
+.card-shadow-v1:hover:not(.card-no-hover-v1) {
     @apply bg-[var(--color-theme-tertiary)]
 }
 
-.card-shadow .title {
+.card-shadow-v1 .title-v1 {
     @apply text-[var(--color-light)] font-bold text-lg mb-2
 }
 
-.card-shadow:hover .details {
+.card-shadow-v1:hover .details-v1 {
     @apply text-[var(--color-theme-secondary)]
 }
 
-.card-shadow .details {
+.card-shadow-v1 .details-v1 {
     @apply text-[var(--color-theme-tertiary-light)]
 }
 
-.card-shadow .details span {
+.card-shadow-v1 .details-v1 span {
     @apply text-[var(--color-theme-important)] font-semibold text-base mb-2
 }
 
-.card-no-bg {
+.card-no-bg-v1 {
     @apply p-3 shadow-none bg-transparent
 }
 
-.card-container {
+.card-container-v1 {
     @apply flex flex-col content-start justify-between md:flex-row
 }
 
-.select-month-container {
+.select-month-container-v1 {
     @apply flex flex-col items-center mb-[1rem]
 }
 
-.select-month-container form {
+.select-month-container-v1 form {
     @apply max-w-none flex flex-row sm:max-w-[30rem]
 }
 
-.select-month-container input {
+.select-month-container-v1 input {
     @apply w-full border-[var(--color-theme-important)] text-[var(--color-light)] border-solid border-[1px] rounded-l-lg p-[10px_10px] bg-transparent
 }
 
-.select-month-container form:hover button {
+.select-month-container-v1 form:hover button {
     @apply bg-[var(--color-theme-important-dark)] rounded-r-lg text-[var(--color-theme-primary)] cursor-pointer
 }
 
-.select-month-container form:hover input {
+.select-month-container-v1 form:hover input {
     @apply border-[var(--color-theme-important-dark)] rounded-l-lg
 }
 
-.table-header {
+.table-header-v1 {
     @apply flex flex-row justify-between items-center mb-5 p-2
 }
 
-.table-header button {
+.table-header-v1 button {
     @apply flex items-center
 }
 
-.table-header button span:last-child {
+.table-header-v1 button span:last-child {
     @apply hidden sm:inline
 }
 
-.table-header button span:first-child {
+.table-header-v1 button span:first-child {
     @apply pr-0 sm:pr-3
 }
 
-/* .table-container {
+/* .table-container-v1 {
         @apply overflow-auto;
     } */
 
-.table {
+.table-v1 {
     @apply w-full
 }
 
-.table th {
+.table-v1 th {
     @apply border
 }
 
-.table td, .table th {
+.table-v1 td, .table-v1 th {
     @apply p-[10px_5px] border-b
 }
 
-.table thead tr th {
+.table-v1 thead tr th {
     @apply bg-[var(--color-theme-tertiary)] text-[var(--theme-one-dark)]
 }
 
-.table thead tr th:hover {
+.table-v1 thead tr th:hover {
     @apply bg-[var(--color-theme-tertiary-light)] text-[var(--theme-one-dark)] cursor-not-allowed
 }
 
 
 
-.table tbody .tr-header:first-child {
+.table-v1 tbody .tr-header-v1:first-child {
     @apply bg-[var(--color-theme-tertiary-light)] text-center font-bold cursor-pointer
 }
 
-.table tbody tr:hover,
-.table tbody .tr-header:first-child:hover {
+.table-v1 tbody tr:hover,
+.table-v1 tbody .tr-header-v1:first-child:hover {
     @apply bg-[var(--color-theme-tertiary)]
 }
 
-/* table tbody .tr-header {
+/* table tbody .tr-header-v1 {
         @apply text-center font-bold bg-[var(--theme-one-neutral-light2)] text-[var(--theme-one-dark)]
     }
 
-    table tbody .tr-header:hover {
+    table tbody .tr-header-v1:hover {
         @apply text-[var(--theme-one-dark)]
     }'
      */
 
-table tbody .tr-header .tr-header-important {
+table tbody .tr-header-v1 .tr-header-important-v1 {
     @apply font-bold bg-[var(--color-theme-tertiary-light)] text-[var(--color-theme-important)]
 }
 
-table tbody .tr-header:hover>.tr-header-important {
+table tbody .tr-header-v1:hover>.tr-header-important-v1 {
     @apply text-[var(--color-dark)] bg-[var(--color-theme-important-light)];
 }
 
-.backdrop-loading {
+.backdrop-loading-v1 {
     @apply fixed top-0 left-0 w-full h-full bg-[var(--color-semi-transparent-black)] z-50 pointer-events-none;
 }

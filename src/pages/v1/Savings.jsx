@@ -42,19 +42,19 @@ const Savings = () => {
                     setUpdateData={setUpdateData}
                 />
             </Modal >
-            <div className='card-container'>
-                <div className='card card-no-bg flex-1'> </div>
-                <div className='card card-main'>
+            <div className='card-container-v1'>
+                <div className='card-v1 card-no-bg-v1 flex-1'> </div>
+                <div className='card-v1 card-main-v1'>
 
                 </div>
             </div>
-            <div className="card card-main">
-                <div className='table-header'>
+            <div className="card-v1 card-main-v1">
+                <div className='table-header-v1'>
                     <div>
                         {/* Table Title Here */}
                         <Link to={`/v1/savingsTracker/${paramMonth}`}>
                             <button
-                                className='btn btn-cancel'>
+                                className='btn-v1 btn-cancel-v1'>
                                 <span><LuArrowLeft /></span>
                                 <span>Back</span>
                             </button>
@@ -62,14 +62,14 @@ const Savings = () => {
                     </div>
                     <div>
                         <button
-                            className='btn btn-primary'
+                            className='btn-v1 btn-primary-v1'
                             onClick={() => setIsModalOpen(true)}>
                             <span><LuPlus /></span>
                             <span>Add</span>
                         </button>
                     </div>
                 </div>
-                <table className="table">
+                <table className="table-v1">
                     <thead>
                         <tr>
                             {/* <th>#</th> */}
@@ -96,13 +96,13 @@ const Savings = () => {
                                         <td>{!item.actual ? item.target.toFixed(2) : (item.target - item.actual).toFixed(2)}</td>
                                         <td>{item.status}</td>
                                         <td>
-                                            <div className="multi-btn-evenly">
+                                            <div className="multi-btn-evenly-v1">
                                                 <button
-                                                    className='btn btn-cancel'
+                                                    className='btn-v1 btn-cancel-v1'
                                                     onClick={async () => { await deleteDataController('savings', item.id) }}>
                                                     <LuTrash2 /></button>
                                                 <button
-                                                    className='btn btn-cancel'
+                                                    className='btn-v1 btn-cancel-v1'
                                                     onClick={() => updateSetData(
                                                         {
                                                             id: item.id,

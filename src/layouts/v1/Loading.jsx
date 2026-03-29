@@ -9,11 +9,11 @@ const Loading = ({ onLoading }) => {
     return (
         <>
             {onLoading ? (
-                <div className='backdrop-loading'>Loading...</div>
+                <div className='backdrop-loading-v1'>Loading...</div>
             ) : (
                 <div></div>
             )}
-            {/* {onLoading && <div ref={backdropRef} className='backdrop-loading'>Loading...</div>} */}
+            {/* {onLoading && <div ref={backdropRef} className='backdrop-loading-v1'>Loading...</div>} */}
         </>
     )
 }

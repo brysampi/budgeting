@@ -1,16 +1,19 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import Transaction from './Transaction';
-import Stats from './Stats';
-import ExpensesCategory from './ExpensesCategory';
+import DateSelector from './components/DateSelector';
+import Transaction from './components/Transaction';
+import Stats from './components/Stats';
+import ExpensesCategory from './components/ExpensesCategory';
+import WalletCardsSection from './components/WalletCardsSection';
+import ModalForms from '../v1/ModalForms';
+
 import Card from '../../components/cards/Card';
-import WalletCardsSection from './WalletCardsSection';
-import DateSelector from './DateSelector';
 import Modal from '../../components/modal/Modal';
 import BottomSheet from '../../components/modal/BottomSheetModal';
-import ModalForms from '../v1/ModalForms';
+import Dropdown from '../../components/Dropdown';
+
 import { getAllDataRealTimeController, logout, collectedData_v2 } from '../../library/firebase/controller';
-import Dropdown from '../../layouts/v2/Dropdown';
-import '../../css/v2/main.css';
+
+// import '../../css/v2/main.css';
 // icon import removed
 import {
     NotificationIcon as FaBell,
@@ -87,7 +90,7 @@ const Simplified = () => {
         setFormData11(data); // This fills your form automatically!
     };
     return (
-        <div className="w-full max-w-[768px] mx-auto p-4 md:p-8 flex flex-col gap-8 min-h-screen relative font-sans pb-32">
+        <div className="w-full max-w-[var(--size-page)] mx-auto p-4 md:p-8 flex flex-col gap-8 min-h-screen relative font-sans pb-32">
             {/* <button onClick={addData}>Add Data</button> */}
             {/* Header */}
             <header className="flex justify-between items-center px-1">

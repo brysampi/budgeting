@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { LuPlus, LuMinus, LuCheck, LuWallet, LuCalendar, LuBolt } from "react-icons/lu";
 import { useParams } from 'react-router-dom';
-import { bills, getAllDataActiveRealTimeController } from '../../../library/firebase/controller';
+// import { bills, getAllDataActiveRealTimeController } from '../../../library/firebase/controller';
 import { getTodayDate } from '../../../library/firebase/utils';
 import '../../../css/v2/v2-form.css';
 
-const BillsForm = ({ onFinish }) => {
+const WalletForm = ({ onFinish }) => {
     const { paramMonth } = useParams();
     const [loading, setLoading] = useState(false);
 
@@ -69,19 +69,20 @@ const BillsForm = ({ onFinish }) => {
                 wallet: selectedWallet,
                 date: headerDate,
             };
+            console.log(data);
 
-            const result = await bills(data);
-            if (result.status === 'success') {
-                successCount++;
-            }
+            // const result = await bills(data);
+            // if (result.status === 'success') {
+            //     successCount++;
+            // }
         }
 
-        if (successCount === rows.length) {
-            if (onFinish) onFinish();
-            setRows([{ id: Date.now(), description: '', budget: '', actual: '', dueDate: getTodayDate() }]);
-        } else if (successCount > 0) {
-            alert(`Successfully added ${successCount} of ${rows.length} bills.`);
-        }
+        // if (successCount === rows.length) {
+        //     if (onFinish) onFinish();
+        //     setRows([{ id: Date.now(), description: '', budget: '', actual: '', dueDate: getTodayDate() }]);
+        // } else if (successCount > 0) {
+        //     alert(`Successfully added ${successCount} of ${rows.length} bills.`);
+        // }
         setLoading(false);
     };
 
@@ -177,11 +178,11 @@ const BillsForm = ({ onFinish }) => {
                     onClick={handleSubmitAll}
                     disabled={loading}
                 >
-                    {loading ? 'Adding...' : 'Save Bills'}
+                    {loading ? 'Adding...' : 'Add Wallet'}
                 </button>
             </div>
         </div>
     );
 };
 
-export default BillsForm;
+export default WalletForm;

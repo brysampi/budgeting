@@ -1,4 +1,4 @@
-.modal-overlay-v1 {
+.modal-overlay {
   background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(8px);
   position: fixed;
@@ -12,7 +12,7 @@
   transition: all 0.2s ease-in-out;
 }
 
-.modal-content-v1 {
+.modal-content {
   background: var(--color-theme-secondary);
   width: 100%;
   margin: auto;
@@ -26,20 +26,20 @@
 }
 
 /* React Modal Animation Classes */
-.ReactModal__Overlay-v1 {
+.ReactModal__Overlay {
   opacity: 0;
 }
 
-.ReactModal__Overlay--after-open-v1 {
+.ReactModal__Overlay--after-open {
   opacity: 1;
 }
 
-.ReactModal__Overlay--before-close-v1 {
+.ReactModal__Overlay--before-close {
   opacity: 0;
 }
 
 /* Internal Layout */
-.modal-inner-v1 {
+.modal-inner {
   max-width: 600px;
   margin: 0 auto;
   width: 100%;
@@ -51,24 +51,24 @@
 }
 
 /* Tab Bar Utilities */
-.no-scrollbar-v1::-webkit-scrollbar {
+.no-scrollbar::-webkit-scrollbar {
   display: none;
 }
 
-.no-scrollbar-v1 {
+.no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
 
 /* Mobile Responsive & Forced Fullscreen */
 @media (max-width: 480px) {
-  .modal-overlay-v1 {
+  .modal-overlay {
     padding: 0;
     align-items: stretch;
     background: var(--color-theme-primary);
   }
 
-  .modal-content-v1 {
+  .modal-content {
     min-height: 100vh;
     border-radius: 0;
     border: none;
@@ -77,19 +77,19 @@
     /* Ensure content touches edges in mobile */
   }
 
-  .modal-inner-v1 {
+  .modal-inner {
     padding: 1.25rem 1.25rem 4rem;
   }
 }
 
 /* Forced Fullscreen (Prop) */
-.modal-overlay-fullscreen-v1 {
+.modal-overlay-fullscreen {
   padding: 0;
   align-items: stretch;
   background: var(--color-theme-primary);
 }
 
-.modal-content-fullscreen-v1 {
+.modal-content-fullscreen {
   min-height: 100vh;
   border-radius: 0;
   border: none;
@@ -97,12 +97,12 @@
   padding: 0 !important;
 }
 
-.modal-content-fullscreen-v1 .modal-inner-v1 {
+.modal-content-fullscreen .modal-inner {
   padding: 2rem;
 }
 
 /* Header & Body Styles */
-.modal-header-v1 {
+.modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -110,14 +110,14 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.modal-title-v1 {
+.modal-title {
   color: var(--color-light);
   font-weight: 800;
   font-size: 1.5rem;
   letter-spacing: -0.02em;
 }
 
-.modal-close-btn-v1 {
+.modal-close-btn {
   background: transparent;
   border: none;
   color: var(--color-light);
@@ -132,13 +132,13 @@
   background: rgba(255, 255, 255, 0.05);
 }
 
-.modal-close-btn-v1:hover {
+.modal-close-btn:hover {
   opacity: 1;
   background: rgba(255, 255, 255, 0.1);
   transform: scale(1.05);
 }
 
-.modal-body-v1 {
+.modal-body {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;

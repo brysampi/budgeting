@@ -46,7 +46,7 @@ export default function MonthSelection({ onLogOut }) {
             <UploadImage onDataExtracted={handleAiData} />
             {/* <Loading onLoading={loading} /> */}
             {/* <Logout onLogout={onLogOut} /> */}
-            <div className='card card-shadow card-no-hover flex flex-col justify-between my-[1rem]  sm:flex-row'>
+            <div className='card-v1 card-shadow-v1 card-no-hover-v1 flex flex-col justify-between my-[1rem]  sm:flex-row'>
                 <div className='flex items-center mb-[1rem] sm:mb-0 sm:text-left text-2xl font-bold'>
                     Select Month
                 </div>
@@ -94,8 +94,8 @@ export default function MonthSelection({ onLogOut }) {
             {/* <Navbar title={'Select Month'} /> */}
 
 
-            <div className='select-month-container'>
-                <form className='form-select-month py-0'
+            <div className='select-month-container-v1'>
+                <form className='form-select-month-v1 py-0'
                     onSubmit={collectData}>
                     <div className=''>
                         <input
@@ -108,7 +108,7 @@ export default function MonthSelection({ onLogOut }) {
                         {/* <label htmlFor="month">Select Month</label> */}
                     </div>
 
-                    <button className="btn btn-primary btn-select-month sm:min-w-[9rem] rounded-l-none text-[var(--color-dark)] pl-2 pr-2 sm:pl-6 sm:pr-6"
+                    <button className="btn-v1 btn-primary-v1 btn-select-month sm:min-w-[9rem] rounded-l-none text-[var(--color-dark)] pl-2 pr-2 sm:pl-6 sm:pr-6"
                         disabled={isLoading}>{isLoading ? 'Loading' : 'Select Month'}
                     </button>
                 </form>
@@ -127,11 +127,11 @@ export default function MonthSelection({ onLogOut }) {
                                     + '-' +
                                     (item.date.toDate().getMonth() + 1)
                                 }>
-                                    <div className="card card-shadow">
-                                        <div className="title">
+                                    <div className="card-v1 card-shadow-v1">
+                                        <div className="title-v1">
                                             {getMonthNames(item.date) + ' ' + item.date.toDate().getFullYear() + '    '}
                                         </div>
-                                        <div className="details">
+                                        <div className="details-v1">
                                             Remaining Income: <span>{item.remainingIncome.toFixed(2)}</span>
                                         </div>
                                     </div>

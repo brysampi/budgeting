@@ -47,13 +47,13 @@ const BillsSettings = () => {
                 />
             </Modal >
 
-            <div className="card card-main">
-                <div className='table-header'>
+            <div className="card-v1 card-main-v1">
+                <div className='table-header-v1'>
                     <div>
                         {/* Table Title Here */}
                         <Link to={`/bills/${paramMonth}`}>
                             <button
-                                className='btn btn-cancel'>
+                                className='btn-v1 btn-cancel-v1'>
                                 <span><LuArrowLeft /></span>
                                 <span>Back</span>
                             </button>
@@ -61,14 +61,14 @@ const BillsSettings = () => {
                     </div>
                     <div>
                         <button
-                            className='btn btn-primary'
+                            className='btn-v1 btn-primary-v1'
                             onClick={() => setIsModalOpen(true)}>
                             <span><LuPlus /></span>
                             <span>Add</span>
                         </button>
                     </div>
                 </div>
-                <table className="table">
+                <table className="table-v1">
                     <thead>
                         <tr>
                             {/* <th>#</th> */}
@@ -94,14 +94,14 @@ const BillsSettings = () => {
                                         <td>{item.budget.toFixed(2)}</td>
                                         <td>{!item.monthlyBudget ? '' : item.monthlyBudget.toFixed(2)}</td>
                                         <td>
-                                            <div className="multi-btn-evenly">
+                                            <div className="multi-btn-evenly-v1">
                                                 <button
-                                                    className="btn btn-cancel"
+                                                    className="btn-v1 btn-cancel-v1"
                                                     onClick={async () => { await deleteDataController('income', item.id) }}>
                                                     <LuTrash2 />
                                                 </button>
                                                 <button
-                                                    className="btn btn-cancel"
+                                                    className="btn-v1 btn-cancel-v1"
                                                     onClick={() => updateSetData(
                                                         {
                                                             id: item.id,

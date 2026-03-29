@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Icons, Icon } from '../../assets/Icons';
-import Card from '../../components/cards/Card';
+import { Icons, Icon } from '../assets/Icons';
+import Card from '../components/cards/Card';
 import { useNavigate } from 'react-router-dom';
 
 const IconLibrary = () => {
@@ -11,12 +11,20 @@ const IconLibrary = () => {
     const filteredIcons = iconNames.filter(name =>
         name.toLowerCase().includes(searchTerm.toLowerCase())
     );
+    const clickIcon = (name) => {
+        console.log(name);
+        navigator.clipboard.writeText(name);
+    }
+    const backButton = () => {
+        // navigate(-1);
+        console.log("back");
+    }
 
     return (
         <div className="flex flex-col gap-6 p-4 md:p-8 max-w-4xl mx-auto">
             <div className="flex flex-col gap-4">
                 <button
-                    onClick={() => navigate(-1)}
+                    onClick={backButton}
                     className="flex items-center gap-2 text-[var(--color-theme-secondary-text)] hover:text-[var(--color-theme-important)] transition-colors text-sm font-bold group w-fit"
                 >
                     <Icons.LuArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
@@ -49,10 +57,7 @@ const IconLibrary = () => {
                 {filteredIcons.map((name) => (
                     <Card
                         key={name}
-                        onClick={() => {
-                            navigator.clipboard.writeText(name);
-                            // You could add a toast here if available
-                        }}
+                        onClick={() => clickIcon(name)}
                         className="flex flex-col items-center justify-center p-6 gap-3 group cursor-pointer active:scale-95 transition-all"
                         padding="p-6"
                     >

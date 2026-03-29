@@ -54,30 +54,30 @@ export default function SideNav({ hide, sidenavRef }) {
     return (
         <aside
             ref={sidenavRef}
-            className="sidenav-container">
-            {/* <div className="shrink" onClick={() => setHideNav(!hideNav)}>
-                <div className="shrink-icon">
+            className="sidenav-container-v1">
+            {/* <div className="shrink-v1" onClick={() => setHideNav(!hideNav)}>
+                <div className="shrink-icon-v1">
                     {hideNav ? < LuIndentIncrease /> : <LuIndentDecrease />}
                 </div>
             </div> */}
             <div className={`sidenav ${hideNav ? 'w-[200px] sm:w-[50px]' : 'w-[50px] sm:w-[200px]'}`}>
 
-                {/* <div className="title">
+                {/* <div className="title-v1">
                     <span className={hideText}>
                         My Logo here
                     </span>
 
                 </div> */}
 
-                <div className="sidenav-content">
+                <div className="sidenav-content-v1">
                     <ul>
                         <li onClick={() => setHideNav(!hideNav)} className="cursor-none flex flex-row-reverse justify-between mb-[1rem]">
-                            <span className="shrink">{hideNav ? < LuIndentIncrease /> : <LuIndentDecrease />}</span>
+                            <span className="shrink-v1">{hideNav ? < LuIndentIncrease /> : <LuIndentDecrease />}</span>
                             <span className={hideText}>Budgeting</span>
                         </li>
                         {menuItems.map((item, idx) => (
                             <Link key={idx} to={item.to}>
-                                <li className={isActive(item.to, item.exact) ? 'active' : ''}>
+                                <li className={isActive(item.to, item.exact) ? 'active-v1' : ''}>
                                     <span>{item.icon}</span>
                                     <span className={hideText}>{item.label}</span>
                                 </li>

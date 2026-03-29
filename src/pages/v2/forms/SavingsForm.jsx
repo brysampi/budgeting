@@ -88,14 +88,14 @@ const SavingsForm = ({ onFinish }) => {
     };
 
     return (
-        <div className="shared-form-container">
+        <div className="shared-form-container-v2">
             {/* Header Section */}
-            <div className="shared-form-header">
+            <div className="shared-form-header-v2">
                 <div className="flex items-center flex-1">
                     <LuCalendar className="ml-3 text-[var(--color-theme-secondary-text)]" size={16} />
                     <input
                         type="date"
-                        className="header-field"
+                        className="header-field-v2"
                         value={headerDate}
                         onChange={(e) => setHeaderDate(e.target.value)}
                     />
@@ -103,7 +103,7 @@ const SavingsForm = ({ onFinish }) => {
                 <div className="flex items-center flex-1">
                     <LuWallet className="ml-3 text-[var(--color-theme-secondary-text)]" size={16} />
                     <select
-                        className="header-field"
+                        className="header-field-v2"
                         value={selectedWallet}
                         onChange={(e) => setSelectedWallet(e.target.value)}
                     >
@@ -118,10 +118,10 @@ const SavingsForm = ({ onFinish }) => {
             {/* Rows List */}
             <div className="shared-form-body">
                 {rows.map((row, index) => (
-                    <div key={row.id} className="shared-form-row">
-                        <div className="shared-form-input-group">
+                    <div key={row.id} className="shared-form-row-v2">
+                        <div className="shared-form-input-group-v2">
                             <select
-                                className="shared-form-field field-category"
+                                className="shared-form-field-v2 field-category-v2"
                                 value={row.category}
                                 onChange={(e) => handleInputChange(row.id, 'category', e.target.value)}
                             >
@@ -135,7 +135,7 @@ const SavingsForm = ({ onFinish }) => {
 
                             <input
                                 type="text"
-                                className="shared-form-field field-description"
+                                className="shared-form-field-v2 field-description-v2"
                                 placeholder="Description"
                                 value={row.description}
                                 onChange={(e) => handleInputChange(row.id, 'description', e.target.value)}
@@ -143,16 +143,16 @@ const SavingsForm = ({ onFinish }) => {
 
                             <input
                                 type="number"
-                                className="shared-form-field field-price"
+                                className="shared-form-field-v2 field-price-v2"
                                 placeholder="Amount"
                                 value={row.amount}
                                 onChange={(e) => handleInputChange(row.id, 'amount', e.target.value)}
                             />
                         </div>
 
-                        <div className="shared-form-actions">
+                        <div className="shared-form-actions-v2">
                             <button
-                                className="shared-form-action-btn btn-remove"
+                                className="shared-form-action-btn-v2 btn-remove-v2"
                                 onClick={() => removeRow(row.id)}
                                 title="Remove Row"
                             >
@@ -164,15 +164,15 @@ const SavingsForm = ({ onFinish }) => {
             </div>
 
             {/* Add Item Button */}
-            <button className="shared-form-add-more" onClick={addRow}>
+            <button className="shared-form-add-more-v2" onClick={addRow}>
                 <LuPlus size={18} />
                 <span>Add Savings</span>
             </button>
 
             {/* Footer Submit */}
-            <div className="shared-form-footer">
+            <div className="shared-form-footer-v2">
                 <button
-                    className={`shared-form-submit-all ${loading ? 'loading' : ''}`}
+                    className={`shared-form-submit-all-v2 ${loading ? 'loading' : ''}`}
                     onClick={handleSubmitAll}
                     disabled={loading}
                 >

@@ -56,14 +56,14 @@ const Navbar = ({
     const progress = (180 / 200) * 100;
     return (
         <>
-            <div className="card card-main flex flex-col justify-between sm:items-center p-5 mb-[10px] sm:flex-row">
+            <div className="card-v1 card-main-v1 flex flex-col justify-between sm:items-center p-5 mb-[10px] sm:flex-row">
                 <div>
                     {title}
-                    <div className='floating-label-wrapper'>
+                    <div className='floating-label-wrapper-v1'>
                         <select
                             id="selectWallet"
                             placeholder="Select Wallet"
-                            className='input'
+                            className='input-v1'
                             value={selectedWallet}
                             onChange={(e) => setSelectedWallet(e.target.value)}
                         >

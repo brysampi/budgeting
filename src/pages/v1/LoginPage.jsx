@@ -40,7 +40,7 @@ export default function LoginPage({ onLogin }) {
     return (
         <>
             <div className='flex flex-col items-center justify-center h-screen'>
-                <div className='card card-login'>
+                <div className='card-v1 card-login-v1'>
                     <div className='text-center font-bold text-2xl p-10 text-[var(--theme-one-neutral-dark)]'>
                         My Logo Here
                     </div>
@@ -48,11 +48,11 @@ export default function LoginPage({ onLogin }) {
                         className='
                         flex flex-col items-center
                         '>
-                        <div className='floating-label-wrapper input-login max-w-[300px]'>
+                        <div className='floating-label-wrapper-v1 input-login-v1 max-w-[300px]'>
                             <input id="user" type="text" onChange={(e) => setUser(e.target.value)} value={user} placeholder='Username' />
                             <label htmlFor="user">Username</label>
                         </div>
-                        <div className='floating-label-wrapper input-login max-w-[300px]'>
+                        <div className='floating-label-wrapper-v1 input-login-v1 max-w-[300px]'>
                             <input id="pass" type={viewPassword === false ? 'password' : 'text'} onChange={(e) => setPass(e.target.value)} value={pass} placeholder='Password' />
                             <label htmlFor="pass">Password</label>
                         </div>
@@ -63,7 +63,7 @@ export default function LoginPage({ onLogin }) {
 
                         {/* <div> */}
                         <button
-                            className='btn btn-primary-gradient 
+                            className='btn-v1 btn-primary-gradient-v1 
                                 max-w-[300px] w-full sm:w-ful'
                             disabled={loading}>{loading ? 'Loading' : 'Login'}
                         </button>
