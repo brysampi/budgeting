@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { LuPlus, LuMinus, LuCheck, LuWallet, LuCalendar, LuBolt } from "react-icons/lu";
 import { useParams } from 'react-router-dom';
 import { bills, getAllDataActiveRealTimeController } from '../../../library/firebase/controller';
-import { getTodayDate } from '../../../library/firebase/utils';
-import '../../../css/v2/v2-form.css';
+import { getTodayDate, generateUniqueID } from '../../../library/utils';
+import '../../../css/v2/form.css';
 
 const BillsForm = ({ onFinish }) => {
     const { paramMonth } = useParams();
@@ -17,7 +17,7 @@ const BillsForm = ({ onFinish }) => {
 
     // Manage multiple rows
     const [rows, setRows] = useState([
-        { id: Date.now(), description: '', budget: '', actual: '', dueDate: getTodayDate() }
+        { id: generateUniqueID(), description: '', budget: '', actual: '', dueDate: getTodayDate() }
     ]);
 
     useEffect(() => {
@@ -34,14 +34,14 @@ const BillsForm = ({ onFinish }) => {
     };
 
     const addRow = () => {
-        setRows([...rows, { id: Date.now(), description: '', budget: '', actual: '', dueDate: getTodayDate() }]);
+        setRows([...rows, { id: generateUniqueID(), description: '', budget: '', actual: '', dueDate: getTodayDate() }]);
     };
 
     const removeRow = (id) => {
         if (rows.length > 1) {
             setRows(rows.filter(row => row.id !== id));
         } else {
-            setRows([{ id: Date.now(), description: '', budget: '', actual: '', dueDate: getTodayDate() }]);
+            setRows([{ id: generateUniqueID(), description: '', budget: '', actual: '', dueDate: getTodayDate() }]);
         }
     };
 
@@ -78,7 +78,7 @@ const BillsForm = ({ onFinish }) => {
 
         if (successCount === rows.length) {
             if (onFinish) onFinish();
-            setRows([{ id: Date.now(), description: '', budget: '', actual: '', dueDate: getTodayDate() }]);
+            setRows([{ id: generateUniqueID(), description: '', budget: '', actual: '', dueDate: getTodayDate() }]);
         } else if (successCount > 0) {
             alert(`Successfully added ${successCount} of ${rows.length} bills.`);
         }

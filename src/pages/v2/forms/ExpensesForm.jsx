@@ -5,8 +5,8 @@ import UploadImage from '../../../library/gemini/RecieptScanner';
 import { LuPlus, LuMinus, LuBadgePercent, LuCheck, LuWallet, LuCalendar } from "react-icons/lu";
 import { useParams } from 'react-router-dom';
 import { expensesTracker, getExpenses, getAllDataActiveRealTimeController } from '../../../library/firebase/controller';
-import { getTodayDate } from '../../../library/firebase/utils';
-import '../../../css/v2/v2-form.css';
+import { getTodayDate, generateUniqueID } from '../../../library/utils';
+import '../../../css/v2/form.css';
 import { expensesCategoryStore } from '../../../library/zustand/storage';
 
 const ExpensesForm = ({ onFinish }) => {
@@ -22,11 +22,11 @@ const ExpensesForm = ({ onFinish }) => {
 
         if (data.items.length > 0) {
             console.log(data);
-            rows[0].id === 0 && setRows([]);
+            if (rows.length === 1 && !rows[0].description) setRows([]);
             for (const item of data.items) {
                 console.log(item);
                 setRows(rows => [...rows, {
-                    id: rows.length > 0 ? rows[rows.length - 1].id + 1 : 1,
+                    id: generateUniqueID(),
                     categoryId: item.categoryId,
                     categoryName: item.categoryName,
                     description: item.name,
@@ -59,7 +59,7 @@ const ExpensesForm = ({ onFinish }) => {
 
     // Manage multiple rows
     const [rows, setRows] = useState([
-        { id: 0, categoryId: '', categoryName: '', description: '', quantity: '', price: '', discount: '', showDiscount: false }
+        { id: generateUniqueID(), categoryId: '', categoryName: '', description: '', quantity: '', price: '', discount: '', showDiscount: false }
     ]);
 
     useEffect(() => {
@@ -77,7 +77,7 @@ const ExpensesForm = ({ onFinish }) => {
     };
 
     const addRow = () => {
-        setRows([...rows, { id: Date.now(), categoryId: '', categoryName: '', description: '', quantity: '', price: '', discount: '', showDiscount: false }]);
+        setRows([...rows, { id: generateUniqueID(), categoryId: '', categoryName: '', description: '', quantity: '', price: '', discount: '', showDiscount: false }]);
     };
 
     const toggleDiscount = (id) => {
@@ -90,7 +90,7 @@ const ExpensesForm = ({ onFinish }) => {
         if (rows.length > 1) {
             setRows(rows.filter(row => row.id !== id));
         } else {
-            setRows([{ id: Date.now(), categoryId: '', categoryName: '', description: '', quantity: '', price: '', discount: '', showDiscount: false }]);
+            setRows([{ id: generateUniqueID(), categoryId: '', categoryName: '', description: '', quantity: '', price: '', discount: '', showDiscount: false }]);
         }
     };
 
@@ -131,7 +131,7 @@ const ExpensesForm = ({ onFinish }) => {
         if (successCount === rows.length) {
             console.log('success')
             if (onFinish) onFinish();
-            setRows([{ id: Date.now(), categoryId: '', categoryName: '', description: '', quantity: '', price: '', discount: '', showDiscount: false }]);
+            setRows([{ id: generateUniqueID(), categoryId: '', categoryName: '', description: '', quantity: '', price: '', discount: '', showDiscount: false }]);
         } else if (successCount > 0) {
             alert(`Successfully added ${successCount} of ${rows.length} expenses.`);
         } else {

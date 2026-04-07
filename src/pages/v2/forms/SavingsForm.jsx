@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { LuPlus, LuMinus, LuCheck, LuWallet, LuCalendar, LuPiggyBank } from "react-icons/lu";
 import { useParams } from 'react-router-dom';
 import { savingsTracker, getSavings, getAllDataActiveRealTimeController } from '../../../library/firebase/controller';
-import { getTodayDate } from '../../../library/firebase/utils';
-import '../../../css/v2/v2-form.css';
+import { getTodayDate, generateUniqueID } from '../../../library/utils';
+import '../../../css/v2/form.css';
 
 const SavingsForm = ({ onFinish }) => {
     const { paramMonth } = useParams();
@@ -19,7 +19,7 @@ const SavingsForm = ({ onFinish }) => {
 
     // Manage multiple rows
     const [rows, setRows] = useState([
-        { id: Date.now(), category: '', description: '', amount: '' }
+        { id: generateUniqueID(), category: '', description: '', amount: '' }
     ]);
 
     useEffect(() => {
@@ -37,14 +37,14 @@ const SavingsForm = ({ onFinish }) => {
     };
 
     const addRow = () => {
-        setRows([...rows, { id: Date.now(), category: '', description: '', amount: '' }]);
+        setRows([...rows, { id: generateUniqueID(), category: '', description: '', amount: '' }]);
     };
 
     const removeRow = (id) => {
         if (rows.length > 1) {
             setRows(rows.filter(row => row.id !== id));
         } else {
-            setRows([{ id: Date.now(), category: '', description: '', amount: '' }]);
+            setRows([{ id: generateUniqueID(), category: '', description: '', amount: '' }]);
         }
     };
 
@@ -81,7 +81,7 @@ const SavingsForm = ({ onFinish }) => {
         setLoading(false);
         if (successCount === rows.length) {
             if (onFinish) onFinish();
-            setRows([{ id: Date.now(), category: '', description: '', amount: '' }]);
+            setRows([{ id: generateUniqueID(), category: '', description: '', amount: '' }]);
         } else if (successCount > 0) {
             alert(`Successfully added ${successCount} of ${rows.length} savings entries.`);
         }

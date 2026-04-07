@@ -1,6 +1,6 @@
 import { serverTimestamp } from 'firebase/firestore';
 import Cookies from 'js-cookie';
-import { successMsg, errorMsg, getUserID, convertToTimeStamp, convertToDate, componentIcons } from './utils';
+import { successMsg, errorMsg, getUserID, convertToTimeStamp, convertToDate, componentIcons } from '../utils';
 import {
     addData, updateData, getDataSingle, deleteData, getData, getUser, getAllData, getAllDataRealtime, getDataById, getAllDataActiveRealTime,
     getDataRealTime,

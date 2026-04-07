@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { LuPlus, LuMinus, LuCheck, LuWallet, LuCalendar, LuHandCoins } from "react-icons/lu";
 import { useParams } from 'react-router-dom';
 import { income, getAllDataActiveRealTimeController } from '../../../library/firebase/controller';
-import { getTodayDate } from '../../../library/firebase/utils';
-import '../../../css/v2/v2-form.css';
+import { getTodayDate, generateUniqueID } from '../../../library/utils';
+import '../../../css/v2/form.css';
 
 const IncomeForm = ({ onFinish }) => {
     const { paramMonth } = useParams();
@@ -17,7 +17,7 @@ const IncomeForm = ({ onFinish }) => {
 
     // Manage multiple rows
     const [rows, setRows] = useState([
-        { id: Date.now(), description: '', expected: '', amount: '' }
+        { id: generateUniqueID(), description: '', expected: '', amount: '' }
     ]);
 
     useEffect(() => {
@@ -34,14 +34,14 @@ const IncomeForm = ({ onFinish }) => {
     };
 
     const addRow = () => {
-        setRows([...rows, { id: Date.now(), description: '', expected: '', amount: '' }]);
+        setRows([...rows, { id: generateUniqueID(), description: '', expected: '', amount: '' }]);
     };
 
     const removeRow = (id) => {
         if (rows.length > 1) {
             setRows(rows.filter(row => row.id !== id));
         } else {
-            setRows([{ id: Date.now(), description: '', expected: '', amount: '' }]);
+            setRows([{ id: generateUniqueID(), description: '', expected: '', amount: '' }]);
         }
     };
 
@@ -78,7 +78,7 @@ const IncomeForm = ({ onFinish }) => {
         setLoading(false);
         if (successCount === rows.length) {
             if (onFinish) onFinish();
-            setRows([{ id: Date.now(), description: '', expected: '', amount: '' }]);
+            setRows([{ id: generateUniqueID(), description: '', expected: '', amount: '' }]);
         } else if (successCount > 0) {
             alert(`Successfully added ${successCount} of ${rows.length} income entries.`);
         }

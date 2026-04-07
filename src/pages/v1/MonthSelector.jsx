@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { getCollectedDataRealTimeController, creteCollectedData } from '../../library/firebase/controller'
-import { convertToDate, getMonthNames } from '../../library/firebase/utils'
+import { convertToDate, getMonthNames } from '../../library/utils'
 import Logout from './Logout'
 import Navbar from '../../layouts/v1/Navbar'
 

@@ -7,7 +7,7 @@ ReactModal.setAppElement('#root'); // For accessibility
 
 const Modal = ({
   title,
-  isModalOpen,
+  isModalOpen = true,
   onClose,
   children,
   fullscreen = false,
@@ -15,6 +15,7 @@ const Modal = ({
   closeOnOverlay = true,
   zIndex = 5000
 }) => {
+  console.log('Modal isModalOpen', isModalOpen)
   return (
     <ReactModal
       isOpen={isModalOpen}

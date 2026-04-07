@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { IconCard, Icons } from '../../../assets/Icons';
 import Card from '../../../components/cards/Card';
 import { getAllTransactions } from '../../../library/firebase/controller';
-import { getTodayDate, convertToDate } from '../../../library/firebase/utils';
+import { getTodayDate, convertToDate } from '../../../library/utils';
 
 const Transaction = ({ paramMonth = new Date().toISOString().slice(0, 7), onClick = () => { } }) => {
     const [transactionsData, setTransactionsData] = useState([]);

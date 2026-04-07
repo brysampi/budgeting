@@ -60,7 +60,7 @@ export default function SideNav({ hide, sidenavRef }) {
                     {hideNav ? < LuIndentIncrease /> : <LuIndentDecrease />}
                 </div>
             </div> */}
-            <div className={`sidenav ${hideNav ? 'w-[200px] sm:w-[50px]' : 'w-[50px] sm:w-[200px]'}`}>
+            <div className={`sidenav-v1 ${hideNav ? 'w-[200px] sm:w-[50px]' : 'w-[50px] sm:w-[200px]'}`}>
 
                 {/* <div className="title-v1">
                     <span className={hideText}>

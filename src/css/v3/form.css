@@ -1,0 +1,349 @@
+.shared-form-container-v3 {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.shared-form-header-v3 {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.header-field-v3 {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 0.6rem 0.8rem;
+    color: var(--color-light);
+    font-size: 0.85rem;
+    outline: none;
+}
+
+.header-field-v3:first-child {
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.shared-form-row-v3 {
+    padding-top: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    width: 100%;
+    animation: slideIn 0.3s cubic-bezier(0, 0, 0.2, 1) forwards;
+}
+
+.shared-form-input-group-v3 {
+    flex: 1;
+    display: flex;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+}
+
+.shared-form-input-group-v3 input,
+.shared-form-input-group-v3 select {
+    width: 100%;
+}
+
+.shared-form-input-group-v3 .w-limit {
+    max-width: 100px;
+}
+
+.shared-form-input-group-v3 .w-limit-150 {
+    max-width: 150px;
+}
+
+
+.shared-form-field-v3 {
+    background: transparent;
+    border: none;
+    padding: 0.7rem 0.6rem;
+    color: var(--color-light);
+    font-size: 0.85rem;
+    outline: none;
+    min-width: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.shared-form-field-v3:focus {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.shared-form-field-v3::placeholder {
+    color: var(--color-theme-secondary-text);
+    opacity: 0.4;
+}
+
+.shared-form-field-v3+.shared-form-field-v3 {
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.field-description-v3 {
+    flex: 2;
+    min-width: 150px;
+}
+
+.field-price-v3 {
+    flex: 1;
+    min-width: 100px;
+}
+
+.shared-form-actions-v3 {
+    display: flex;
+    gap: 0.35rem;
+    flex-shrink: 0;
+}
+
+.shared-form-action-btn-v3 {
+    border-radius: 12px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(255, 255, 255, 0.03);
+    flex-shrink: 0;
+}
+
+.shared-form-action-btn-v3.btn-remove-v3 {
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    /* color: var(--color-theme-secondary-text); */
+    color: var(--color-danger);
+}
+
+.shared-form-action-btn-v3.btn-remove-v3:hover {
+    background: rgba(248, 113, 113, 0.1);
+    color: var(--color-danger);
+    border-color: rgba(248, 113, 113, 0.2);
+}
+
+.shared-form-action-btn-v3.btn-discount-v3 {
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    /* color: var(--color-theme-secondary-text); */
+    color: var(--color-info);
+}
+
+.shared-form-action-btn-v3.btn-discount-v3:hover,
+.shared-form-action-btn-v3.btn-discount-v3.active-v3 {
+    color: var(--color-info);
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.shared-form-action-btn-v3.btn-submit-v3 {
+    background: var(--color-theme-important);
+    color: var(--color-dark);
+    box-shadow: 0 4px 12px var(--color-theme-important-low);
+    border: none;
+}
+
+.shared-form-action-btn-v3.btn-submit-v3:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px var(--color-theme-important-low);
+}
+
+.shared-form-action-btn-v3.btn-remove-v3 {
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    /* color: var(--color-theme-secondary-text); */
+    color: var(--color-danger);
+}
+
+.shared-form-action-btn-v3.btn-remove-v3:hover {
+    background: rgba(248, 113, 113, 0.1);
+    color: var(--color-danger);
+    border-color: rgba(248, 113, 113, 0.2);
+}
+
+.shared-form-add-more-v3 {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    color: var(--color-theme-important);
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 0.75rem;
+}
+
+.shared-form-add-more-v3:hover {
+    border-color: var(--color-theme-important);
+    color: var(--color-theme-important);
+    background: var(--color-theme-important-low);
+    border-style: solid;
+}
+
+.shared-form-footer-v3 {
+    display: flex;
+    margin-top: 3rem;
+}
+
+.shared-form-submit-all-v3 {
+    width: 100%;
+    background: var(--color-theme-important);
+    color: var(--color-dark);
+    height: 52px;
+    border-radius: 20px;
+    border: none;
+    font-weight: 800;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 30px var(--color-theme-important-low);
+}
+
+.shared-form-submit-all-v3:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 40px var(--color-theme-important-low);
+}
+
+.shared-form-submit-all-v3:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+}
+
+.shared-form-submit-all-v3:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--color-theme-tertiary);
+    color: var(--color-theme-secondary-text);
+}
+
+/* -------------------------------------IF Form is only One------------------------------------ */
+/* .shared-form-header-v3-single {
+    flex-direction: column;
+    gap: 0;
+}
+
+.header-field-v3-single:first-child {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+} */
+
+.shared-form-row-v3.single {
+    flex-direction: column;
+    align-items: stretch;
+    background: rgba(255, 255, 255, 0.01);
+    padding: 0.75rem;
+    border-radius: 18px;
+    margin-bottom: 0.5rem;
+}
+
+.shared-form-input-group-v3.single {
+    flex-direction: column;
+    background: transparent;
+    border: none;
+    padding: 0;
+    gap: 0.4rem;
+    max-width: none;
+}
+
+.shared-form-input-group-v3 .w-limit.single,
+.shared-form-input-group-v3 .w-limit-150.single {
+    max-width: none;
+}
+
+.shared-form-field-v3.single {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px !important;
+    text-align: left !important;
+    padding: 0.6rem;
+}
+
+.shared-form-actions-v3.single {
+    width: 100%;
+    margin-top: 0.2rem;
+}
+
+.shared-form-action-btn-v3.single {
+    flex: 1;
+    height: 42px;
+}
+
+.shared-form-submit-all-v3.single {
+    height: 56px;
+}
+
+/* -------------------------------------------------------------------------------------------- */
+
+/* @media (max-width: 768px) { */
+/* Forms for Mobile */
+@media (max-width: 500px) {
+    .shared-form-header-v3 {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .header-field-v3:first-child {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .shared-form-row-v3 {
+        flex-direction: column;
+        align-items: stretch;
+        background: rgba(255, 255, 255, 0.01);
+        padding: 0.75rem;
+        border-radius: 18px;
+        margin-bottom: 0.5rem;
+    }
+
+    .shared-form-input-group-v3 {
+        flex-direction: column;
+        background: transparent;
+        border: none;
+        padding: 0;
+        gap: 0.4rem;
+    }
+
+    .shared-form-input-group-v3 .w-limit,
+    .shared-form-input-group-v3 .w-limit-150 {
+        max-width: none;
+    }
+
+    .shared-form-field-v3 {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 10px !important;
+        text-align: left !important;
+        padding: 0.6rem;
+    }
+
+    .shared-form-actions-v3 {
+        width: 100%;
+        margin-top: 0.2rem;
+    }
+
+    .shared-form-action-btn-v3 {
+        flex: 1;
+        height: 42px;
+    }
+
+    .shared-form-footer-v3 {
+        margin-top: 2rem;
+    }
+
+    .shared-form-submit-all-v3 {
+        height: 56px;
+    }
+
+}

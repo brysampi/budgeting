@@ -1,4 +1,5 @@
 import Main from "../../pages/v3/Main";
+import '../../css/v3/form.css';
 const MainLayout = () => {
     return (
         <>

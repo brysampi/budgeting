@@ -3,7 +3,7 @@ import Card from '../../../components/cards/Card';
 import { IconCard } from '../../../assets/Icons';
 import { getCollectedDataRealTimeController, unsubscribeForAll } from '../../../library/firebase/controller';
 import DateSelector from './DateSelector';
-import { convertToDate, formatToYearMonth, componentIcons } from '../../../library/firebase/utils';
+import { convertToDate, formatToYearMonth, componentIcons } from '../../../library/utils';
 const Stats = ({ setParamMonth }) => {
     const [monthCollectionData, setMonthCollectionData] = useState([]);
     const [isFetching, setIsFetching] = useState(true);

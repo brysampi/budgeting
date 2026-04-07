@@ -17,7 +17,7 @@
 
 
 .sidenav-v1 ul li {
-    @apply p-[10px_18px] flex block cursor-pointer min-h-[44px]
+    @apply p-[10px_18px] flex items-center cursor-pointer min-h-[44px];
 }
 
 .sidenav-v1 ul li.active-v1 {

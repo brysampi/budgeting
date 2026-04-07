@@ -6,6 +6,11 @@ export const expensesCategoryStore = create((set) => ({
     // addData: (item) => set((state) => ({ data: [...state.data, item] })),
 }));
 
+export const walletStorage = create((set) => ({
+    data: [],
+    setData: (newData) => set({ data: newData }),
+}));
+
 // ------------------------------------------------------------------------
 // Example of how to use it
 // export const useStore = create((set) => ({

@@ -43,10 +43,10 @@ export const Icons = {
  * Universal Icon Component
  * Usage: <Icon name="FaMugHot" size={16} />
  */
-export const Icon = ({ name, size = 16, className = "" }) => {
+export const Icon = ({ name, size = 16, className = "", strokeWidth = null }) => {
     const IconComponent = Icons[name];
     if (!IconComponent) return null;
-    return <IconComponent size={size} className={className} />;
+    return <IconComponent size={size} className={className} strokeWidth={strokeWidth} />;
 };
 
 /**

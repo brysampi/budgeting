@@ -8,15 +8,16 @@ import {
     IconCard
 } from "../../../assets/Icons";
 import Cookies from "js-cookie";
+import { logout } from "../../../library/firebase/controller";
 // const Header = ({ isDarkMode, setIsDarkMode }) => {
 const Header = () => {
     const [isDarkMode, setIsDarkMode] = useState(true);
     const handleLogout = async () => {
-        // const response = await logout();
-        // if (response.status === 'success') {
-        //     window.location.href = '/login';
-        // }
-        console.log('Logout');
+        const response = await logout();
+        if (response.status === 'success') {
+            window.location.href = '/login';
+        }
+        // console.log('Logout');
     };
 
     const settingItems = [

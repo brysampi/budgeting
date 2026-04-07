@@ -132,3 +132,8 @@ export function componentIcons(type, customIcon = null, customColor = null) {
         iconBackground: customColor || colors[type] || 'bg-gray-100 dark:bg-white/10 text-gray-500'
     };
 }
+
+export function generateUniqueID() {
+    // 13 digits for timestamp + 2 digits for random = 15 digits
+    return `${Date.now()}${Math.floor(Math.random() * 90 + 10)}`;
+}
