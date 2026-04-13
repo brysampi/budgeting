@@ -5,7 +5,7 @@ import Logout from '../../pages/v1/Logout';
 import { useState, useRef, useEffect, useMemo } from 'react';
 // import '../css/main.css';
 const routes = [
-    { path: "/", title: "Bell Budgeting App" },
+    { path: "/", title: "Quanta Budgeting App" },
     { path: "/wallets/:paraMonth", title: "Wallets" },
     { path: "/income/:paraMonth", title: "Income" },
     { path: "/savings/:paraMonth", title: "Savings Summary / Category" },
@@ -32,12 +32,12 @@ const MainLayout = () => {
 
     const currentRoute = useMemo(() =>
         routes.find((r) => matchPath({ path: r.path, end: true }, location.pathname)) ||
-        { title: "Bell Budgeting App" },
+        { title: "Quanta Budgeting App" },
         [location.pathname]);
 
     useEffect(() => {
         // console.log('Current Route:', currentRoute);
-        document.title = `${currentRoute.title} - Bell Budgeting App` || "Bell Budgeting App";
+        document.title = `${currentRoute.title} - Quanta Budgeting App` || "Quanta Budgeting App";
     }, [currentRoute]);
 
     const [hideNav, setHideNav] = useState(false);

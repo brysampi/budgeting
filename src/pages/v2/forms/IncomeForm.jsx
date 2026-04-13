@@ -3,7 +3,6 @@ import { LuPlus, LuMinus, LuCheck, LuWallet, LuCalendar, LuHandCoins } from "rea
 import { useParams } from 'react-router-dom';
 import { income, getAllDataActiveRealTimeController } from '../../../library/firebase/controller';
 import { getTodayDate, generateUniqueID } from '../../../library/utils';
-import '../../../css/v2/form.css';
 
 const IncomeForm = ({ onFinish }) => {
     const { paramMonth } = useParams();

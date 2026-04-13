@@ -1,24 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Icons } from '../../../assets/Icons';
+import { Icons, Icon } from '../../../assets/Icons';
 import Modal from '../../../components/modal/Modal';
 import UploadImage from '../../../library/gemini/RecieptScanner';
 import { LuPlus, LuMinus, LuBadgePercent, LuCheck, LuWallet, LuCalendar } from "react-icons/lu";
 import { useParams } from 'react-router-dom';
 import { expensesTracker, getExpenses, getAllDataActiveRealTimeController } from '../../../library/firebase/controller';
 import { getTodayDate, generateUniqueID } from '../../../library/utils';
-import { expensesCategoryStore } from '../../../library/zustand/storage';
+import '../../../css/v2/form.css';
+import { expensesCategoryStore, walletStorage } from '../../../library/zustand/storage';
 
 const ExpensesForm = ({ onFinish }) => {
     const { paramMonth } = useParams();
-    const [categories, setCategories] = useState([]);
-    const [isFetchingCategories, setIsFetchingCategories] = useState(true);
     const [loading, setLoading] = useState(false);
     const [isModalOpenAI, setIsModalOpenAI] = useState(false);
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
     const storedCategories = expensesCategoryStore((state) => state.data) || [];
-    const handleAiData = (data) => {
-        // setRows(data); // This fills your form automatically!
+    const storedWallets = walletStorage((state) => state.data) || [];
+    const [headerDate, setHeaderDate] = useState(getTodayDate());
+    const [selectedWallet, setSelectedWallet] = useState(storedWallets[storedWallets.length - 1].id);
 
+    // AI Data Handler
+    const handleAiData = (data) => {
         if (data.items.length > 0) {
             console.log(data);
             if (rows.length === 1 && !rows[0].description) setRows([]);
@@ -32,7 +34,7 @@ const ExpensesForm = ({ onFinish }) => {
                     quantity: item.quantity,
                     price: item.price,
                     discount: item.discount,
-                    showDiscount: false
+                    showDiscount: item.discount > 0 ? true : false
                 }]);
             }
             setIsModalOpenAI(false);
@@ -40,34 +42,12 @@ const ExpensesForm = ({ onFinish }) => {
             console.log('No data found');
         }
     };
-    // const buttonClick = () => {
-    //     // console.log('button clicked', rows);
-    //     // console.log('data', data);
-    //     const fetchedData = [];
-    //     for (const item of data) {
-    //         fetchedData.push({ id: item.id, name: item.category });
-    //     }
-    //     console.log('data', fetchedData);
-    //     console.log('data', JSON.stringify(fetchedData, null, 2));
-    // };
-    // Header state
-    const [headerDate, setHeaderDate] = useState(getTodayDate());
-    const [selectedWallet, setSelectedWallet] = useState('');
-    const [wallets, setWallets] = useState([]);
-    const [isWalletsFetching, setIsWalletsFetching] = useState(true);
 
     // Manage multiple rows
+    const maxSingleRow = 3;
     const [rows, setRows] = useState([
         { id: generateUniqueID(), categoryId: '', categoryName: '', description: '', quantity: '', price: '', discount: '', showDiscount: false }
     ]);
-
-    useEffect(() => {
-        const fetchInitialData = async () => {
-            await getExpenses(paramMonth, setCategories, setIsFetchingCategories, true);
-            await getAllDataActiveRealTimeController('wallets', setWallets, setIsWalletsFetching);
-        };
-        fetchInitialData();
-    }, [paramMonth]);
 
     const handleInputChange = (id, field, value) => {
         setRows(rows.map(row =>
@@ -81,7 +61,11 @@ const ExpensesForm = ({ onFinish }) => {
 
     const toggleDiscount = (id) => {
         setRows(rows.map(row =>
-            row.id === id ? { ...row, showDiscount: !row.showDiscount } : row
+            row.id === id ? {
+                ...row,
+                discount: '',
+                showDiscount: !row.showDiscount
+            } : row
         ));
     };
 
@@ -95,74 +79,73 @@ const ExpensesForm = ({ onFinish }) => {
 
     const handleSubmitAll = async () => {
 
-        if (!selectedWallet) {
-            alert("Please select a wallet");
-            return;
-        }
+        // if (!selectedWallet) {
+        //     alert("Please select a wallet");
+        //     return;
+        // }
 
-        const invalidRows = rows.filter(row => !row.categoryId || !row.description || !row.price);
-        if (invalidRows.length > 0) {
-            alert("Please fill in all fields (Category, Description, Price) for all rows.");
-            return;
-        }
+        // const invalidRows = rows.filter(row => !row.categoryId || !row.description || !row.price);
+        // if (invalidRows.length > 0) {
+        //     alert("Please fill in all fields (Category, Description, Price) for all rows.");
+        //     return;
+        // }
 
-        setLoading(true);
-        let successCount = 0;
+        // setLoading(true);
+        // let successCount = 0;
 
         for (const row of rows) {
             const data = {
                 category: row.categoryId,
                 description: row.description,
-                price: parseFloat(row.price),
-                discount: row.discount ? parseFloat(row.discount) : 0,
+                price: row.price,
+                discount: row.discount ? row.discount : 0,
                 date: headerDate,
                 wallet: selectedWallet
             };
 
-            const result = await expensesTracker(data);
-            if (result.status === 'success') {
-                successCount++;
-                console.log(result);
-            }
+            console.log(data);
+            // const result = await expensesTracker(data);
+            // if (result.status === 'success') {
+            //     successCount++;
+            //     console.log(result);
+            // }
         }
 
-        setLoading(false);
-        if (successCount === rows.length) {
-            console.log('success')
-            if (onFinish) onFinish();
-            setRows([{ id: generateUniqueID(), categoryId: '', categoryName: '', description: '', quantity: '', price: '', discount: '', showDiscount: false }]);
-        } else if (successCount > 0) {
-            alert(`Successfully added ${successCount} of ${rows.length} expenses.`);
-        } else {
-            alert(`Failed to add expenses.`);
-        }
+        // setLoading(false);
+        // if (successCount === rows.length) {
+        //     console.log('success')
+        //     if (onFinish) onFinish();
+        //     setRows([{ id: generateUniqueID(), categoryId: '', categoryName: '', description: '', quantity: '', price: '', discount: '', showDiscount: false }]);
+        // } else if (successCount > 0) {
+        //     alert(`Successfully added ${successCount} of ${rows.length} expenses.`);
+        // } else {
+        //     alert(`Failed to add expenses.`);
+        // }
     };
 
     return (
-        <div className="shared-form-container-v2">
-            {/* Header Section */}
-            {/* <button onClick={buttonClick}>
-                Click me
-            </button> */}
-            <>
-                <button
-                    // onClick={() => setIsSettingsOpen(true)}
-                    onClick={() => setIsModalOpenAI(true)}
-                    className="w-full p-4 rounded-2xl bg-[var(--color-theme-secondary)] border border-white/5 flex items-center justify-between group hover:bg-white/5 transition-all text-left"
-                >
-                    <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-500">
-                            <Icons.LuSparkles size={20} />
-                        </div>
-                        <div>
-                            <div className="text-[var(--color-light)] font-bold">AI Receipt Scanner</div>
-                            <div className="text-[var(--color-theme-secondary-text)] text-xs">Auto-extract details from photos</div>
-                        </div>
+        <div className="shared-form-container-v3">
+            {/* AI Button */}
+            <button
+                // onClick={() => setIsSettingsOpen(true)}
+                onClick={() => setIsModalOpenAI(true)}
+                className="w-full p-4 rounded-2xl bg-[var(--color-theme-secondary)] border border-white/5 flex items-center justify-between group hover:bg-white/5 transition-all text-left"
+            >
+                <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-500">
+                        <Icon name="LuSparkles" size={20} />
                     </div>
-                    <Icons.LuArrowLeft className="rotate-180 opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                </button>
-                <div className="h-[1px] bg-white/5 w-full my-2" />
-            </>
+                    <div>
+                        <div className="text-[var(--color-light)] font-bold">AI Receipt Scanner</div>
+                        <div className="text-[var(--color-theme-secondary-text)] text-xs">Auto-extract details from photos</div>
+                    </div>
+                </div>
+                <Icon name="LuArrowLeft" size={20} className="rotate-180 opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+            </button>
+
+            <div className="h-[1px] bg-white/5 w-full my-2" />
+
+            {/* AI Modal */}
             <Modal
                 title={'AI Receipt Scanner'}
                 isModalOpen={isModalOpenAI}
@@ -175,38 +158,58 @@ const ExpensesForm = ({ onFinish }) => {
             >
                 <UploadImage onDataExtracted={handleAiData} />
             </Modal>
-            <div className="shared-form-header-v2">
+
+            <div className="shared-form-header-v3">
                 <div className="flex items-center flex-1">
-                    <LuCalendar className="ml-3 text-[var(--color-theme-secondary-text)]" size={16} />
+                    <Icon name="LuCalendar" size={16} className="ml-3 text-[var(--color-theme-secondary-text)]" />
                     <input
                         type="date"
-                        className="header-field-v2"
+                        className="header-field-v3"
                         value={headerDate}
                         onChange={(e) => setHeaderDate(e.target.value)}
                     />
                 </div>
                 <div className="flex items-center flex-1">
-                    <LuWallet className="ml-3 text-[var(--color-theme-secondary-text)]" size={16} />
+                    <Icon name="LuWallet" size={16} className="ml-3 text-[var(--color-theme-secondary-text)]" />
                     <select
-                        className="header-field-v2"
+                        className="header-field-v3"
                         value={selectedWallet}
                         onChange={(e) => setSelectedWallet(e.target.value)}
                     >
-                        <option value="" disabled>Select Wallet</option>
-                        {wallets.map(w => (
-                            <option key={w.id} value={w.id}>{w.name}</option>
-                        ))}
+                        {storedWallets && storedWallets.length > 0 ? (
+                            storedWallets.map(wallet => (
+                                wallet.status === 'active' && (
+                                    <option key={wallet.id} value={wallet.id}>{wallet.name}</option>
+                                )
+                            )).reverse()
+                        ) :
+                            <option value="" disabled>No Wallets Found</option>
+                        }
                     </select>
                 </div>
             </div>
+            {/* Table Header */}
+            {rows.length >= maxSingleRow && (
+                <div className="shared-form-table-header-v3">
+                    <div className="shared-form-input-group-v3" style={{ background: 'transparent', border: 'none', borderRadius: 0 }}>
+                        <div className="form-header-title field-description-v3">Expenses Name / Description</div>
+                        <div className="form-header-title" style={{ flex: 1 }}>Category</div>
+                        <div className="form-header-title field-price-v3">Price</div>
+                        {/* <div className="form-header-title field-price-v3">Discount</div> */}
+                    </div>
+                    <div className="shared-form-actions-v3">
+                        <div style={{ width: '36px' }}></div>
+                    </div>
+                </div>
+            )}
 
             {/* Rows List */}
             <div className="shared-form-body">
                 {rows.map((row, index) => (
-                    <div key={row.id} className="shared-form-row-v2">
-                        <div className="shared-form-input-group-v2">
+                    <div key={row.id} className={`shared-form-row-v3 ${rows.length < maxSingleRow ? 'single' : ''}`}>
+                        <div className={`shared-form-input-group-v3 ${rows.length < maxSingleRow ? 'single' : ''}`}>
                             <select
-                                className="shared-form-field-v2 field-category-v2"
+                                className={`shared-form-field-v3 field-category-v3 ${rows.length < maxSingleRow ? 'single' : ''}`}
                                 value={row.categoryId}
                                 onChange={(e) => handleInputChange(row.id, 'categoryId', e.target.value)}
                             >
@@ -225,21 +228,21 @@ const ExpensesForm = ({ onFinish }) => {
 
                             <input
                                 type="text"
-                                className="shared-form-field-v2 field-description-v2"
+                                className={`shared-form-field-v3 field-description-v3 ${rows.length < maxSingleRow ? 'single' : ''}`}
                                 placeholder="Description"
                                 value={row.description}
                                 onChange={(e) => handleInputChange(row.id, 'description', e.target.value)}
                             />
                             <input
                                 type="number"
-                                className="shared-form-field-v2 field-qty-v2"
+                                className={`shared-form-field-v3 field-qty-v3 ${rows.length < maxSingleRow ? 'single' : ''}`}
                                 placeholder="Qty"
                                 value={row.quantity}
                                 onChange={(e) => handleInputChange(row.id, 'quantity', e.target.value)}
                             />
                             <input
                                 type="number"
-                                className="shared-form-field-v2 field-price-v2"
+                                className={`shared-form-field-v3 field-price-v3 ${rows.length < maxSingleRow ? 'single' : ''}`}
                                 placeholder="Price"
                                 value={row.price}
                                 onChange={(e) => handleInputChange(row.id, 'price', e.target.value)}
@@ -248,7 +251,7 @@ const ExpensesForm = ({ onFinish }) => {
                             {row.showDiscount && (
                                 <input
                                     type="number"
-                                    className="shared-form-field-v2 field-discount-v2"
+                                    className={`shared-form-field-v3 field-discount-v3 ${rows.length < maxSingleRow ? 'single' : ''}`}
                                     placeholder="Disc"
                                     value={row.discount}
                                     onChange={(e) => handleInputChange(row.id, 'discount', e.target.value)}
@@ -256,20 +259,23 @@ const ExpensesForm = ({ onFinish }) => {
                             )}
                         </div>
 
-                        <div className="shared-form-actions-v2">
+                        <div className="shared-form-actions-v3">
                             <button
-                                className={`shared-form-action-btn-v2 btn-discount-v2 ${row.showDiscount ? 'active-v2' : ''}`}
+                                className={`shared-form-action-btn-v3 btn-discount-v3 
+                                    ${row.showDiscount ? 'active-v3' : ''} 
+                                    ${rows.length < maxSingleRow ? 'single' : ''}
+                                    `}
                                 onClick={() => toggleDiscount(row.id)}
                                 title="Add Discount"
                             >
-                                <LuBadgePercent size={18} />
+                                <Icon name="LuBadgePercent" size={18} />
                             </button>
                             <button
-                                className="shared-form-action-btn-v2 btn-remove-v2"
+                                className={`shared-form-action-btn-v3 btn-remove-v3 ${rows.length < maxSingleRow ? 'single' : ''}`}
                                 onClick={() => removeRow(row.id)}
                                 title="Remove Row"
                             >
-                                <LuMinus size={18} />
+                                <Icon name="LuMinus" size={18} />
                             </button>
 
                         </div>
@@ -277,16 +283,14 @@ const ExpensesForm = ({ onFinish }) => {
                 ))}
             </div>
 
-            {/* Add Item Button */}
-            <button className="shared-form-add-more-v2" onClick={addRow}>
-                <LuPlus size={18} />
+            <button className="shared-form-add-more-v3" onClick={addRow}>
+                <Icon name="LuPlus" size={18} />
                 <span>Add Item</span>
             </button>
 
-            {/* Footer Submit */}
-            <div className="shared-form-footer-v2">
+            <div className="shared-form-footer-v3">
                 <button
-                    className={`shared-form-submit-all-v2 ${loading ? 'loading' : ''}`}
+                    className={`shared-form-submit-all-v3 ${loading ? 'loading' : ''}`}
                     onClick={handleSubmitAll}
                     disabled={loading}
                 >

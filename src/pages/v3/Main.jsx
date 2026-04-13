@@ -13,6 +13,7 @@ import {
 } from '../../assets/Icons';
 import Header from './components/Header';
 import Wallets from './components/Wallets';
+import AddForms from './components/AddForms';
 
 import { getAllDataRealTimeController } from '../../library/firebase/controller';
 import Fetching from './Fetching';
@@ -32,7 +33,7 @@ const main = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     console.log('param month ', searchParams.get('yearMonth'));
     const changeMonth = (newMonth) => {
-        setSearchParams({ yearMonth: newMonth }); // updates URL without reload
+        setSearchParams({ yearMonth: newMonth });
     };
     // const paramMonth = new Date().toISOString().slice(0, 7); // Default to current YYYY-MM
     // const paramMonth = '2025-11';
@@ -42,9 +43,10 @@ const main = () => {
         <>
             {/* <Header isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} /> */}
             <Fetching setIsFetching={setIsFetching} />
+            <AddForms />
             <Header />
             <Wallets />
-            <button onClick={() => changeMonth('2025-11')}>Change Month</button>
+            {/* <button onClick={() => changeMonth('2025-11')}>Change Month</button> */}
         </>
     );
 };

@@ -3,7 +3,6 @@ import { LuPlus, LuMinus, LuCheck, LuWallet, LuCalendar, LuPiggyBank } from "rea
 import { useParams } from 'react-router-dom';
 import { savingsTracker, getSavings, getAllDataActiveRealTimeController } from '../../../library/firebase/controller';
 import { getTodayDate, generateUniqueID } from '../../../library/utils';
-import '../../../css/v2/form.css';
 
 const SavingsForm = ({ onFinish }) => {
     const { paramMonth } = useParams();

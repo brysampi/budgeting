@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Icons, Icon } from '../../../assets/Icons';
+import { Icon } from '../../../assets/Icons';
 import { getAllDataRealTimeController } from '../../../library/firebase/controller';
 import Modal from '../../../components/modal/Modal';
 import WalletForm from '../forms/WalletForm';
@@ -114,7 +114,7 @@ const Wallets = () => {
                                     <div className="w-14 h-14 rounded-full bg-[var(--color-theme-important)]/10 flex items-center justify-center">
                                         <Icon name="LuLoader" size={28} className="text-[var(--color-theme-important)] animate-spin" strokeWidth={2.5} />
                                     </div>
-                                    <span className="text-base font-semibold text-[var(--color-theme-important)]">Fetching Cards</span>
+                                    <span className="text-base font-semibold text-[var(--color-theme-important)]">Fetching Wallets</span>
                                 </div>
                                 :
                                 <>

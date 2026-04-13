@@ -15,7 +15,7 @@ const Modal = ({
   closeOnOverlay = true,
   zIndex = 5000
 }) => {
-  console.log('Modal isModalOpen', isModalOpen)
+  // console.log('Modal isModalOpen', isModalOpen)
   return (
     <ReactModal
       isOpen={isModalOpen}

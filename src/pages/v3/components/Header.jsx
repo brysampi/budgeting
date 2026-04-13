@@ -5,7 +5,8 @@ import {
     SettingsIcon as FaGear,
     SunIcon as FaSun,
     MoonIcon as FaMoon,
-    IconCard
+    IconCard,
+    Icon
 } from "../../../assets/Icons";
 import Cookies from "js-cookie";
 import { logout } from "../../../library/firebase/controller";
@@ -82,7 +83,7 @@ const Header = () => {
                 </div>
                 <div className="flex items-center gap-3">
                     <button onClick={toggleTheme} className="w-10 h-10 rounded-full bg-[var(--color-theme-secondary)] dark:bg-[var(--color-theme-secondary)] hover:bg-[var(--color-theme-important-light)] flex items-center justify-center text-[var(--color-theme-important-light)] hover:text-[var(--color-theme-secondary)] transition-all shadow-sm border border-black/5">
-                        {isDarkMode ? <FaSun size={16} /> : <FaMoon size={16} />}
+                        {isDarkMode ? <Icon name="FaSun" size={16} /> : <Icon name="FaMoon" size={16} />}
                     </button>
                     {/* <button className="w-10 h-10 rounded-full bg-white dark:bg-[var(--color-theme-secondary)] flex items-center justify-center text-[var(--color-theme-secondary-text)] hover:shadow-md transition-all border border-black/5">
                         <FaBell size={16} />

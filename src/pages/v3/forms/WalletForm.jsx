@@ -7,29 +7,17 @@ import { walletStorage } from '../../../library/zustand/storage';
 
 const WalletForm = ({ onFinish }) => {
     const { paramMonth } = useParams();
-    console.log('paramMonth', paramMonth)
+    // console.log('paramMonth', paramMonth)
     const [loading, setLoading] = useState(false);
-
-    // Header state
     const [headerDate, setHeaderDate] = useState(getTodayDate());
     const [selectedWallet, setSelectedWallet] = useState('');
-    // const [wallets, setWallets] = useState([]);
-    // const [isWalletsFetching, setIsWalletsFetching] = useState(true);
+    const storedWallets = walletStorage((state) => state.data) || [];
 
     // Manage multiple rows
+    const maxSingleRow = 3;
     const [rows, setRows] = useState([
         { id: generateUniqueID(), name: '', status: '', startingBudget: '', dueDate: getTodayDate() }
     ]);
-    const maxSingleRow = 2;
-
-    const storedWallets = walletStorage((state) => state.data) || [];
-    // console.log(storedWallets)
-    // useEffect(() => {
-    //     const fetchInitialData = async () => {
-    //         await getAllDataActiveRealTimeController('wallets', setWallets, setIsWalletsFetching);
-    //     };
-    //     fetchInitialData();
-    // }, []);
 
     const handleInputChange = (id, field, value) => {
         setRows(rows.map(row =>
@@ -141,7 +129,7 @@ const WalletForm = ({ onFinish }) => {
                                 onChange={(e) => handleInputChange(row.id, 'status', e.target.value)}
                             >
                                 {/* <option value="" disabled>Status</option> */}
-                                <option value="active" selected>Active</option>
+                                <option value="active" defaultValue>Active</option>
                                 <option value="inactive">Inactive</option>
                             </select>
 
