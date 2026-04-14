@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { LuPlus, LuMinus, LuCheck, LuWallet, LuCalendar, LuBolt } from "react-icons/lu";
 import { useParams } from 'react-router-dom';
 // import { bills, getAllDataActiveRealTimeController } from '../../../library/firebase/controller';
-import { getTodayDate, generateUniqueID } from '../../../library/utils';
+import { getTodayDate, generateUniqueID, accurateDecimal } from '../../../library/utils';
 import { walletStorage } from '../../../library/zustand/storage';
+
+import { addWallets } from '../../../library/firebase/v3/controller';
 
 const WalletForm = ({ onFinish }) => {
     const { paramMonth } = useParams();
@@ -16,7 +18,7 @@ const WalletForm = ({ onFinish }) => {
     // Manage multiple rows
     const maxSingleRow = 3;
     const [rows, setRows] = useState([
-        { id: generateUniqueID(), name: '', status: '', startingBudget: '', dueDate: getTodayDate() }
+        { id: generateUniqueID(), name: '', type: 'checking', startingBudget: '', dueDate: getTodayDate() }
     ]);
 
     const handleInputChange = (id, field, value) => {
@@ -26,26 +28,21 @@ const WalletForm = ({ onFinish }) => {
     };
 
     const addRow = () => {
-        setRows([...rows, { id: generateUniqueID(), name: '', status: '', startingBudget: '', dueDate: getTodayDate() }]);
+        setRows([...rows, { id: generateUniqueID(), name: '', type: 'checking', startingBudget: '', dueDate: getTodayDate() }]);
     };
 
     const removeRow = (id) => {
         if (rows.length > 1) {
             setRows(rows.filter(row => row.id !== id));
         } else {
-            setRows([{ id: generateUniqueID(), name: '', status: '', startingBudget: '', dueDate: getTodayDate() }]);
+            setRows([{ id: generateUniqueID(), name: '', type: '', startingBudget: '', dueDate: getTodayDate() }]);
         }
     };
 
     const handleSubmitAll = async () => {
-        if (!selectedWallet) {
-            alert("Please select a wallet");
-            return;
-        }
-
-        const invalidRows = rows.filter(row => !row.description || !row.budget || !row.dueDate);
+        const invalidRows = rows.filter(row => !row.name || !row.type);
         if (invalidRows.length > 0) {
-            alert("Please fill in (Description, Budget, Due Date) for all rows.");
+            alert("Please fill in (Name, Type) for all rows.");
             return;
         }
 
@@ -54,27 +51,23 @@ const WalletForm = ({ onFinish }) => {
 
         for (const row of rows) {
             const data = {
-                description: row.description,
-                budget: parseFloat(row.budget),
-                actual: row.actual ? parseFloat(row.actual) : 0,
-                dueDate: row.dueDate,
-                wallet: selectedWallet,
-                date: headerDate,
+                name: row.name,
+                type: row.type,
+                startingBudget: row.startingBudget ? accurateDecimal(row.startingBudget) : 0,
             };
-            console.log(data);
-
-            // const result = await bills(data);
-            // if (result.status === 'success') {
-            //     successCount++;
-            // }
+            const result = await addWallets(data)
+            // console.log('result', result)
+            if (result.status === 'success') {
+                successCount++;
+            }
         }
 
-        // if (successCount === rows.length) {
-        //     if (onFinish) onFinish();
-        //     setRows([{ id: generateUniqueID(), description: '', budget: '', actual: '', dueDate: getTodayDate() }]);
-        // } else if (successCount > 0) {
-        //     alert(`Successfully added ${successCount} of ${rows.length} bills.`);
-        // }
+        if (successCount === rows.length) {
+            if (onFinish) onFinish();
+            setRows([{ id: generateUniqueID(), name: '', type: 'checking', startingBudget: '', dueDate: getTodayDate() }]);
+        } else if (successCount > 0) {
+            alert(`Successfully added ${successCount} of ${rows.length} wallets.`);
+        }
         setLoading(false);
     };
 
@@ -110,7 +103,19 @@ const WalletForm = ({ onFinish }) => {
                     </select>
                 </div>
             </div> */}
-
+            {/* Table Header */}
+            {rows.length >= maxSingleRow && (
+                <div className="shared-form-table-header-v3">
+                    <div className="shared-form-input-group-v3" style={{ background: 'transparent', border: 'none', borderRadius: 0 }}>
+                        <div className="form-header-title field-description-v3">Wallet Name</div>
+                        <div className="form-header-title" style={{ flex: 1 }}>Wallet Type</div>
+                        <div className="form-header-title field-price-v3">Starting Budget</div>
+                    </div>
+                    <div className="shared-form-actions-v3">
+                        <div style={{ width: '36px' }}></div>
+                    </div>
+                </div>
+            )}
             {/* Rows List */}
             <div className="shared-form-body">
                 {rows.map((row, index) => (
@@ -123,14 +128,17 @@ const WalletForm = ({ onFinish }) => {
                                 value={row.name}
                                 onChange={(e) => handleInputChange(row.id, 'name', e.target.value)}
                             />
+                            <div className={`shared-form-label-v3 ${rows.length < maxSingleRow ? 'single' : ''}`}>
+                                Wallet Type
+                            </div>
                             <select
                                 className={`shared-form-field-v3 w-limit ${rows.length < maxSingleRow ? 'single' : ''}`}
-                                value={row.status}
-                                onChange={(e) => handleInputChange(row.id, 'status', e.target.value)}
+                                value={row.type}
+                                onChange={(e) => handleInputChange(row.id, 'type', e.target.value)}
                             >
                                 {/* <option value="" disabled>Status</option> */}
-                                <option value="active" defaultValue>Active</option>
-                                <option value="inactive">Inactive</option>
+                                <option value="checking" defaultValue>Checking / Transfer</option>
+                                <option value="savings">Savings</option>
                             </select>
 
                             <input

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Icons, Icon } from '../../../assets/Icons';
+import { Icon } from '../../../assets/Icons';
 import Modal from '../../../components/modal/Modal';
 import UploadImage from '../../../library/gemini/RecieptScanner';
 import { LuPlus, LuMinus, LuBadgePercent, LuCheck, LuWallet, LuCalendar } from "react-icons/lu";
@@ -8,8 +8,8 @@ import { expensesTracker, getExpenses, getAllDataActiveRealTimeController } from
 import { getTodayDate, generateUniqueID } from '../../../library/utils';
 import '../../../css/v2/form.css';
 import { expensesCategoryStore, walletStorage } from '../../../library/zustand/storage';
-
-const ExpensesForm = ({ onFinish }) => {
+import Big from "big.js";
+const ExpenseForm = ({ onFinish }) => {
     const { paramMonth } = useParams();
     const [loading, setLoading] = useState(false);
     const [isModalOpenAI, setIsModalOpenAI] = useState(false);
@@ -97,10 +97,10 @@ const ExpensesForm = ({ onFinish }) => {
             const data = {
                 category: row.categoryId,
                 description: row.description,
-                price: row.price,
-                discount: row.discount ? row.discount : 0,
-                date: headerDate,
-                wallet: selectedWallet
+                price: new Big(row.price),
+                discount: row.discount ? new Big(row.discount) : new Big(0),
+                wallet: selectedWallet,
+                date: headerDate
             };
 
             console.log(data);
@@ -301,4 +301,4 @@ const ExpensesForm = ({ onFinish }) => {
     );
 };
 
-export default ExpensesForm;
+export default ExpenseForm;

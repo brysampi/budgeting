@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getDataRealTimeController, getBillsDataRealTimeController, deleteDataController } from '../../library/firebase/controller';
-import { convertToDate, getMonthNamesSingleDigit } from '../../library/firebase/utils';
+import { convertToDate, getMonthNamesSingleDigit } from '../../library/utils';
 import { useParams, useOutletContext, Link } from 'react-router-dom';
 import { LuPlus, LuTrash2, LuSquarePen, LuArrowLeft } from 'react-icons/lu';
 import Modal from '../../components/modal/Modal';

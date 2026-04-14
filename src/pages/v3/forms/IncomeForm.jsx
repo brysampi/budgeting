@@ -4,7 +4,7 @@ import { income, getAllDataActiveRealTimeController } from '../../../library/fir
 import { getTodayDate, generateUniqueID } from '../../../library/utils';
 import { walletStorage } from '../../../library/zustand/storage';
 import { Icon } from '../../../assets/Icons';
-
+import Big from "big.js";
 const IncomeForm = ({ onFinish }) => {
     const { paramMonth } = useParams();
     const [loading, setLoading] = useState(false);
@@ -64,8 +64,8 @@ const IncomeForm = ({ onFinish }) => {
         for (const row of rows) {
             const data = {
                 description: row.description,
-                expected: parseFloat(row.expected),
-                amount: parseFloat(row.amount),
+                expected: new Big(row.expected),
+                amount: new Big(row.amount),
                 wallet: selectedWallet,
                 date: headerDate,
             };

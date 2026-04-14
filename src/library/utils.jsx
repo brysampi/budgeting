@@ -1,5 +1,6 @@
 import Cookies from 'js-cookie';
 import { Timestamp } from 'firebase/firestore';
+import Big from "big.js";
 
 export function successMsg(message, data) {
     return { status: 'success', message: message, data: data, boolean: true };
@@ -137,3 +138,8 @@ export function generateUniqueID() {
     // 13 digits for timestamp + 2 digits for random = 15 digits
     return `${Date.now()}${Math.floor(Math.random() * 90 + 10)}`;
 }
+
+export function accurateDecimal(amount) {
+    return new Big(amount);
+}
+

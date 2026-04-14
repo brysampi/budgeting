@@ -16,8 +16,7 @@ const Wallets = () => {
 
     const clickCard = (card) => console.log('Selected card', card);
     const clickAddCard = () => {
-        console.log('Add card');
-        console.log(isModalOpen);
+        console.log('Add Wallet');
         setIsModalOpen(true);
     };
 
@@ -82,13 +81,21 @@ const Wallets = () => {
     };
     return (
         <>
-
             <div className="w-full">
                 <div className="flex items-center justify-between mb-4 px-1">
                     <h2 className="text-lg font-bold text-[var(--color-light)]">My Wallets</h2>
-                    <span className="text-xs text-[var(--color-theme-secondary-text)] font-medium">
-                        {walletCards.length} {walletCards.length === 1 ? 'wallet' : 'wallets'}
-                    </span>
+                    <div className="text-xs text-[var(--color-theme-secondary-text)] font-medium flex items-center gap-3">
+                        <button
+                            onClick={() => console.log('View All Wallets')}
+                            className="hover:text-[var(--color-theme-important)] text-xs text-[var(--color-theme-secondary-text)] font-medium">
+                            {walletCards.length} {walletCards.length === 1 ? 'Wallet' : 'Wallets'}
+                        </button>
+                        <button
+                            onClick={() => setIsModalOpen(true)}
+                            className="hover:text-[var(--color-theme-important)] text-xs text-[var(--color-theme-secondary-text)] font-medium">
+                            Add Wallet
+                        </button>
+                    </div>
                 </div>
 
                 {/* Scroll Container with Navigation Buttons */}
@@ -157,7 +164,7 @@ const Wallets = () => {
                 </div>
             </div>
             <Modal
-                title="Add Card"
+                title="Add Wallet"
                 isModalOpen={isModalOpen}
                 fullscreen={false}
                 maxWidth='550px'
@@ -179,7 +186,7 @@ const WalletCard = ({ name, balance, isAddCard, onClick }) => {
                 <div className="w-14 h-14 rounded-full bg-[var(--color-theme-important)]/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Icon name="LuPlus" size={28} className="text-[var(--color-theme-important)]" strokeWidth={2.5} />
                 </div>
-                <span className="text-base font-semibold text-[var(--color-theme-important)]">Add Card</span>
+                <span className="text-base font-semibold text-[var(--color-theme-important)]">Add Wallet</span>
             </div>
         );
     }

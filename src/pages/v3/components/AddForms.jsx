@@ -1,7 +1,6 @@
-import ExpensesForm from "../forms/ExpensesForm";
+import ExpenseForm from "../forms/ExpenseForm";
 import IncomeForm from "../forms/IncomeForm";
 import BillsForm from "../forms/BillsForm";
-// import SavingsForm from "../forms/SavingsForm";
 import { Icon, Icons } from "../../../assets/Icons";
 import Modal from "../../../components/modal/Modal";
 import { useState } from 'react';
@@ -66,7 +65,7 @@ export default function AddForms() {
                             { label: 'Expense', type: 'Expense', icon: 'LuShoppingBag' },
                             { label: 'Income', type: 'Income', icon: 'LuHandCoins' },
                             { label: 'Bill', type: 'Bill', icon: 'FaBolt' },
-                            { label: 'Saving', type: 'Saving', icon: 'FaPiggyBank' }
+                            // { label: 'Saving', type: 'Saving', icon: 'FaPiggyBank' }
                         ].map(tab => (
                             <button
                                 key={tab.type}
@@ -88,7 +87,7 @@ export default function AddForms() {
 
                     {modalFormType === 'Expense' && (
                         // <ExpensesForm onFinish={() => setIsModalOpen(false)} />
-                        <ExpensesForm />
+                        <ExpenseForm />
                         // console.log('expensesTracker')
                     )}
 
@@ -106,7 +105,8 @@ export default function AddForms() {
 
                     {modalFormType === 'Saving' && (
                         // <SavingsForm onFinish={() => setIsModalOpen(false)} />
-                        console.log('savingsTracker')
+                        <SavingForm />
+                        // console.log('savingsTracker')
                     )}
                     {/* <div className="flex flex-col"> */}
                     <button

@@ -11,6 +11,11 @@ export const walletStorage = create((set) => ({
     setData: (newData) => set({ data: newData }),
 }));
 
+export const categoriesStore = create((set) => ({
+    data: [],
+    setData: (newData) => set({ data: newData }),
+}));
+
 // ------------------------------------------------------------------------
 // Example of how to use it
 // export const useStore = create((set) => ({

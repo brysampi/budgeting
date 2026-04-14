@@ -5,6 +5,7 @@ import { bills, getAllDataActiveRealTimeController } from '../../../library/fire
 import { getTodayDate, generateUniqueID } from '../../../library/utils';
 import { walletStorage } from '../../../library/zustand/storage';
 import { Icon } from '../../../assets/Icons';
+import Big from "big.js";
 
 const BillsForm = ({ onFinish }) => {
     const { paramMonth } = useParams();
@@ -48,43 +49,43 @@ const BillsForm = ({ onFinish }) => {
     };
 
     const handleSubmitAll = async () => {
-        if (!selectedWallet) {
-            alert("Please select a wallet");
-            return;
-        }
+        // if (!selectedWallet) {
+        //     alert("Please select a wallet");
+        //     return;
+        // }
 
-        const invalidRows = rows.filter(row => !row.description || !row.budget || !row.dueDate);
-        if (invalidRows.length > 0) {
-            alert("Please fill in (Description, Budget, Due Date) for all rows.");
-            return;
-        }
+        // const invalidRows = rows.filter(row => !row.description || !row.budget || !row.dueDate);
+        // if (invalidRows.length > 0) {
+        //     alert("Please fill in (Description, Budget, Due Date) for all rows.");
+        //     return;
+        // }
 
-        setLoading(true);
-        let successCount = 0;
+        // setLoading(true);
+        // let successCount = 0;
 
         for (const row of rows) {
             const data = {
                 description: row.description,
-                budget: parseFloat(row.budget),
-                actual: row.actual ? parseFloat(row.actual) : 0,
+                budget: new Big(row.budget),
+                actual: row.actual ? new Big(row.actual) : new Big(0),
                 dueDate: row.dueDate,
                 wallet: selectedWallet,
                 date: headerDate,
             };
 
-            const result = await bills(data);
-            if (result.status === 'success') {
-                successCount++;
-            }
+            // const result = await bills(data);
+            // if (result.status === 'success') {
+            //     successCount++;
+            // }
         }
 
-        if (successCount === rows.length) {
-            if (onFinish) onFinish();
-            setRows([{ id: generateUniqueID(), description: '', budget: '', actual: '', dueDate: getTodayDate() }]);
-        } else if (successCount > 0) {
-            alert(`Successfully added ${successCount} of ${rows.length} bills.`);
-        }
-        setLoading(false);
+        // if (successCount === rows.length) {
+        //     if (onFinish) onFinish();
+        //     setRows([{ id: generateUniqueID(), description: '', budget: '', actual: '', dueDate: getTodayDate() }]);
+        // } else if (successCount > 0) {
+        //     alert(`Successfully added ${successCount} of ${rows.length} bills.`);
+        // }
+        // setLoading(false);
     };
 
     return (

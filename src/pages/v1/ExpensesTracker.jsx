@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { expensesTracker, getExpensesTracker, getExpenses, expensesTrackerUpdate, deleteDataController, checkStaticData } from '../../library/firebase/controller';
 import { useParams, useOutletContext } from 'react-router-dom';
 import { LuPlus, LuArrowBigUpDash, LuArrowBigDownDash, LuTrash2, LuSquarePen } from "react-icons/lu";
-import { convertToDate, getLastDayOfTheMonth } from '../../library/firebase/utils';
+import { convertToDate, getLastDayOfTheMonth } from '../../library/utils';
 import Modal from '../../components/modal/Modal';
 import ModalForms from './ModalForms';
 
@@ -10,7 +10,7 @@ const ExpensesTracker = () => {
     const selectedWallet = useOutletContext();
     const { paramMonth } = useParams();
     const [isFetching, setIsFetching] = useState(true);
-    const [expensesTrackerData, setExpensesTrackerData] = useState([]);
+    const [expensesTrackerData, setExpensesTrackeData] = useState([]);
     const [updateDataStatus, setUpdateStatus] = useState(false);
     const [updateData, setUpdateData] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
