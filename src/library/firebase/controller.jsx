@@ -52,11 +52,11 @@ export async function collectedData_v2(inputDate, wallet, formType = null, value
         // console.log('getDataCollected: ', getDataCollected)
         if (!getDataCollected) {
             const data = {
-                remainingIncome: 0,
-                totalIncome: 0,
-                totalSavings: 0,
-                totalBills: 0,
-                totalExpenses: 0,
+                balance: 0,
+                income: 0,
+                savings: 0,
+                bills: 0,
+                expenses: 0,
                 wallet: wallet,
                 date: convertToTimeStamp(inputDate),
             }
@@ -70,28 +70,28 @@ export async function collectedData_v2(inputDate, wallet, formType = null, value
                 return successMsg('Form is already have data, this is not for updating collected data.')
             } else {
                 const data = {
-                    remainingIncome: getDataCollected.remainingIncome,
-                    totalIncome: getDataCollected.totalIncome,
-                    totalSavings: getDataCollected.totalSavings,
-                    totalBills: getDataCollected.totalBills,
-                    totalExpenses: getDataCollected.totalExpenses,
+                    balance: getDataCollected.balance,
+                    income: getDataCollected.income,
+                    savings: getDataCollected.savings,
+                    bills: getDataCollected.bills,
+                    expenses: getDataCollected.expenses,
                     wallet: wallet,
                 }
                 if (formType == 'income') {
-                    data.totalIncome = getDataCollected.totalIncome + value
-                    data.remainingIncome = getDataCollected.remainingIncome + value
+                    data.income = getDataCollected.income + value
+                    data.balance = getDataCollected.balance + value
                 }
                 if (formType == 'bills') {
-                    data.totalBills = getDataCollected.totalBills + value
-                    data.remainingIncome = getDataCollected.remainingIncome - value
+                    data.bills = getDataCollected.bills + value
+                    data.balance = getDataCollected.balance - value
                 }
                 if (formType == 'expensesTracker') {
-                    data.totalExpenses = getDataCollected.totalExpenses + value
-                    data.remainingIncome = getDataCollected.remainingIncome - value
+                    data.expenses = getDataCollected.expenses + value
+                    data.balance = getDataCollected.balance - value
                 }
                 if (formType == 'savingsTracker') {
-                    data.totalSavings = getDataCollected.totalSavings + value
-                    data.remainingIncome = getDataCollected.remainingIncome - value
+                    data.savings = getDataCollected.savings + value
+                    data.balance = getDataCollected.balance - value
                 }
 
                 if (Object.keys(data).length > 0) {
@@ -114,7 +114,7 @@ export async function collectedData(inputDate) {
     if (!getUserID())
         return errorMsg('No LoggedIn User Found.')
     let totalIncomeData = 0, totalBillsData = 0, totalExpensesData = 0, totalSavingsData = 0;
-    let remainingIncomeData = 0;
+    let balanceData = 0;
     const databaseTable = ['income', 'bills', 'expensesTracker', 'savingsTracker'];
     try {
         for (const databaseItem of databaseTable) {
@@ -130,18 +130,18 @@ export async function collectedData(inputDate) {
                     totalExpensesData += data.amount
 
                 if (databaseItem == 'savingsTracker')
-                    totalExpensesData += data.amount
+                    totalSavingsData += data.amount
             })
         }
 
-        remainingIncomeData = totalIncomeData - (totalBillsData + totalExpensesData + totalSavingsData);
+        balanceData = totalIncomeData - (totalBillsData + totalExpensesData + totalSavingsData);
 
         const data = {
-            remainingIncome: remainingIncomeData,
-            totalIncome: totalIncomeData,
-            totalSavings: totalSavingsData,
-            totalBills: totalBillsData,
-            totalExpenses: totalExpensesData,
+            balance: balanceData,
+            income: totalIncomeData,
+            savings: totalSavingsData,
+            bills: totalBillsData,
+            expenses: totalExpensesData,
             date: convertToTimeStamp(inputDate),
             user: getUserID(),
         }

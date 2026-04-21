@@ -13,7 +13,7 @@ export async function addDataModel(table, arrayData, created = serverTimestamp()
                 createdAt: created
                 // createdAt: convertToTimeStamp('2025-08-08')
             })
-            console.log('returnData', returnData)
+            // console.log('returnData', returnData)
             return successMsg('Successfully Added.', { id: returnData.id })
         }
         else
@@ -31,14 +31,39 @@ export async function getAllDataRealtimeModel(table, setData, isFetching) {
             where("user", "==", getUserID()),
             orderBy("createdAt", "desc"),
         );
-        console.log('getUserID()', getUserID())
+        // console.log('getUserID()', getUserID())
         const unsubscribe = onSnapshot(que, async (snapshot) => {
             const promises = snapshot.docs.map(async (docSnap) => ({
                 id: docSnap.id,
                 ...docSnap.data(),
             }));
             const resolvedData = await Promise.all(promises);
-            console.log('resolvedData', resolvedData)
+            // console.log('resolvedData', resolvedData)
+            setData(resolvedData);
+            isFetching(false);
+            return resolvedData;
+        });
+        return unsubscribe;
+    } catch (error) {
+        console.log(error)
+        return errorMsg('Failed to fetch data. Check console for error.');
+    }
+}
+export async function getAllDataRealtimeByDateModel(table, setData, isFetching) {
+    try {
+        const que = query(
+            collection(db, table),
+            where("user", "==", getUserID()),
+            orderBy("date", "desc"),
+        );
+        // console.log('getUserID()', getUserID())
+        const unsubscribe = onSnapshot(que, async (snapshot) => {
+            const promises = snapshot.docs.map(async (docSnap) => ({
+                id: docSnap.id,
+                ...docSnap.data(),
+            }));
+            const resolvedData = await Promise.all(promises);
+            // console.log('resolvedData', resolvedData)
             setData(resolvedData);
             isFetching(false);
             return resolvedData;

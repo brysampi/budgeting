@@ -21,7 +21,7 @@ import { getAllDataRealTimeController } from '../../library/firebase/controller'
 import Fetching from './Fetching';
 import { useSearchParams } from 'react-router-dom';
 const main = () => {
-    // const [isDarkMode, setIsDarkMode] = useState(true);
+    const [isDarkMode, setIsDarkMode] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isModalOpenAI, setIsModalOpenAI] = useState(false);
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
@@ -33,7 +33,7 @@ const main = () => {
     const [isFetching, setIsFetching] = useState(false);
 
     const [searchParams, setSearchParams] = useSearchParams();
-    console.log('param month ', searchParams.get('yearMonth'));
+    // console.log('param month ', searchParams.get('yearMonth'));
     const changeMonth = (newMonth) => {
         setSearchParams({ yearMonth: newMonth });
     };
@@ -43,13 +43,12 @@ const main = () => {
 
     return (
         <>
-            {/* <Header isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} /> */}
-            <Fetching setIsFetching={setIsFetching} />
             <AddForms />
-            <Header />
+            <Header isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+            <Fetching setIsFetching={setIsFetching} />
             <Wallets />
             <Stats setParamMonth={setParamMonth} />
-            {/* <Category /> */}
+            <Category paramMonth={paramMonth} />
             {/* <button onClick={() => changeMonth('2025-11')}>Change Month</button> */}
         </>
     );

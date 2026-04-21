@@ -107,9 +107,9 @@ const IncomeForm = ({ onFinish }) => {
                         onChange={(e) => setSelectedWallet(e.target.value)}
                     >
                         {storedWallets && storedWallets.length > 0 ? (
-                            storedWallets.map(wallet => (
+                            storedWallets.map((wallet,index) => (
                                 wallet.status === 'active' && (
-                                    <option key={wallet.id} value={wallet.id}>{wallet.name}</option>
+                                    <option key={index} value={wallet.id}>{wallet.name}</option>
                                 )
                             )).reverse()
                         ) :

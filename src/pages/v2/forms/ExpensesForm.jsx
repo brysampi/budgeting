@@ -216,9 +216,9 @@ const ExpensesForm = ({ onFinish }) => {
                                         {cat.category}
                                     </option>
                                 ))} */}
-                                {storedCategories.map((item) => (
-                                    <option key={item.id} value={item.id}>
-                                        {item.category}
+                                {storedCategories.map((item,index) => (
+                                    <option key={index} value={item.id}>
+                                        {item.name}
                                     </option>
                                 ))}
                             </select>

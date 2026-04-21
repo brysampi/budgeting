@@ -82,7 +82,7 @@ const Navbar = ({
                 {/* {
                     isFetchingNavbar ? 'Loading...' :
                         monthCollectionData.length === 0 ? 'No Data' :
-                            `Remaining Income: ${monthCollectionData[0].remainingIncome.toFixed(2)}`
+                            `Remaining Balance: ${monthCollectionData[0].balance.toFixed(2)}`
                 } */}
                 <div className='w-full justify-between items-center max-w-[400px] '>
                     {/* <div className=''>
@@ -135,9 +135,9 @@ const Navbar = ({
                 {/* </div> */}
                 <div className='hidden sm:block'>Test</div>
             </div>
-            {/* {console.log('Month Collected ',monthCollectionData.remainingIncome)} */}
+            {/* {console.log('Month Collected ',monthCollectionData.balance)} */}
             {/* {currentRoute.title} */}
         </>
     )
 }
-export default Navbar;
+export default Navbar;

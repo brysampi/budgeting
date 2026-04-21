@@ -93,6 +93,16 @@ export function getMonthNamesSingleDigit(paramMonth) {
     ];
     return monthNames[monthNo];
 }
+// Helper to format "2026-05" to "May 2026"
+export const getMonthNamesWithYear = (dateStr) => {
+    const [year, month] = dateStr.split('-');
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+    // console.log(parseInt(month) - 1)
+    return `${monthNames[parseInt(month) - 1]} ${year}`;
+};
 export function getLastDayOfTheMonth(paramMonth) {
     // Set the last day of the month based on paramMonth for the default due date
     const [yearStr, monthStr] = paramMonth.split("-");

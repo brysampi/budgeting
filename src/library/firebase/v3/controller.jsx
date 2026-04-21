@@ -1,8 +1,12 @@
-import { getAllDataRealtimeModel, addDataModel } from "./model";
+import { getAllDataRealtimeModel, addDataModel, getAllDataRealtimeByDateModel } from "./model";
 import { convertToTimeStamp } from "../../utils";
 
 export async function getAllDataRealtime(table, setData, isFetching) {
     return await getAllDataRealtimeModel(table, setData, isFetching)
+}
+
+export async function getAllDataRealtimeByDate(table, setData, isFetching) {
+    return await getAllDataRealtimeByDateModel(table, setData, isFetching)
 }
 
 export async function addWallets(arrayData) {
@@ -13,4 +17,12 @@ export async function addWallets(arrayData) {
         balance: startingBudget.toNumber(),
     }
     return await addDataModel('wallets', data)
+}
+
+export async function addCategory(arrayData) {
+    const data = {
+        ...arrayData,
+        status: 'active',
+    }
+    return await addDataModel('categories', data)
 }

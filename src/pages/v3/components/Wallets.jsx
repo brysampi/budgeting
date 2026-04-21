@@ -22,16 +22,10 @@ const Wallets = () => {
 
     const storedWallets = walletStorage((state) => state.data) || [];
 
-    // useEffect(() => {
-    //     setIsFetching(true);
-    //     getAllDataRealTimeController('wallets', setWalletsData, setIsFetching);
-    // }, []);
-
     const walletCards = useMemo(() => {
-        console.log(storedWallets)
         return storedWallets.map(wallet => ({
             name: wallet.name || 'Unnamed Wallet',
-            balance: wallet.balance || 0, // Fallback to 0 if balance is missing
+            balance: wallet.balance || 0,
         })).reverse();
     }, [storedWallets]);
 

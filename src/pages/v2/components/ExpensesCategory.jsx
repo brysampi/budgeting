@@ -114,7 +114,7 @@ const ExpensesCategory = ({ paramMonth, onClick = () => { } }) => {
                                 [...categoriesData]
                                     .sort((a, b) => (b.actual / (b.budget || 1)) - (a.actual / (a.budget || 1)))
                                     .slice(0, isCategoriesExpanded ? 10 : 3)
-                                    .map(cat => {
+                                    .map((cat,index) => {
                                         const remaining = cat.actual ? cat.budget - cat.actual : cat.budget;
                                         const categoryId = `category-${cat.category.replace(/\s+/g, '-').toLowerCase()}`;
                                         const isOver = cat.actual > cat.budget;
@@ -123,7 +123,7 @@ const ExpensesCategory = ({ paramMonth, onClick = () => { } }) => {
                                         // console.log('isOver', isOver)
                                         // console.log('cat', cat)
                                         return (
-                                            <Card padding="p-4" key={cat.id} noHover={true} className={`group ${categoryId} h-[110px] flex flex-col justify-between`}>
+                                            <Card padding="p-4" key={index} noHover={true} className={`group ${categoryId} h-[110px] flex flex-col justify-between`}>
                                                 {/* 1. Custom Header (Icon | Title/Budget | Status) */}
                                                 <div className="flex items-start justify-between w-full mb-2">
                                                     <div className="flex items-center gap-3">
@@ -203,9 +203,9 @@ const ExpensesCategory = ({ paramMonth, onClick = () => { } }) => {
             >
                 {/* ... existing categories grid ... */}
                 <div className="grid grid-cols-2 gap-4">
-                    {categoriesData.map(cat => (
+                    {categoriesData.map((cat,index) => (
                         <button
-                            key={cat.id}
+                            key={index}
                             onClick={() => setIsBottomSheetOpen(false)}
                             className="flex flex-col items-center gap-3 p-6 rounded-3xl bg-white/[0.03] hover:bg-white/[0.08] transition-all border border-white/5"
                         >

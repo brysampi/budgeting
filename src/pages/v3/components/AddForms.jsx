@@ -1,6 +1,7 @@
 import ExpenseForm from "../forms/ExpenseForm";
 import IncomeForm from "../forms/IncomeForm";
 import BillsForm from "../forms/BillsForm";
+import CategoryForm from "../forms/CategoryForm";
 import { Icon, Icons } from "../../../assets/Icons";
 import Modal from "../../../components/modal/Modal";
 import { useState } from 'react';
@@ -100,12 +101,14 @@ export default function AddForms() {
                     {modalFormType === 'Bill' && (
                         // <BillsForm onFinish={() => setIsModalOpen(false)} />
                         <BillsForm />
+                        // <CategoryForm />
                         // console.log('bills')
                     )}
 
                     {modalFormType === 'Saving' && (
                         // <SavingsForm onFinish={() => setIsModalOpen(false)} />
                         <SavingForm />
+
                         // console.log('savingsTracker')
                     )}
                     {/* <div className="flex flex-col"> */}

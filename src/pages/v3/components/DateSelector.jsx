@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Icons } from '../../../assets/Icons';
-import { convertToDate } from '../../../library/utils';
+import { convertToDate, getMonthNamesWithYear } from '../../../library/utils';
 
 const DateSelector = ({ collectedData = [], currentIndex = 0, onChange }) => {
 
@@ -16,16 +16,19 @@ const DateSelector = ({ collectedData = [], currentIndex = 0, onChange }) => {
         }
     };
 
-    // Helper to format "2026-05" to "May 2026"
-    const formatLabel = (dateStr) => {
-        const [year, month] = dateStr.split('-');
-        const monthNames = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        ];
-        // console.log(parseInt(month) - 1)
-        return `${monthNames[parseInt(month) - 1]} ${year}`;
-    };
+    // // Helper to format "2026-05" to "May 2026"
+    // const formatLabel = (dateStr) => {
+    //     const [year, month] = dateStr.split('-');
+    //     const monthNames = [
+    //         "January", "February", "March", "April", "May", "June",
+    //         "July", "August", "September", "October", "November", "December"
+    //     ];
+    //     // console.log(parseInt(month) - 1)
+    //     return `${monthNames[parseInt(month) - 1]} ${year}`;
+    // };
+    const label = collectedData[currentIndex]?.status !== 'no_data'
+        ? getMonthNamesWithYear(convertToDate(collectedData[currentIndex]?.date))
+        : `No Transactions - ${getMonthNamesWithYear(convertToDate(collectedData[currentIndex]?.date))}`;
 
     return (
         <>
@@ -40,7 +43,7 @@ const DateSelector = ({ collectedData = [], currentIndex = 0, onChange }) => {
                 </button>
 
                 <span className="text-lg font-bold text-[var(--color-light)] min-w-[140px] text-center">
-                    {collectedData.length > 0 ? formatLabel(convertToDate(collectedData[currentIndex].date)) : 'No Transactions'}
+                    {label}
                 </span>
 
                 <button

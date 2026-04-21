@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { getCollectedDataRealTimeController, creteCollectedData } from '../../library/firebase/controller'
-import { convertToDate, getMonthNames } from '../../library/utils'
+import { convertToDate, getMonthNamesWithYear } from '../../library/utils'
 import Logout from './Logout'
 import Navbar from '../../layouts/v1/Navbar'
 
@@ -129,10 +129,10 @@ export default function MonthSelection({ onLogOut }) {
                                 }>
                                     <div className="card-v1 card-shadow-v1">
                                         <div className="title-v1">
-                                            {getMonthNames(item.date) + ' ' + item.date.toDate().getFullYear() + '    '}
+                                            {getMonthNamesWithYear(convertToDate(item.date))}
                                         </div>
                                         <div className="details-v1">
-                                            Remaining Income: <span>{item.remainingIncome.toFixed(2)}</span>
+                                            Remaining Balance: <span>{item.balance.toFixed(2)}</span>
                                         </div>
                                     </div>
                                 </Link>

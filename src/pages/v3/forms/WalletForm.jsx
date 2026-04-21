@@ -51,8 +51,8 @@ const WalletForm = ({ onFinish }) => {
 
         for (const row of rows) {
             const data = {
-                name: row.name,
-                type: row.type,
+                name: row.name.trim(),
+                type,
                 startingBudget: row.startingBudget ? accurateDecimal(row.startingBudget) : 0,
             };
             const result = await addWallets(data)
@@ -119,7 +119,7 @@ const WalletForm = ({ onFinish }) => {
             {/* Rows List */}
             <div className="shared-form-body">
                 {rows.map((row, index) => (
-                    <div key={row.id} className={`shared-form-row-v3 ${rows.length < maxSingleRow ? 'single' : ''}`}>
+                    <div key={index} className={`shared-form-row-v3 ${rows.length < maxSingleRow ? 'single' : ''}`}>
                         <div className={`shared-form-input-group-v3 ${rows.length < maxSingleRow ? 'single' : ''}`}>
                             <input
                                 type="text"
