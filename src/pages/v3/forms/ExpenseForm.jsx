@@ -10,11 +10,15 @@ import '../../../css/v2/form.css';
 import { expensesCategoryStore, walletStorage } from '../../../library/zustand/storage';
 import CategoryForm from './CategoryForm';
 import Big from "big.js";
+import Calculator from '../../../components/Calculator';
+
 const ExpenseForm = ({ onFinish }) => {
     const { paramMonth } = useParams();
     const [loading, setLoading] = useState(false);
     const [isModalOpenAI, setIsModalOpenAI] = useState(false);
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+    const [isCalcModalOpen, setIsCalcModalOpen] = useState(false);
+    const [activeCalcRowId, setActiveCalcRowId] = useState(null);
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
     const storedCategories = expensesCategoryStore((state) => state.data) || [];
     const storedWallets = walletStorage((state) => state.data) || [];
@@ -33,7 +37,7 @@ const ExpenseForm = ({ onFinish }) => {
                     categoryId: item.categoryId,
                     categoryName: item.categoryName,
                     description: item.name,
-                    quantity: item.quantity,
+                    // quantity: item.quantity,
                     price: item.price,
                     discount: item.discount,
                     showDiscount: item.discount > 0 ? true : false
@@ -48,7 +52,7 @@ const ExpenseForm = ({ onFinish }) => {
     // Manage multiple rows
     const maxSingleRow = 3;
     const [rows, setRows] = useState([
-        { id: generateUniqueID(), categoryId: '', categoryName: '', description: '', quantity: '', price: '', discount: '', showDiscount: false }
+        { id: generateUniqueID(), categoryId: '', categoryName: '', description: '', price: '', discount: '', showDiscount: false }
     ]);
 
     const handleInputChange = (id, field, value) => {
@@ -58,7 +62,7 @@ const ExpenseForm = ({ onFinish }) => {
     };
 
     const addRow = () => {
-        setRows([...rows, { id: generateUniqueID(), categoryId: '', categoryName: '', description: '', quantity: '', price: '', discount: '', showDiscount: false }]);
+        setRows([...rows, { id: generateUniqueID(), categoryId: '', categoryName: '', description: '', price: '', discount: '', showDiscount: false }]);
     };
 
     const toggleDiscount = (id) => {
@@ -75,7 +79,7 @@ const ExpenseForm = ({ onFinish }) => {
         if (rows.length > 1) {
             setRows(rows.filter(row => row.id !== id));
         } else {
-            setRows([{ id: generateUniqueID(), categoryId: '', categoryName: '', description: '', quantity: '', price: '', discount: '', showDiscount: false }]);
+            setRows([{ id: generateUniqueID(), categoryId: '', categoryName: '', description: '', price: '', discount: '', showDiscount: false }]);
         }
     };
 
@@ -166,7 +170,7 @@ const ExpenseForm = ({ onFinish }) => {
                             onChange={(e) => setSelectedWallet(e.target.value)}
                         >
                             {storedWallets && storedWallets.length > 0 ? (
-                                storedWallets.map((wallet,index) => (
+                                storedWallets.map((wallet, index) => (
                                     wallet.status === 'active' && (
                                         <option key={index} value={wallet.id}>{wallet.name}</option>
                                     )
@@ -211,7 +215,7 @@ const ExpenseForm = ({ onFinish }) => {
                                     <option value="" disabled>Select Category</option>
                                     <option value="CREATE_NEW">➕ Add New Category...</option>
 
-                                    {storedCategories.map((item,index) => (
+                                    {storedCategories.map((item, index) => (
                                         <option key={index} value={item.id}>
                                             {item.name}
                                         </option>
@@ -225,18 +229,23 @@ const ExpenseForm = ({ onFinish }) => {
                                     value={row.description}
                                     onChange={(e) => handleInputChange(row.id, 'description', e.target.value)}
                                 />
-                                <input
+                                {/* <input
                                     type="number"
                                     className={`shared-form-field-v3 field-qty-v3 ${rows.length < maxSingleRow ? 'single' : ''}`}
                                     placeholder="Qty"
                                     value={row.quantity}
                                     onChange={(e) => handleInputChange(row.id, 'quantity', e.target.value)}
-                                />
+                                /> */}
                                 <input
                                     type="number"
                                     className={`shared-form-field-v3 field-price-v3 ${rows.length < maxSingleRow ? 'single' : ''}`}
                                     placeholder="Price"
                                     value={row.price}
+                                    readOnly={true}
+                                    onClick={() => {
+                                        setActiveCalcRowId(row.id);
+                                        setIsCalcModalOpen(true);
+                                    }}
                                     onChange={(e) => handleInputChange(row.id, 'price', e.target.value)}
                                 />
 
@@ -315,6 +324,28 @@ const ExpenseForm = ({ onFinish }) => {
                 zIndex={6000}
             >
                 <CategoryForm />
+            </Modal>
+            {/* Calculator Modal */}
+            <Modal
+                // title={'Calculator'}
+                isModalOpen={isCalcModalOpen}
+                onClose={() => setIsCalcModalOpen(false)}
+                fullscreen={false}
+                bodyFullscreen={true}
+                maxWidth='425px'
+                closeOnOverlay={false}
+                zIndex={6000}
+            >
+                {activeCalcRowId && (
+                    <Calculator
+                        key={isCalcModalOpen ? activeCalcRowId : 'closed'}
+                        initialValue={String(rows.find(r => r.id === activeCalcRowId)?.price || '0')}
+                        onEquals={(val) => {
+                            handleInputChange(activeCalcRowId, 'price', val);
+                            setIsCalcModalOpen(false);
+                        }}
+                    />
+                )}
             </Modal>
         </>
     );

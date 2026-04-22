@@ -5,6 +5,7 @@ import CategoryForm from "../forms/CategoryForm";
 import { Icon, Icons } from "../../../assets/Icons";
 import Modal from "../../../components/modal/Modal";
 import { useState } from 'react';
+import Calculator from '../../../components/Calculator';
 
 
 export default function AddForms() {
@@ -18,7 +19,7 @@ export default function AddForms() {
                 title={`Add New ${modalFormType}`}
                 isModalOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                fullscreen={false}
+                // fullscreen={false}
                 maxWidth='550px'
                 closeOnOverlay={false}
             >
@@ -100,7 +101,8 @@ export default function AddForms() {
 
                     {modalFormType === 'Bill' && (
                         // <BillsForm onFinish={() => setIsModalOpen(false)} />
-                        <BillsForm />
+                        // <BillsForm />
+                        <Calculator />
                         // <CategoryForm />
                         // console.log('bills')
                     )}
@@ -108,6 +110,7 @@ export default function AddForms() {
                     {modalFormType === 'Saving' && (
                         // <SavingsForm onFinish={() => setIsModalOpen(false)} />
                         <SavingForm />
+
 
                         // console.log('savingsTracker')
                     )}
