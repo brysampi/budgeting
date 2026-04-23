@@ -20,7 +20,7 @@ const BillsForm = ({ onFinish }) => {
     // Manage multiple rows
     const maxSingleRow = 3;
     const [rows, setRows] = useState([
-        { id: generateUniqueID(), description: '', budget: '', actual: '', dueDate: getTodayDate() }
+        { id: generateUniqueID(), description: '', expected: '', amount: '', dueDate: getTodayDate() }
     ]);
 
     // useEffect(() => {
@@ -37,14 +37,14 @@ const BillsForm = ({ onFinish }) => {
     };
 
     const addRow = () => {
-        setRows([...rows, { id: generateUniqueID(), description: '', budget: '', actual: '', dueDate: getTodayDate() }]);
+        setRows([...rows, { id: generateUniqueID(), description: '', expected: '', amount: '', dueDate: getTodayDate() }]);
     };
 
     const removeRow = (id) => {
         if (rows.length > 1) {
             setRows(rows.filter(row => row.id !== id));
         } else {
-            setRows([{ id: generateUniqueID(), description: '', budget: '', actual: '', dueDate: getTodayDate() }]);
+            setRows([{ id: generateUniqueID(), description: '', expected: '', amount: '', dueDate: getTodayDate() }]);
         }
     };
 
@@ -66,8 +66,8 @@ const BillsForm = ({ onFinish }) => {
         for (const row of rows) {
             const data = {
                 description: row.description,
-                budget: new Big(row.budget),
-                actual: row.actual ? new Big(row.actual) : new Big(0),
+                expected: new Big(row.expected),
+                amount: row.amount ? new Big(row.amount) : new Big(0),
                 dueDate: row.dueDate,
                 wallet: selectedWallet,
                 date: headerDate,
@@ -109,7 +109,7 @@ const BillsForm = ({ onFinish }) => {
                         onChange={(e) => setSelectedWallet(e.target.value)}
                     >
                         {storedWallets && storedWallets.length > 0 ? (
-                            storedWallets.map((wallet,index) => (
+                            storedWallets.map((wallet, index) => (
                                 wallet.status === 'active' && (
                                     <option key={index} value={wallet.id}>{wallet.name}</option>
                                 )
@@ -127,8 +127,8 @@ const BillsForm = ({ onFinish }) => {
                     <div className="shared-form-input-group-v3" style={{ background: 'transparent', border: 'none', borderRadius: 0 }}>
                         <div className="form-header-title field-description-v3">Bill Name / Description</div>
                         <div className="form-header-title" style={{ flex: 1 }}>Due Date</div>
-                        <div className="form-header-title field-price-v3">Budget</div>
-                        <div className="form-header-title field-price-v3">Actual</div>
+                        <div className="form-header-title field-price-v3">Expected</div>
+                        <div className="form-header-title field-price-v3">Actual / Paid (Optional)</div>
                     </div>
                     <div className="shared-form-actions-v3">
                         <div style={{ width: '36px' }}></div>
@@ -164,17 +164,17 @@ const BillsForm = ({ onFinish }) => {
                             <input
                                 type="number"
                                 className={`shared-form-field-v3 field-price-v3 ${rows.length < maxSingleRow ? 'single' : ''}`}
-                                placeholder="Budget"
-                                value={row.budget}
-                                onChange={(e) => handleInputChange(row.id, 'budget', e.target.value)}
+                                placeholder="Expected"
+                                value={row.expected}
+                                onChange={(e) => handleInputChange(row.id, 'expected', e.target.value)}
                             />
 
                             <input
                                 type="number"
                                 className={`shared-form-field-v3 field-price-v3 ${rows.length < maxSingleRow ? 'single' : ''}`}
-                                placeholder="Actual"
-                                value={row.actual}
-                                onChange={(e) => handleInputChange(row.id, 'actual', e.target.value)}
+                                placeholder="Actual / Paid (Leave empty if not paid yet - Optional)"
+                                value={row.amount}
+                                onChange={(e) => handleInputChange(row.id, 'amount', e.target.value)}
                             />
                         </div>
 

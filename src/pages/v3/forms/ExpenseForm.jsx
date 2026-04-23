@@ -4,7 +4,7 @@ import Modal from '../../../components/modal/Modal';
 import UploadImage from '../../../library/gemini/RecieptScanner';
 import { LuPlus, LuMinus, LuBadgePercent, LuCheck, LuWallet, LuCalendar } from "react-icons/lu";
 import { useParams } from 'react-router-dom';
-import { expensesTracker, getExpenses, getAllDataActiveRealTimeController } from '../../../library/firebase/controller';
+import { addExpenses } from '../../../library/firebase/v3/controller';
 import { getTodayDate, generateUniqueID } from '../../../library/utils';
 import '../../../css/v2/form.css';
 import { expensesCategoryStore, walletStorage } from '../../../library/zustand/storage';
@@ -35,7 +35,6 @@ const ExpenseForm = ({ onFinish }) => {
                 setRows(rows => [...rows, {
                     id: generateUniqueID(),
                     categoryId: item.categoryId,
-                    categoryName: item.categoryName,
                     description: item.name,
                     // quantity: item.quantity,
                     price: item.price,
@@ -52,7 +51,7 @@ const ExpenseForm = ({ onFinish }) => {
     // Manage multiple rows
     const maxSingleRow = 3;
     const [rows, setRows] = useState([
-        { id: generateUniqueID(), categoryId: '', categoryName: '', description: '', price: '', discount: '', showDiscount: false }
+        { id: generateUniqueID(), categoryId: '', description: '', price: '', discount: '', showDiscount: false }
     ]);
 
     const handleInputChange = (id, field, value) => {
@@ -62,7 +61,7 @@ const ExpenseForm = ({ onFinish }) => {
     };
 
     const addRow = () => {
-        setRows([...rows, { id: generateUniqueID(), categoryId: '', categoryName: '', description: '', price: '', discount: '', showDiscount: false }]);
+        setRows([...rows, { id: generateUniqueID(), categoryId: '', description: '', price: '', discount: '', showDiscount: false }]);
     };
 
     const toggleDiscount = (id) => {
@@ -79,7 +78,7 @@ const ExpenseForm = ({ onFinish }) => {
         if (rows.length > 1) {
             setRows(rows.filter(row => row.id !== id));
         } else {
-            setRows([{ id: generateUniqueID(), categoryId: '', categoryName: '', description: '', price: '', discount: '', showDiscount: false }]);
+            setRows([{ id: generateUniqueID(), categoryId: '', description: '', price: '', discount: '', showDiscount: false }]);
         }
     };
 
@@ -89,8 +88,12 @@ const ExpenseForm = ({ onFinish }) => {
         //     alert("Please select a wallet");
         //     return;
         // }
+        // if (!headerDate) {
+        //     alert("Please select a date");
+        //     return;
+        // }
 
-        // const invalidRows = rows.filter(row => !row.categoryId || !row.description || !row.price);
+        // const invalidRows = rows.filter(row => !row.categoryId || !row.description || row.price === 0 || !row.price);
         // if (invalidRows.length > 0) {
         //     alert("Please fill in all fields (Category, Description, Price) for all rows.");
         //     return;
@@ -98,34 +101,39 @@ const ExpenseForm = ({ onFinish }) => {
 
         // setLoading(true);
         // let successCount = 0;
+        // console.log(rows)
+        // for (const row of rows) {
+        //     const data = {
+        //         category: row.categoryId,
+        //         description: row.description,
+        //         amount: new Big(row.price || 0),
+        //         discount: row.discount ? new Big(row.discount) : new Big(0),
+        //         wallet: selectedWallet,
+        //         date: headerDate
+        //     };
 
-        for (const row of rows) {
-            const data = {
-                category: row.categoryId,
-                description: row.description,
-                price: new Big(row.price),
-                discount: row.discount ? new Big(row.discount) : new Big(0),
-                wallet: selectedWallet,
-                date: headerDate
-            };
-
-            console.log(data);
-            // const result = await expensesTracker(data);
-            // if (result.status === 'success') {
-            //     successCount++;
-            //     console.log(result);
-            // }
-        }
-
-        // setLoading(false);
+        //     console.log(data);
+        //     const result = await addExpenses(data);
+        //     // console.log(result)
+        //     // const result = await expensesTracker(data);
+        //     // if (result.status === 'success') {
+        //     //     successCount++;
+        //     //     console.log(result);
+        //     // }
+        // }
+        // console.log('rows', rows)    
+        setLoading(true);
+        const result = await addExpenses(rows, headerDate, selectedWallet);
+        console.log('result', result)
+        setLoading(false);
         // if (successCount === rows.length) {
         //     console.log('success')
         //     if (onFinish) onFinish();
         //     setRows([{ id: generateUniqueID(), categoryId: '', categoryName: '', description: '', quantity: '', price: '', discount: '', showDiscount: false }]);
         // } else if (successCount > 0) {
-        //     alert(`Successfully added ${successCount} of ${rows.length} expenses.`);
+        //     console.log(`Successfully added ${successCount} of ${rows.length} expenses.`);
         // } else {
-        //     alert(`Failed to add expenses.`);
+        //     console.log(`Failed to add expenses.`);
         // }
     };
 
@@ -185,8 +193,8 @@ const ExpenseForm = ({ onFinish }) => {
                 {rows.length >= maxSingleRow && (
                     <div className="shared-form-table-header-v3">
                         <div className="shared-form-input-group-v3" style={{ background: 'transparent', border: 'none', borderRadius: 0 }}>
-                            <div className="form-header-title field-description-v3">Expenses Name / Description</div>
                             <div className="form-header-title" style={{ flex: 1 }}>Category</div>
+                            <div className="form-header-title field-description-v3">Name / Description</div>
                             <div className="form-header-title field-price-v3">Price</div>
                             {/* <div className="form-header-title field-price-v3">Discount</div> */}
                         </div>
@@ -225,7 +233,7 @@ const ExpenseForm = ({ onFinish }) => {
                                 <input
                                     type="text"
                                     className={`shared-form-field-v3 field-description-v3 ${rows.length < maxSingleRow ? 'single' : ''}`}
-                                    placeholder="Description"
+                                    placeholder="Name / Description"
                                     value={row.description}
                                     onChange={(e) => handleInputChange(row.id, 'description', e.target.value)}
                                 />
@@ -236,18 +244,26 @@ const ExpenseForm = ({ onFinish }) => {
                                     value={row.quantity}
                                     onChange={(e) => handleInputChange(row.id, 'quantity', e.target.value)}
                                 /> */}
-                                <input
-                                    type="number"
-                                    className={`shared-form-field-v3 field-price-v3 ${rows.length < maxSingleRow ? 'single' : ''}`}
-                                    placeholder="Price"
-                                    value={row.price}
-                                    readOnly={true}
-                                    onClick={() => {
-                                        setActiveCalcRowId(row.id);
-                                        setIsCalcModalOpen(true);
-                                    }}
-                                    onChange={(e) => handleInputChange(row.id, 'price', e.target.value)}
-                                />
+                                <div className={`flex items-center shared-form-field-v3 field-price-v3 p-0 ${rows.length < maxSingleRow ? 'single' : ''}`}>
+                                    <input
+                                        type="number"
+                                        className="w-full bg-transparent border-none outline-none text-inherit placeholder-inherit min-w-0"
+                                        placeholder="Price"
+                                        value={row.price}
+                                        onChange={(e) => handleInputChange(row.id, 'price', new Big(e.target.value))}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="flex-shrink-0 text-[var(--color-theme-secondary-text)] hover:text-[var(--color-theme-important)] transition-colors pr-[0.6rem]"
+                                        onClick={() => {
+                                            setActiveCalcRowId(row.id);
+                                            setIsCalcModalOpen(true);
+                                        }}
+                                        title="Open Calculator"
+                                    >
+                                        <Icon name="LuCalculator" size={16} />
+                                    </button>
+                                </div>
 
                                 {row.showDiscount && (
                                     <input
@@ -255,7 +271,7 @@ const ExpenseForm = ({ onFinish }) => {
                                         className={`shared-form-field-v3 field-discount-v3 ${rows.length < maxSingleRow ? 'single' : ''}`}
                                         placeholder="Disc"
                                         value={row.discount}
-                                        onChange={(e) => handleInputChange(row.id, 'discount', e.target.value)}
+                                        onChange={(e) => handleInputChange(row.id, 'discount', new Big(e.target.value))}
                                     />
                                 )}
                             </div>

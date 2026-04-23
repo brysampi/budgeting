@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { LuCheck } from "react-icons/lu";
 
 const BUTTONS = [
@@ -248,6 +248,45 @@ export default function Calculator({
 
         appendDigit(key);
     };
+
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                return;
+            }
+
+            const { key } = e;
+
+            if (key >= '0' && key <= '9') {
+                e.preventDefault();
+                handlePress(key);
+            } else if (key === '.' || key === ',') {
+                e.preventDefault();
+                handlePress('.');
+            } else if (key === '+' || key === '-' || key === '*' || key === '/') {
+                e.preventDefault();
+                const operatorMap = {
+                    '+': 'add',
+                    '-': 'subtract',
+                    '*': 'multiply',
+                    '/': 'divide',
+                };
+                handlePress(operatorMap[key]);
+            } else if (key === 'Enter' || key === '=') {
+                e.preventDefault();
+                handlePress('equals');
+            } else if (key === 'Backspace') {
+                e.preventDefault();
+                handlePress('backspace');
+            } else if (key === 'Escape' || key === 'Delete' || key === 'c' || key === 'C') {
+                e.preventDefault();
+                handlePress('clear');
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [expression]);
 
     return (
         <section className="w-full p-4 sm:p-5 ">

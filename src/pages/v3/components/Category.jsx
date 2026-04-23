@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, use } from 'react';
-import { getExpenses, unsubscribeForAll } from '../../../library/firebase/controller';
+import { unsubscribeForAll } from '../../../library/firebase/controller';
+import { getTransactions } from '../../../library/firebase/v3/controller';
 import { expensesCategoryStore } from '../../../library/zustand/storage';
 import { IconCard, Icons, Icon } from '../../../assets/Icons';
 import CategoryForm from '../forms/CategoryForm';
@@ -18,12 +19,12 @@ const Category = ({ paramMonth }) => {
     const iconSize = 24;
     const incomeData = 22000;
     const [transactionData, setTransactionData] = useState([
-        {
-            id: 1,
-            category: "OetCHDe8V3f4ARenYU1F",
-            amount: 850,
+        // {
+        //     id: 1,
+        //     category: "OetCHDe8V3f4ARenYU1F",
+        //     amount: 850,
 
-        },
+        // },
         // {
         //     id: 2,
         //     category: "sKvLuUBctnH1nyfl77eZ",
@@ -121,17 +122,16 @@ const Category = ({ paramMonth }) => {
         // console.log('Categories Data', categoriesData)
     }, [storeExpensesCategory, transactionData])
 
-    // const fetchTransactions = async () => {
-    //     setIsFetching(true);
-    //     await getTransactions(paramMonth, setTransactionData, setIsFetching);
-    // }
+
     useEffect(() => {
-        // fetchTransactions();
-        console.log('Category ParamMonth', paramMonth)
+        const fetchTransactions = async () => {
+            setIsFetching(true);
+            return await getTransactions(paramMonth, setTransactionData, setIsFetching);
+        }
+        // console.log('transactionData', transactionData)
+        return unsubscribeForAll(fetchTransactions());
     }, [paramMonth]);
-
     const addCategoryModal = () => {
-
     }
 
     return (

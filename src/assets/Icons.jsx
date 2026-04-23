@@ -79,7 +79,7 @@ import {
     LuMail, LuPhone, LuVideo, LuMessageCircle,
     // Misc
     LuStar, LuFlag, LuClock, LuBell,
-    LuTrophy, LuMedal, LuCrown, LuPalette, LuWandSparkles,
+    LuTrophy, LuMedal, LuCrown, LuPalette, LuWandSparkles, LuCalculator,
 } from "react-icons/lu";
 
 import { LiaCalendar, LiaCoinsSolid, LiaUserCogSolid } from "react-icons/lia";
@@ -199,7 +199,7 @@ export const Icons = {
 
     // ── Lu: Misc ──
     LuStar, LuFlag, LuClock, LuBell,
-    LuTrophy, LuMedal, LuCrown, LuPalette, LuWandSparkles,
+    LuTrophy, LuMedal, LuCrown, LuPalette, LuWandSparkles, LuCalculator,
 
     // ── Lia ──
     LiaCalendar, LiaCoinsSolid, LiaUserCogSolid,

@@ -101,8 +101,8 @@ export default function AddForms() {
 
                     {modalFormType === 'Bill' && (
                         // <BillsForm onFinish={() => setIsModalOpen(false)} />
-                        // <BillsForm />
-                        <Calculator />
+                        <BillsForm />
+                        // <Calculator />
                         // <CategoryForm />
                         // console.log('bills')
                     )}

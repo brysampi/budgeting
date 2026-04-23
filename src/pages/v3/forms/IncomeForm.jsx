@@ -18,7 +18,11 @@ const IncomeForm = ({ onFinish }) => {
     // Manage multiple rows
     const maxSingleRow = 3;
     const [rows, setRows] = useState([
-        { id: generateUniqueID(), description: '', expected: '', amount: '' }
+        {
+            id: generateUniqueID(), description: '',
+            //  expected: '',
+            amount: ''
+        }
     ]);
 
     // useEffect(() => {
@@ -35,14 +39,22 @@ const IncomeForm = ({ onFinish }) => {
     };
 
     const addRow = () => {
-        setRows([...rows, { id: generateUniqueID(), description: '', expected: '', amount: '' }]);
+        setRows([...rows, {
+            id: generateUniqueID(), description: '',
+            // expected: '',
+            amount: ''
+        }]);
     };
 
     const removeRow = (id) => {
         if (rows.length > 1) {
             setRows(rows.filter(row => row.id !== id));
         } else {
-            setRows([{ id: generateUniqueID(), description: '', expected: '', amount: '' }]);
+            setRows([{
+                id: generateUniqueID(), description: '',
+                // expected: '',
+                amount: ''
+            }]);
         }
     };
 
@@ -64,7 +76,7 @@ const IncomeForm = ({ onFinish }) => {
         for (const row of rows) {
             const data = {
                 description: row.description,
-                expected: new Big(row.expected),
+                // expected: new Big(row.expected),
                 amount: new Big(row.amount),
                 wallet: selectedWallet,
                 date: headerDate,
@@ -107,7 +119,7 @@ const IncomeForm = ({ onFinish }) => {
                         onChange={(e) => setSelectedWallet(e.target.value)}
                     >
                         {storedWallets && storedWallets.length > 0 ? (
-                            storedWallets.map((wallet,index) => (
+                            storedWallets.map((wallet, index) => (
                                 wallet.status === 'active' && (
                                     <option key={index} value={wallet.id}>{wallet.name}</option>
                                 )
@@ -123,7 +135,7 @@ const IncomeForm = ({ onFinish }) => {
                 <div className="shared-form-table-header-v3">
                     <div className="shared-form-input-group-v3" style={{ background: 'transparent', border: 'none', borderRadius: 0 }}>
                         <div className="form-header-title field-description-v3">Income Name / Description</div>
-                        <div className="form-header-title" style={{ flex: 1 }}>Expected</div>
+                        {/* <div className="form-header-title" style={{ flex: 1 }}>Expected</div> */}
                         <div className="form-header-title field-price-v3">Amount</div>
                     </div>
                     <div className="shared-form-actions-v3">
@@ -145,13 +157,13 @@ const IncomeForm = ({ onFinish }) => {
                                 onChange={(e) => handleInputChange(row.id, 'description', e.target.value)}
                             />
 
-                            <input
+                            {/* <input
                                 type="number"
                                 className={`shared-form-field-v3 field-price-v3 ${rows.length < maxSingleRow ? 'single' : ''}`}
                                 placeholder="Expected"
                                 value={row.expected}
                                 onChange={(e) => handleInputChange(row.id, 'expected', e.target.value)}
-                            />
+                            /> */}
 
                             <input
                                 type="number"

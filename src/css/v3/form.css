@@ -98,11 +98,13 @@
     overflow: hidden;
 }
 
-.shared-form-field-v3:focus {
+.shared-form-field-v3:focus,
+.shared-form-field-v3:focus-within {
     background: rgba(255, 255, 255, 0.03);
 }
 
-.shared-form-field-v3::placeholder {
+.shared-form-field-v3::placeholder,
+.shared-form-field-v3 input::placeholder {
     color: var(--color-theme-secondary-text);
     opacity: 0.4;
 }
@@ -126,19 +128,29 @@
     background: rgba(255, 255, 255, 0.015);
 }
 
-.shared-form-label-v3 + .shared-form-field-v3,
-.shared-form-field-v3 + .shared-form-label-v3 {
+.shared-form-label-v3+.shared-form-field-v3,
+.shared-form-field-v3+.shared-form-label-v3 {
     border-left: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.field-category-v3 {
+    flex: 0.5;
+    min-width: 100px;
 }
 
 .field-description-v3 {
     flex: 2;
-    min-width: 150px;
+    min-width: 130px;
 }
 
 .field-price-v3 {
     flex: 1;
-    min-width: 100px;
+    min-width: 120px;
+}
+
+.field-discount-v3 {
+    flex: 1;
+    min-width: 120px;
 }
 
 .shared-form-actions-v3 {
@@ -170,6 +182,17 @@
     background: rgba(248, 113, 113, 0.1);
     color: var(--color-danger);
     border-color: rgba(248, 113, 113, 0.2);
+}
+
+.shared-form-action-btn-v3.btn-calc-v3 {
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--color-theme-important);
+}
+
+.shared-form-action-btn-v3.btn-calc-v3:hover {
+    background: var(--color-theme-important-low);
+    color: var(--color-theme-important);
+    border-color: var(--color-theme-important);
 }
 
 .shared-form-action-btn-v3.btn-discount-v3 {
