@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { unsubscribeForAll } from '../../library/firebase/controller';
 import { monthlyCollectedDataStore, expensesCategoryStore, walletStorage, categoriesStore } from '../../library/zustand/storage';
 import { getAllDataRealtime, getAllDataRealtimeByDate } from '../../library/firebase/v3/controller';
+import { Timestamp } from 'firebase/firestore';
+import { convertToDate, formatToYearMonth } from '../../library/utils';
 
 export default function Fetching({ setIsFetching }) {
     // Zustand storage
@@ -20,14 +22,13 @@ export default function Fetching({ setIsFetching }) {
     // useEffect(() => {
     //     console.log('storeWallet', storeWallet)
     // }, [storeWallet]);
+    // const fakeDate = new Date('2024-02-01T12:00:00');
+    // const fakeTimestamp = Timestamp.fromDate(fakeDate);
     useEffect(() => {
-        
+
         getAllDataRealtime('wallets', storeWallet, setIsWalletFetching);
-        getAllDataRealtime('categories', storeExpensesCategory, setIsExpensesCategoryFetching);
-        // const returnCategoriesDefault = async () => {
-        //     setIsFetching(true);
-        //     return await getAllDataRealtime('categories', storeCategories.setData, setIsCategoriesFetching);
-        // }
+        getAllDataRealtime('categories', storeCategories, setIsCategoriesFetching);
         getAllDataRealtimeByDate('collectedData', storeMonthlyCollectedData, setIsMonthlyCollectedDataFetching);
+        // updateCollectedData();
     }, []);
 }

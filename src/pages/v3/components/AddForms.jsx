@@ -67,7 +67,7 @@ export default function AddForms() {
                             { label: 'Expense', type: 'Expense', icon: 'LuShoppingBag' },
                             { label: 'Income', type: 'Income', icon: 'LuHandCoins' },
                             { label: 'Bill', type: 'Bill', icon: 'FaBolt' },
-                            // { label: 'Saving', type: 'Saving', icon: 'FaPiggyBank' }
+                            { label: 'Saving', type: 'Saving', icon: 'FaPiggyBank' }
                         ].map(tab => (
                             <button
                                 key={tab.type}
@@ -92,13 +92,6 @@ export default function AddForms() {
                         <ExpenseForm />
                         // console.log('expensesTracker')
                     )}
-
-                    {modalFormType === 'Income' && (
-                        // <IncomeForm onFinish={() => setIsModalOpen(false)} />
-                        <IncomeForm />
-                        // console.log('income')
-                    )}
-
                     {modalFormType === 'Bill' && (
                         // <BillsForm onFinish={() => setIsModalOpen(false)} />
                         <BillsForm />
@@ -107,10 +100,23 @@ export default function AddForms() {
                         // console.log('bills')
                     )}
 
+                    {modalFormType === 'Income' && (
+                        // <IncomeForm onFinish={() => setIsModalOpen(false)} />
+                        <IncomeForm />
+                        // console.log('income')
+                    )}
+
+
+
                     {modalFormType === 'Saving' && (
                         // <SavingsForm onFinish={() => setIsModalOpen(false)} />
-                        <SavingForm />
-
+                        // <SavingForm />
+                        <>
+                            <div className="flex items-center justify-center gap-2 flex-col text-[var(--color-theme-secondary-text)]">
+                                Under Development
+                                <Icons.LuSparkles size={20} />
+                            </div>
+                        </>
 
                         // console.log('savingsTracker')
                     )}

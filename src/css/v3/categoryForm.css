@@ -46,6 +46,12 @@
     color: #fbbf24;
 }
 
+.category-form-type-btn-v3.active.type-bills-v3 {
+    background: rgba(99, 102, 241, 0.15);
+    border-color: rgba(99, 102, 241, 0.4);
+    color: #6366f1;
+}
+
 /* ── Color picker ── */
 .category-form-color-wrap-v3 {
     display: flex;

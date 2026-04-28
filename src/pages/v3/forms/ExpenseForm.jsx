@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 import { addExpenses } from '../../../library/firebase/v3/controller';
 import { getTodayDate, generateUniqueID } from '../../../library/utils';
 import '../../../css/v2/form.css';
-import { expensesCategoryStore, walletStorage } from '../../../library/zustand/storage';
+import { categoriesStore, walletStorage } from '../../../library/zustand/storage';
 import CategoryForm from './CategoryForm';
 import Big from "big.js";
 import Calculator from '../../../components/Calculator';
@@ -20,10 +20,11 @@ const ExpenseForm = ({ onFinish }) => {
     const [isCalcModalOpen, setIsCalcModalOpen] = useState(false);
     const [activeCalcRowId, setActiveCalcRowId] = useState(null);
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
-    const storedCategories = expensesCategoryStore((state) => state.data) || [];
+    const storedCategories = categoriesStore((state) => state.data) || [];
     const storedWallets = walletStorage((state) => state.data) || [];
     const [headerDate, setHeaderDate] = useState(getTodayDate());
     const [selectedWallet, setSelectedWallet] = useState(storedWallets[storedWallets.length - 1].id);
+    const [viewMode, setViewMode] = useState('list');
 
     // AI Data Handler
     const handleAiData = (data) => {
@@ -78,26 +79,38 @@ const ExpenseForm = ({ onFinish }) => {
         if (rows.length > 1) {
             setRows(rows.filter(row => row.id !== id));
         } else {
-            setRows([{ id: generateUniqueID(), categoryId: '', description: '', price: '', discount: '', showDiscount: false }]);
+            handleClear();
         }
+    };
+
+    const handleClear = () => {
+        setRows([{ id: generateUniqueID(), categoryId: '', description: '', price: '', discount: '', showDiscount: false }]);
+    };
+
+    const calculateTotal = () => {
+        return rows.reduce((sum, row) => {
+            const price = parseFloat(row.price) || 0;
+            const discount = parseFloat(row.discount) || 0;
+            return sum + (price - discount);
+        }, 0);
     };
 
     const handleSubmitAll = async () => {
 
-        // if (!selectedWallet) {
-        //     alert("Please select a wallet");
-        //     return;
-        // }
-        // if (!headerDate) {
-        //     alert("Please select a date");
-        //     return;
-        // }
+        if (!selectedWallet) {
+            alert("Please select a wallet");
+            return;
+        }
+        if (!headerDate) {
+            alert("Please select a date");
+            return;
+        }
 
-        // const invalidRows = rows.filter(row => !row.categoryId || !row.description || row.price === 0 || !row.price);
-        // if (invalidRows.length > 0) {
-        //     alert("Please fill in all fields (Category, Description, Price) for all rows.");
-        //     return;
-        // }
+        const invalidRows = rows.filter(row => !row.categoryId || !row.description || row.price === 0 || !row.price);
+        if (invalidRows.length > 0) {
+            alert("Please fill in all fields (Category, Description, Price) for all rows.");
+            return;
+        }
 
         // setLoading(true);
         // let successCount = 0;
@@ -125,6 +138,9 @@ const ExpenseForm = ({ onFinish }) => {
         setLoading(true);
         const result = await addExpenses(rows, headerDate, selectedWallet);
         console.log('result', result)
+        if (result.boolean)
+            handleClear();
+        alert(result.message);
         setLoading(false);
         // if (successCount === rows.length) {
         //     console.log('success')
@@ -136,6 +152,10 @@ const ExpenseForm = ({ onFinish }) => {
         //     console.log(`Failed to add expenses.`);
         // }
     };
+    const gridList = () => {
+        setViewMode(prev => prev === 'list' ? 'grid' : 'list');
+        console.log(viewMode === 'list' ? 'grid' : 'list');
+    }
 
     return (
         <>
@@ -189,6 +209,44 @@ const ExpenseForm = ({ onFinish }) => {
                         </select>
                     </div>
                 </div>
+
+                {/* Total and Clear Actions */}
+                <div className="flex justify-between items-center ">
+                    <div className="text-m font-bold text-[var(--color-light)] flex items-center gap-2">
+                        Total: <span className="text-yellow-500">{calculateTotal().toFixed(2)}</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        {/* <button
+                            type="button"
+                            onClick={gridList}
+                            className="relative flex items-center bg-white/5 rounded-xl p-1 cursor-pointer transition-colors hover:bg-white/10"
+                        >
+                            <div
+                                className={`absolute left-1 top-1 w-7 h-7 bg-white/10 rounded-lg transition-transform duration-200 ease-out ${viewMode === 'list' ? 'translate-x-full' : 'translate-x-0'
+                                    }`}
+                            />
+
+                            <div
+                                className={`relative z-10 p-1.5 transition-colors duration-200 ${viewMode === 'grid' ? 'text-[var(--color-light)]' : 'text-white/40'}`}
+                            >
+                                <Icon name="LuLayoutGrid" size={16} />
+                            </div>
+                            <div
+                                className={`relative z-10 p-1.5 transition-colors duration-200 ${viewMode === 'list' ? 'text-[var(--color-light)]' : 'text-white/40'}`}
+                            >
+                                <Icon name="LuList" size={16} />
+                            </div>
+                        </button> */}
+                        <button
+                            onClick={handleClear}
+                            className="btn-remove-all-v3 px-3 h-9 gap-2"
+                        >
+                            <Icon name="LuTrash2" size={16} />
+                            Clear
+                        </button>
+                    </div>
+                </div>
+
                 {/* Table Header */}
                 {rows.length >= maxSingleRow && (
                     <div className="shared-form-table-header-v3">
@@ -223,11 +281,13 @@ const ExpenseForm = ({ onFinish }) => {
                                     <option value="" disabled>Select Category</option>
                                     <option value="CREATE_NEW">➕ Add New Category...</option>
 
-                                    {storedCategories.map((item, index) => (
-                                        <option key={index} value={item.id}>
-                                            {item.name}
-                                        </option>
-                                    ))}
+                                    {storedCategories.map((item, index) =>
+                                        item.type === 'expense' && (
+                                            <option key={index} value={item.id}>
+                                                {item.name}
+                                            </option>
+                                        )
+                                    )}
                                 </select>
 
                                 <input
@@ -330,7 +390,7 @@ const ExpenseForm = ({ onFinish }) => {
             </Modal>
             {/* Create Category Modal */}
             <Modal
-                title={'Create Category'}
+                title={'Create Category Expense'}
                 isModalOpen={isCategoryModalOpen}
                 onClose={() => setIsCategoryModalOpen(false)}
                 fullscreen={false}
@@ -339,7 +399,7 @@ const ExpenseForm = ({ onFinish }) => {
                 // closeOnOverlay={!isBottomSheetOpen}
                 zIndex={6000}
             >
-                <CategoryForm />
+                <CategoryForm typeSelected="expense" />
             </Modal>
             {/* Calculator Modal */}
             <Modal

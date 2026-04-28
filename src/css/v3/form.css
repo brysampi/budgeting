@@ -8,7 +8,7 @@
 .shared-form-header-v3 {
     display: flex;
     gap: 0.75rem;
-    margin-bottom: 2rem;
+    /* margin-bottom: 2rem; */
     padding: 0.5rem;
     background: rgba(255, 255, 255, 0.02);
     border-radius: 18px;
@@ -170,6 +170,27 @@
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     background: rgba(255, 255, 255, 0.03);
     flex-shrink: 0;
+}
+
+.btn-remove-all-v3 {
+    border-radius: 12px;
+    /* width: 36px;
+    height: 36px; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(255, 255, 255, 0.03);
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--color-danger);
+}
+
+.btn-remove-all-v3:hover {
+    background: rgba(248, 113, 113, 0.1);
+    color: var(--color-danger);
+    border-color: rgba(248, 113, 113, 0.2);
 }
 
 .shared-form-action-btn-v3.btn-remove-v3 {

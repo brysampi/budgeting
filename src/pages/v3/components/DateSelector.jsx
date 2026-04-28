@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Icons } from '../../../assets/Icons';
-import { convertToDate, getMonthNamesWithYear } from '../../../library/utils';
+import { convertToDate, formatToYearMonth, getMonthNamesWithYear } from '../../../library/utils';
 
 const DateSelector = ({ collectedData = [], currentIndex = 0, onChange }) => {
-
+    // console.log('Date Selector', collectedData)
+    // console.log(formatToYearMonth(collectedData.date))
+    // collectedData.map(key => console.log(formatToYearMonth(key.date)))
     const handlePrevious = () => {
         if (currentIndex < collectedData.length - 1) {
             onChange(currentIndex + 1);

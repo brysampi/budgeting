@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { analyzeReceipt } from './aiServices';
 import { Icons } from '../../assets/Icons';
-import { expensesCategoryStore } from '../zustand/storage';
+import { categoriesStore } from '../zustand/storage';
 // Shared helper function to handle API calls
 const processImage = async (base64, type, setLoading, onDataExtracted) => {
   setLoading(true);
 
-  const storedCategories = expensesCategoryStore.getState().data || [];
+  const storedCategories = categoriesStore.getState().data || [];
   const fetchedData = [];
   for (const store of storedCategories) {
     fetchedData.push({ id: store.id, name: store.category });

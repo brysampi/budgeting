@@ -15,11 +15,11 @@ const COLOR_SWATCHES = [
     '#f472b6', '#e879f9', '#94a3b8', '#ffffff',
 ];
 
-const CategoryForm = () => {
+const CategoryForm = ({ typeSelected = '' }) => {
     const [loading, setLoading] = useState(false);
     const randomColor = COLOR_SWATCHES[Math.floor(Math.random() * COLOR_SWATCHES.length)];
     // Form fields
-    const [type, setType] = useState('expense');
+    const [type, setType] = useState(typeSelected || 'expense');
     const [name, setName] = useState('');
     const [color, setColor] = useState(randomColor);
     const [selectedIcon, setSelectedIcon] = useState('');
@@ -71,33 +71,40 @@ const CategoryForm = () => {
             {/* ── Single Row Card ── */}
             <div className="shared-form-row-v3 single">
                 <div className="shared-form-input-group-v3 single">
+                    {!typeSelected && (
+                        <>
 
-                    {/* TYPE toggle */}
-                    <div className="shared-form-label-v3 single">Type</div>
-                    <div className="category-form-type-toggle-v3">
-                        {[
-                            'expense',
-                            'income',
-                            // 'saving'
-                        ].map((t) => (
-                            <button
-                                key={t}
-                                className={`category-form-type-btn-v3 ${type === t ? 'active' : ''} type-${t}-v3`}
-                                onClick={() => setType(t)}
-                                type="button"
-                            >
-                                <Icon
-                                    name={
-                                        t === 'expense' ? 'LuArrowBigDownDash'
-                                            : t === 'income' ? 'LuArrowBigUpDash'
-                                                : 'LuCoins'
-                                    }
-                                    size={15}
-                                />
-                                {t.charAt(0).toUpperCase() + t.slice(1)}
-                            </button>
-                        ))}
-                    </div>
+                            {/* TYPE toggle */}
+                            <div className="shared-form-label-v3 single">Type</div>
+                            <div className="category-form-type-toggle-v3">
+                                {[
+                                    'expense',
+                                    'bills',
+                                    'income',
+                                    'saving'
+
+                                ].map((t) => (
+                                    <button
+                                        key={t}
+                                        className={`category-form-type-btn-v3 ${type === t ? 'active' : ''} type-${t}-v3`}
+                                        onClick={() => setType(t)}
+                                        type="button"
+                                    >
+                                        <Icon
+                                            name={
+                                                t === 'expense' ? 'LuArrowBigDownDash'
+                                                    : t === 'income' ? 'LuArrowBigUpDash'
+                                                        : t === 'bills' ? 'LuZap'
+                                                            : 'LuCoins'
+                                            }
+                                            size={15}
+                                        />
+                                        {t.charAt(0).toUpperCase() + t.slice(1)}
+                                    </button>
+                                ))}
+                            </div>
+                        </>
+                    )}
 
                     {/* NAME */}
                     <div className="shared-form-label-v3 single">Name</div>

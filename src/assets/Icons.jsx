@@ -45,7 +45,7 @@ import {
     LuSettings, LuLogOut, LuCircleUserRound, LuWallet,
     LuPlus, LuMinus, LuArrowBigUpDash, LuArrowBigDownDash, LuTrash2,
     LuSquarePen, LuArrowLeft, LuX, LuLoader, LuChevronLeft, LuChevronRight, LuCreditCard,
-    LuUser, LuCircleHelp, LuLock, LuScan, LuSparkles, LuCamera, LuUpload, LuBadgePercent,
+    LuUser, LuCircleHelp, LuLock, LuScan, LuSparkles, LuCamera, LuUpload, LuBadgePercent, LuRepeat,
     // Transport
     LuCar, LuBus, LuTruck, LuBike, LuTramFront, LuPlane,
     // Food & Drink
@@ -79,7 +79,7 @@ import {
     LuMail, LuPhone, LuVideo, LuMessageCircle,
     // Misc
     LuStar, LuFlag, LuClock, LuBell,
-    LuTrophy, LuMedal, LuCrown, LuPalette, LuWandSparkles, LuCalculator,
+    LuTrophy, LuMedal, LuCrown, LuPalette, LuWandSparkles, LuCalculator, LuList, LuLayoutGrid,
 } from "react-icons/lu";
 
 import { LiaCalendar, LiaCoinsSolid, LiaUserCogSolid } from "react-icons/lia";
@@ -96,6 +96,7 @@ export const Icons = {
     FaMugHot, FaBolt, FaBagShopping, FaPlane,
     FaWallet, FaPiggyBank, FaArrowTrendUp, FaArrowTrendDown,
     FaBell, FaGear, FaSun, FaMoon, FaHouse, FaGamepad,
+    LuRepeat,
 
     // ── Fa6: Transport ──
     FaCar, FaBus, FaTrain, FaMotorcycle, FaBicycle, FaTruck, FaRocket,
@@ -199,7 +200,7 @@ export const Icons = {
 
     // ── Lu: Misc ──
     LuStar, LuFlag, LuClock, LuBell,
-    LuTrophy, LuMedal, LuCrown, LuPalette, LuWandSparkles, LuCalculator,
+    LuTrophy, LuMedal, LuCrown, LuPalette, LuWandSparkles, LuCalculator, LuList, LuLayoutGrid,
 
     // ── Lia ──
     LiaCalendar, LiaCoinsSolid, LiaUserCogSolid,

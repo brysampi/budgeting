@@ -13,8 +13,9 @@ export const analyzeReceipt = async (base64String, mimeType = "image/jpeg", cate
 
   try {
     // gemini-2.5-flash: the stable workhorse for the 2026 Free Tier.
+    // gemini-3-flash-preview: the latest model for the Free Tier.
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3-flash-preview',
       contents: [
         {
           role: 'user',

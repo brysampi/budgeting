@@ -13,18 +13,23 @@ const Stats = ({ setParamMonth }) => {
 
 
 
-    const collectedDataStored = monthlyCollectedDataStore((state) => state.data) || [];
+    const rawCollectedDataStored = monthlyCollectedDataStore((state) => state.data) || [];
+    const collectedDataStored = [...rawCollectedDataStored];
+    // console.log('collectedDataStored', collectedDataStored)
+
     const storedMonthlyCollectedData = useMemo(() => {
         // const reversed = [...rawMonthlyData].reverse();
         const dateNow = new Date();
         const currentMonth = formatToYearMonth(dateNow);
+        // console.log('foun', collectedDataStored.find(item => formatToYearMonth(item.date) === currentMonth))
         if (collectedDataStored.length === 0) {
             collectedDataStored.push({ date: dateNow.toISOString().split('T')[0], status: 'no_data' });
         } else {
-            const latestMonth = formatToYearMonth(convertToDate(collectedDataStored[0].date));
+            const latestMonth = formatToYearMonth(collectedDataStored[0].date);
             // console.log('latestMonth', latestMonth)
             // console.log('currentMonth', currentMonth)
-            if (currentMonth !== latestMonth) {
+            const findCurrentMonth = collectedDataStored.find(item => formatToYearMonth(item.date) === currentMonth)
+            if (!findCurrentMonth) {
                 collectedDataStored.unshift({ date: dateNow.toISOString().split('T')[0], status: 'no_data' });
             }
         }
@@ -173,7 +178,7 @@ const Stats = ({ setParamMonth }) => {
 
             {/* Stats Grid */}
             <div className="grid grid-cols-2 min-[600px]:grid-cols-4 gap-1">
-                {statsData.map((stat,index) => (
+                {statsData.map((stat, index) => (
                     <StatCard key={index} {...stat} />
                 ))}
             </div>
