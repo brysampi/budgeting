@@ -155,6 +155,6 @@ export function generateUniqueID() {
 }
 
 export function accurateDecimal(amount) {
+    if (!amount) return new Big(0);
     return new Big(amount);
 }
-

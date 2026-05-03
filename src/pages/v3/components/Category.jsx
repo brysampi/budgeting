@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, use } from 'react';
 import { unsubscribeForAll } from '../../../library/firebase/controller';
 import { getTransactions } from '../../../library/firebase/v3/controller';
-import { expensesCategoryStore } from '../../../library/zustand/storage';
+import { categoriesStore, transactionStore } from '../../../library/zustand/storage';
 import { IconCard, Icons, Icon } from '../../../assets/Icons';
 import CategoryForm from '../forms/CategoryForm';
 import Modal from '../../../components/modal/Modal';
@@ -14,7 +14,8 @@ const Category = ({ paramMonth }) => {
     const [isFetching, setIsFetching] = useState(false);
     const [isCategoriesExpanded, setIsCategoriesExpanded] = useState(false);
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
-    const storeExpensesCategory = expensesCategoryStore((state) => state.data) || [];
+    const storedCategories = categoriesStore((state) => state.data) || [];
+    const storeTransaction = transactionStore((state) => state.data) || [];
     const [isModalOpen, setIsModalOpen] = useState(false);
     const iconSize = 24;
     const incomeData = 22000;
@@ -101,11 +102,12 @@ const Category = ({ paramMonth }) => {
     //     // console.log('categoriesData2', categoriesData)
     //     storeExpensesCategory.setData(categoriesData);
     // }, [categoriesData]);
-
-    const test = useMemo(() => {
-        const result = storeExpensesCategory.map(categoryItem => {
+    // console.log('storeExpensesCategory', storedCategories);
+    // console.log('storeTransaction', storeTransaction);
+    useMemo(() => {
+        const result = storedCategories.map(categoryItem => {
             // use the second array (transactionData) to find all transactions that match the current category's id
-            const total = transactionData
+            const total = storeTransaction
                 // find the transactions that match the current category in the loop
                 .filter(transactionItem => transactionItem.category === categoryItem.id)
                 // sum up the amounts of the matching transactions
@@ -116,21 +118,22 @@ const Category = ({ paramMonth }) => {
                 amount: total
             };
         });
-        // console.log('Result', result)
-        setCategoriesData(result);
+
+        // console.log('Result (Categories with Totals):', result);
+        setCategoriesData(result.filter(categoryItem => categoryItem.type !== 'income'));
 
         // console.log('Categories Data', categoriesData)
-    }, [storeExpensesCategory, transactionData])
+    }, [storedCategories, storeTransaction])
 
 
-    useEffect(() => {
-        const fetchTransactions = async () => {
-            setIsFetching(true);
-            return await getTransactions(paramMonth, setTransactionData, setIsFetching);
-        }
-        // console.log('transactionData', transactionData)
-        return unsubscribeForAll(fetchTransactions());
-    }, [paramMonth]);
+    // useEffect(() => {
+    //     const fetchTransactions = async () => {
+    //         setIsFetching(true);
+    //         return await getTransactions(paramMonth, setTransactionData, setIsFetching);
+    //     }
+    //     // console.log('transactionData', transactionData)
+    //     return unsubscribeForAll(fetchTransactions());
+    // }, [paramMonth]);
     const addCategoryModal = () => {
     }
 
@@ -138,7 +141,7 @@ const Category = ({ paramMonth }) => {
         <>
             <div className="flex flex-col gap-4">
                 <div className="flex justify-between items-center px-1">
-                    <h2 className="text-xl font-bold text-[var(--color-light)] tracking-tight">Expenses Categories</h2>
+                    <h2 className="text-xl font-bold text-[var(--color-light)] tracking-tight">Categories</h2>
                     {/* <button onClick={() => setIsModalOpen(true)} className="text-[#34A853] hover:underline text-xs md:text-sm font-semibold">See all</button> */}
                     <div className="text-xs text-[var(--color-theme-secondary-text)] font-medium flex items-center gap-3">
                         <button
@@ -166,13 +169,13 @@ const Category = ({ paramMonth }) => {
                             </div> :
                             categoriesData.length === 0 ? (
                                 <button
-                                    onClick={addCategoryModal}
+                                    onClick={() => setIsModalOpen(true)}
                                     className="w-full h-[110px] rounded-2xl border-2 border-dashed border-[var(--color-theme-important)]/30 bg-[var(--color-theme-important)]/5 flex items-center justify-center gap-4 hover:bg-[var(--color-theme-important)]/10 hover:border-[var(--color-theme-important)]/50 transition-all cursor-pointer group"
                                 >
                                     <div className="w-10 h-10 rounded-full bg-[var(--color-theme-important)]/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                                         <Icon name="LuPlus" size={iconSize} className="text-[var(--color-theme-important)]" strokeWidth={2.5} />
                                     </div>
-                                    <span className="text-sm font-bold text-[var(--color-theme-important)]">Add Expenses Category</span>
+                                    <span className="text-sm font-bold text-[var(--color-theme-important)]">Add Category</span>
                                 </button>
                             ) : (
                                 [...categoriesData]

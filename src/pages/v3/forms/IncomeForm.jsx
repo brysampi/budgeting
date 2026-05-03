@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { addIncome } from '../../../library/firebase/v3/controller';
-import { getTodayDate, generateUniqueID } from '../../../library/utils';
+import { getTodayDate, generateUniqueID, accurateDecimal } from '../../../library/utils';
 import { walletStorage, categoriesStore } from '../../../library/zustand/storage';
 import { Icon } from '../../../assets/Icons';
 import Modal from '../../../components/modal/Modal';
@@ -66,7 +66,7 @@ const IncomeForm = ({ onFinish }) => {
             return;
         }
 
-        const invalidRows = rows.filter(row => !row.description || !row.expected || !row.amount);
+        const invalidRows = rows.filter(row => !row.categoryId || !row.description || accurateDecimal(row.amount).toNumber() === 0);
         if (invalidRows.length > 0) {
             alert("Please fill in all fields (Description, Expected, Amount) for all rows.");
             return;
@@ -91,7 +91,9 @@ const IncomeForm = ({ onFinish }) => {
         //     // }
         // }
         setLoading(true);
-        const result = await addIncome(rows, headerDate, selectedWallet);
+        const result = await addIncome(rows, headerDate, selectedWallet,
+            accurateDecimal(storedWallets.find((wallet) => wallet.id === selectedWallet).balance)
+        );
         console.log('result', result)
         if (result.boolean)
             handleClear();
@@ -217,7 +219,7 @@ const IncomeForm = ({ onFinish }) => {
                                     className={`shared-form-field-v3 field-price-v3 ${rows.length < maxSingleRow ? 'single' : ''}`}
                                     placeholder="Amount"
                                     value={row.amount}
-                                    onChange={(e) => handleInputChange(row.id, 'amount', new Big(e.target.value))}
+                                    onChange={(e) => handleInputChange(row.id, 'amount', accurateDecimal(e.target.value))}
                                 />
                             </div>
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { LuPlus, LuMinus, LuCheck, LuWallet, LuCalendar, LuBolt } from "react-icons/lu";
 import { useParams } from 'react-router-dom';
-import { getTodayDate, generateUniqueID } from '../../../library/utils';
+import { getTodayDate, generateUniqueID, accurateDecimal } from '../../../library/utils';
 import { walletStorage, categoriesStore } from '../../../library/zustand/storage';
 import { Icon } from '../../../assets/Icons';
 import Modal from '../../../components/modal/Modal';
@@ -65,7 +65,7 @@ const BillsForm = ({ onFinish }) => {
             return;
         }
 
-        const invalidRows = rows.filter(row => !row.categoryId || !row.description || !row.expected || !row.dueDate);
+        const invalidRows = rows.filter(row => !row.categoryId || !row.description || accurateDecimal(row.expected).toNumber() === 0 || !row.dueDate);
         if (invalidRows.length > 0) {
             alert("Please fill in (Category, Description, Expected, Due Date) for all rows.");
             return;
@@ -91,7 +91,9 @@ const BillsForm = ({ onFinish }) => {
         //     // }
         // }
         setLoading(true);
-        const result = await addBills(rows, headerDate, selectedWallet);
+        const result = await addBills(rows, headerDate, selectedWallet,
+            accurateDecimal(storedWallets.find((wallet) => wallet.id === selectedWallet).balance)
+        );
         console.log('result', result)
         if (result.boolean)
             handleClear();
@@ -223,7 +225,7 @@ const BillsForm = ({ onFinish }) => {
                                     className={`shared-form-field-v3 ${rows.length < maxSingleRow ? 'single' : ''}`}
                                     placeholder="Expected"
                                     value={row.expected}
-                                    onChange={(e) => handleInputChange(row.id, 'expected', new Big(e.target.value))}
+                                    onChange={(e) => handleInputChange(row.id, 'expected', accurateDecimal(e.target.value))}
                                 />
 
                                 <input
@@ -231,7 +233,7 @@ const BillsForm = ({ onFinish }) => {
                                     className={`shared-form-field-v3 ${rows.length < maxSingleRow ? 'single' : ''}`}
                                     placeholder="Actual / Paid (Leave empty if not paid yet - Optional)"
                                     value={row.amount}
-                                    onChange={(e) => handleInputChange(row.id, 'amount', new Big(e.target.value))}
+                                    onChange={(e) => handleInputChange(row.id, 'amount', accurateDecimal(e.target.value))}
                                 />
                             </div>
 

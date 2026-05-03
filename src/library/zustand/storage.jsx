@@ -21,6 +21,11 @@ export const monthlyCollectedDataStore = create((set) => ({
     setData: (newData) => set({ data: newData }),
 }));
 
+export const transactionStore = create((set) => ({
+    data: [],
+    setData: (newData) => set({ data: newData }),
+}));
+
 // ------------------------------------------------------------------------
 // Example of how to use it
 // export const useStore = create((set) => ({

@@ -1,4 +1,4 @@
-import { collection, onSnapshot, orderBy, query, where, addDoc, serverTimestamp, getDocs } from "firebase/firestore";
+import { collection, onSnapshot, orderBy, query, where, addDoc, serverTimestamp, getDocs, doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { getUserID, errorMsg, successMsg } from "../../utils";
 

@@ -7,13 +7,11 @@ const processImage = async (base64, type, setLoading, onDataExtracted) => {
   setLoading(true);
 
   const storedCategories = categoriesStore.getState().data || [];
-  const fetchedData = [];
-  for (const store of storedCategories) {
-    fetchedData.push({ id: store.id, name: store.category });
-  }
+  const fetchedData = storedCategories?.filter(item => item.type === 'expense') || [];
   try {
+    // console.log('fetchedData', fetchedData);
     const result = await analyzeReceipt(base64, type, fetchedData);
-    console.log('result', result);
+    // console.log('result', result);
     if (onDataExtracted) {
       onDataExtracted(result);
     }

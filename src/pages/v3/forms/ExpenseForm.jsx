@@ -5,7 +5,7 @@ import UploadImage from '../../../library/gemini/RecieptScanner';
 import { LuPlus, LuMinus, LuBadgePercent, LuCheck, LuWallet, LuCalendar } from "react-icons/lu";
 import { useParams } from 'react-router-dom';
 import { addExpenses } from '../../../library/firebase/v3/controller';
-import { getTodayDate, generateUniqueID } from '../../../library/utils';
+import { getTodayDate, generateUniqueID, accurateDecimal } from '../../../library/utils';
 import '../../../css/v2/form.css';
 import { categoriesStore, walletStorage } from '../../../library/zustand/storage';
 import CategoryForm from './CategoryForm';
@@ -37,11 +37,14 @@ const ExpenseForm = ({ onFinish }) => {
                     id: generateUniqueID(),
                     categoryId: item.categoryId,
                     description: item.name,
-                    // quantity: item.quantity,
-                    price: item.price,
-                    discount: item.discount,
+                    // Use Big.js for calculation to maintain precision
+                    price: item.quantity
+                        ? accurateDecimal(item.quantity).times(accurateDecimal(item.price))
+                        : accurateDecimal(item.price),
+                    discount: accurateDecimal(item.discount),
                     showDiscount: item.discount > 0 ? true : false
                 }]);
+                console.log('rows', rows)
             }
             setIsModalOpenAI(false);
         } else {
@@ -106,7 +109,7 @@ const ExpenseForm = ({ onFinish }) => {
             return;
         }
 
-        const invalidRows = rows.filter(row => !row.categoryId || !row.description || row.price === 0 || !row.price);
+        const invalidRows = rows.filter(row => !row.categoryId || !row.description || accurateDecimal(row.price).toNumber() === 0);
         if (invalidRows.length > 0) {
             alert("Please fill in all fields (Category, Description, Price) for all rows.");
             return;
@@ -134,9 +137,12 @@ const ExpenseForm = ({ onFinish }) => {
         //     //     console.log(result);
         //     // }
         // }
-        // console.log('rows', rows)    
+        // console.log('rowssssssssssssssssss', rows)
+        // console.log(accurateDecimal(storedWallets.find((wallet) => wallet.id === selectedWallet).balance));
         setLoading(true);
-        const result = await addExpenses(rows, headerDate, selectedWallet);
+        const result = await addExpenses(rows, headerDate, selectedWallet,
+            accurateDecimal(storedWallets.find((wallet) => wallet.id === selectedWallet).balance)
+        );
         console.log('result', result)
         if (result.boolean)
             handleClear();
@@ -273,6 +279,7 @@ const ExpenseForm = ({ onFinish }) => {
                                     onChange={(e) => {
                                         if (e.target.value === 'CREATE_NEW') {
                                             setIsCategoryModalOpen(true);
+                                            handleInputChange(row.id, 'categoryId', '');
                                         } else {
                                             handleInputChange(row.id, 'categoryId', e.target.value);
                                         }
@@ -310,7 +317,7 @@ const ExpenseForm = ({ onFinish }) => {
                                         className="w-full bg-transparent border-none outline-none text-inherit placeholder-inherit min-w-0"
                                         placeholder="Price"
                                         value={row.price}
-                                        onChange={(e) => handleInputChange(row.id, 'price', new Big(e.target.value))}
+                                        onChange={(e) => handleInputChange(row.id, 'price', accurateDecimal(e.target.value))}
                                     />
                                     <button
                                         type="button"
@@ -331,7 +338,7 @@ const ExpenseForm = ({ onFinish }) => {
                                         className={`shared-form-field-v3 field-discount-v3 ${rows.length < maxSingleRow ? 'single' : ''}`}
                                         placeholder="Disc"
                                         value={row.discount}
-                                        onChange={(e) => handleInputChange(row.id, 'discount', new Big(e.target.value))}
+                                        onChange={(e) => handleInputChange(row.id, 'discount', accurateDecimal(e.target.value))}
                                     />
                                 )}
                             </div>

@@ -1,6 +1,7 @@
 import { getAllDataModel, getAllDataRealtimeModel, addDataModel, getAllDataRealtimeByDateModel, updateData } from "./model";
 import { convertToTimeStamp, convertToDate, errorMsg, successMsg } from "../../utils";
 import Big from "big.js";
+
 // ----------------------------------General----------------------------------------
 export async function getAllDataRealtime(table, setData, isFetching) {
     return await getAllDataRealtimeModel(table, setData, isFetching)
@@ -20,27 +21,37 @@ export async function checkCollectedData(date) {
 }
 
 // paramMonth = yyyy-mm-dd
-export async function updateCollectedData(paramMonth, type, amount = 0) {
+export async function updateCollectedData(paramMonth, type, amount = 0, walletId = null, walletBalance = 0) {
     console.log('Updating collectedData for:', paramMonth, 'Type:', type)
     // Check if data exists for this month
     const existing = await checkCollectedData(paramMonth)
-
+    // console.log('existing', existing)
     if (existing.boolean) {
         // Update existing record
         const updatePayload = {
-            [type]: amount // Dynamic key: e.g., expenses: amount
+            balance: type === 'income' ?
+                existing.data.balance + amount :
+                existing.data.balance - amount,
+            [type]: existing.data[type] + amount
+        }
+        if (walletId) {
+            await updateData('wallets', walletId, { balance: walletBalance })
         }
         return await updateData('collectedData', existing.data.id, updatePayload)
     } else {
         // Create new record for the month
         const newData = {
-            balance: 0,
-            income: 0,
-            savings: 0,
-            bills: 0,
-            expenses: 0,
-            [type]: amount,
+            balance: type === 'income' ?
+                amount :
+                0 - amount,
+            income: type === 'income' ? amount : 0,
+            savings: type === 'savings' ? amount : 0,
+            bills: type === 'bills' ? amount : 0,
+            expenses: type === 'expenses' ? amount : 0,
             date: convertToTimeStamp(paramMonth),
+        }
+        if (walletId) {
+            await updateData('wallets', walletId, { balance: walletBalance })
         }
         return await addDataModel('collectedData', newData)
     }
@@ -68,50 +79,50 @@ export async function addCategory(arrayData) {
 
 // ----------------------------------Transactions----------------------------------------
 export async function addTransactions(arrayData) {
-    // const data = {
-    //     balance: 0,
-    //     income: 0,
-    //     savings: 0,
-    //     bills: 0,
-    //     expenses: 0,
-    //     date: convertToTimeStamp(arrayData.date),
-    // }
-    // return await addDataModel('collectedData', data)
 }
+
 export async function getTransactions(paramMonth, setData, setIsFetching) {
     return await getAllDataRealtimeModel('transactions', setData, setIsFetching)
 }
+
 // ----------------------------------Income----------------------------------------
-export async function addIncome(arrayData, date, wallet) {
-    // console.log('addIncome', arrayData, date, wallet)
-    if (!arrayData.category || !arrayData.description || !arrayData.amount || arrayData.amount === 0)
+export async function addIncome(arrayData, date, wallet, walletBalance) {
+    const invalidRows = arrayData.filter(row => !row.categoryId || !row.description || row.amount.toNumber() === 0)
+    if (invalidRows.length > 0)
         return errorMsg('Category, Description, and Price is required')
-    if (!arrayData.wallet)
+    if (!wallet)
         return errorMsg('Wallet is required')
-    if (!arrayData.date)
+    if (!date)
         return errorMsg('Date is required')
+
     const type = 'income'
     let successCount = 0;
     let countErrors = 0;
     let totalAmount = 0;
-    await Promise.all(arrayData.map(async (arrayData, index) => {
+    let initialWalletBalance = walletBalance;
+
+    for (const rowData of arrayData) {
+        const amount = rowData.amount.toNumber();
+        totalAmount += amount;
+        initialWalletBalance = initialWalletBalance.add(rowData.amount);
+
         const data = {
             type: type,
-            category: arrayData.categoryId,
-            description: arrayData.description,
-            amount: arrayData.amount.toNumber(),
+            category: rowData.categoryId,
+            description: rowData.description,
+            amount: amount,
             wallet: wallet,
             date: convertToTimeStamp(date),
+            walletBalance: initialWalletBalance.toNumber(),
         }
-        totalAmount += data.amount;
+
         const result = await addDataModel('transactions', data)
-        // console.log(`result ${index + 1}`, result)
         result.boolean ? successCount++ : countErrors++
-    }),
-        await updateCollectedData(date, type, totalAmount)
-    );
-    // console.log('successCount', successCount)
-    // console.log('countErrors', countErrors)
+    }
+
+    await updateCollectedData(date, type, totalAmount, wallet, initialWalletBalance.toNumber());
+    // await updateData('wallets', wallet, { balance: initialWalletBalance.toNumber() });
+
     if (successCount > 0 && countErrors <= 0)
         return successMsg(`Successfully added ${successCount} of ${arrayData.length} income.`)
     if (countErrors > 0)
@@ -119,92 +130,102 @@ export async function addIncome(arrayData, date, wallet) {
 
     return errorMsg('Failed to add income');
 }
+
 // ----------------------------------Expenses----------------------------------------
-export async function addExpenses(arrayData, date, wallet) {
-    // console.log('addExpenses', arrayData)
-    if (!arrayData.category || !arrayData.description || !arrayData.amount || arrayData.amount === 0)
-        return errorMsg('Category, Description, and Price is required')
-    if (!arrayData.wallet)
-        return errorMsg('Wallet is required')
-    if (!arrayData.date)
-        return errorMsg('Date is required')
+export async function addExpenses(arrayData, date, wallet, walletBalance) {
+    const invalidArrayData = arrayData.filter(row => !row.categoryId || !row.description || row.price.toNumber() === 0)
+    if (invalidArrayData.length > 0)
+        return errorMsg('Category, Description, and Price is required.')
+    if (!wallet)
+        return errorMsg('Wallet is required.')
+    if (!date)
+        return errorMsg('Date is required.')
+
+    if (arrayData.filter(row => row.showDiscount && row.discount.toNumber() === 0).length > 0)
+        return errorMsg('Discount is required.')
+
     const type = 'expenses'
     let successCount = 0;
     let countErrors = 0;
     let totalAmount = 0;
-    await Promise.all(arrayData.map(async (arrayData, index) => {
+    let initialWalletBalance = walletBalance;
+
+    for (const rowData of arrayData) {
+        const originalAmount = rowData.price ? rowData.price.toNumber() : 0;
+        const discount = rowData.discount ? rowData.discount.toNumber() : 0;
+        const finalAmount = rowData.discount ?
+            rowData.price.minus(rowData.discount).toNumber() :
+            originalAmount;
+
+        totalAmount += finalAmount;
+        initialWalletBalance = initialWalletBalance.sub(finalAmount);
+
         const data = {
             type: type,
-            // status: 'completed',
-            category: arrayData.categoryId,
-            description: arrayData.description,
-            originalAmount: arrayData.price ? arrayData.price.toNumber() : 0,
-            discount: arrayData.discount ? arrayData.discount.toNumber() : 0,
-            amount: arrayData.discount ?
-                arrayData.price.minus(arrayData.discount).toNumber() :
-                arrayData.price ? arrayData.price.toNumber() : 0,
+            category: rowData.categoryId,
+            description: rowData.description,
+            originalAmount: originalAmount,
+            discount: discount,
+            amount: finalAmount,
             date: convertToTimeStamp(date),
             wallet: wallet,
+            walletBalance: initialWalletBalance.toNumber(),
         }
-        totalAmount += data.amount;
+
         const result = await addDataModel('transactions', data)
-        // console.log(`result ${index + 1}`, result)
         result.boolean ? successCount++ : countErrors++
-    }),
-        await updateCollectedData(date, type, totalAmount)
-    );
-    // console.log('successCount', successCount)
-    // console.log('countErrors', countErrors)
+    }
+
+    await updateCollectedData(date, type, totalAmount, wallet, initialWalletBalance.toNumber());
+
     if (successCount > 0 && countErrors <= 0)
         return successMsg(`Successfully added ${successCount} of ${arrayData.length} expenses.`)
     if (countErrors > 0)
         return errorMsg(`Failed to add expenses. ${countErrors} errors`);
 
     return errorMsg('Failed to add expenses');
-    // const { amount, discount, ...removedData } = arrayData
-    // const data = {
-    //     ...removedData,
-    //     type: 'expense',
-    //     originalAmount: amount.toNumber(),
-    //     amount: discount.toNumber() > 0 ? amount.minus(discount).toNumber() : amount.toNumber(),
-    //     discount: discount.toNumber(),
-    //     status: 'completed',
-    // }
-    // console.log('data', data)
-    // return await addDataModel('transactions', data)
 }
+
 // ----------------------------------Bills----------------------------------------
-export async function addBills(arrayData, date, wallet) {
-    // console.log('arrayData', date)
-    if (!arrayData.category || !arrayData.description || !arrayData.expected || arrayData.expected === 0)
+export async function addBills(arrayData, date, wallet, walletBalance) {
+    const invalidRows = arrayData.filter(row => !row.categoryId || !row.description || row.expected.toNumber() === 0)
+    if (invalidRows.length > 0)
         return errorMsg('Category, Description, and Expected Amount is required')
-    if (!arrayData.wallet)
+    if (!wallet)
         return errorMsg('Wallet is required')
-    if (!arrayData.date)
+    if (!date)
         return errorMsg('Date is required')
+
     const type = 'bills'
     let successCount = 0;
     let countErrors = 0;
     let totalAmount = 0;
-    await Promise.all(arrayData.map(async (arrayData, index) => {
+    let initialWalletBalance = walletBalance;
+
+    for (const rowData of arrayData) {
+        const amount = !rowData.amount || rowData.amount === 0 ? 0 : rowData.amount.toNumber();
+        totalAmount += amount;
+        initialWalletBalance = initialWalletBalance.sub(rowData.amount || 0);
+
         const data = {
             type: type,
-            // status: 'completed',
-            category: arrayData.categoryId,
-            description: arrayData.description,
-            dueDate: convertToTimeStamp(arrayData.dueDate),
-            expected: !arrayData.expected || arrayData.expected === 0 ? 0 : arrayData.expected.toNumber(),
-            amount: !arrayData.amount || arrayData.amount === 0 ? 0 : arrayData.amount.toNumber(),
+            category: rowData.categoryId,
+            description: rowData.description,
+            dueDate: convertToTimeStamp(rowData.dueDate),
+            expected: !rowData.expected || rowData.expected === 0 ? 0 : rowData.expected.toNumber(),
+            amount: amount,
             date: convertToTimeStamp(date),
             wallet: wallet,
+            walletBalance: initialWalletBalance.toNumber(),
         }
-        totalAmount += data.amount;
+
         const result = await addDataModel('transactions', data)
         result.boolean ? successCount++ : countErrors++
-        // console.log('data', data)
-    }),
-        await updateCollectedData(date, type, totalAmount)
-    );
+    }
+
+    await updateCollectedData(date, type, totalAmount, wallet, initialWalletBalance.toNumber());
+    // await updateData('wallets', wallet, { balance: initialWalletBalance.toNumber() });
+
     if (successCount > 0 && countErrors <= 0)
         return successMsg(`Successfully added ${successCount} of ${arrayData.length} bills.`)
     if (countErrors > 0)

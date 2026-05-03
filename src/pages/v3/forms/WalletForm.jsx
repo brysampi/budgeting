@@ -52,13 +52,14 @@ const WalletForm = ({ onFinish }) => {
         for (const row of rows) {
             const data = {
                 name: row.name.trim(),
-                type,
-                startingBudget: row.startingBudget ? accurateDecimal(row.startingBudget) : 0,
+                type: row.type,
+                startingBudget: accurateDecimal(row.startingBudget),
             };
             const result = await addWallets(data)
-            // console.log('result', result)
-            if (result.status === 'success') {
+            if (result.boolean) {
                 successCount++;
+            } else {
+                alert(result.message);
             }
         }
 
@@ -146,7 +147,7 @@ const WalletForm = ({ onFinish }) => {
                                 className={`shared-form-field-v3 w-limit-150 ${rows.length < maxSingleRow ? 'single' : ''}`}
                                 placeholder="Starting Budget (Optional)"
                                 value={row.startingBudget}
-                                onChange={(e) => handleInputChange(row.id, 'startingBudget', e.target.value)}
+                                onChange={(e) => handleInputChange(row.id, 'startingBudget', accurateDecimal(e.target.value))}
                             />
                         </div>
 
