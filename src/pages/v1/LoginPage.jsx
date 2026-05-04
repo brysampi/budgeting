@@ -17,17 +17,17 @@ export default function LoginPage({ onLogin }) {
     }
     const loginAccount = async (event) => {
         event.preventDefault();
-        // setLoading(true)
-        // if (!user) {
-        //     clearForm()
-        //     console.log('Input Username.')
-        //     return false
-        // }
-        // if (!pass) {
-        //     clearForm()
-        //     console.log('Input Password.')
-        //     return false
-        // }
+        setLoading(true)
+        if (!user) {
+            clearForm()
+            console.log('Input Username.')
+            return false
+        }
+        if (!pass) {
+            clearForm()
+            console.log('Input Password.')
+            return false
+        }
         try {
             // const test = await login(user, pass)
             const test = await login('bell', 'bell')
