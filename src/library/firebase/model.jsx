@@ -14,6 +14,35 @@ export async function getUser(user, password) {
             where("password", "==", password),
             limit(1)
         );
+        // console.log('que: ', que)
+        const querySnapshot = await getDocs(que);
+        // console.log('querySnapshot: ', querySnapshot)
+        if (querySnapshot.empty) {
+            console.log("No users found");
+            return [];
+        }
+
+        const doc = querySnapshot.docs[0];
+        const userData = {
+            id: doc.id,
+            ...doc.data(),
+        };
+        // console.log('userData: ', doc)
+
+        return userData;
+    } catch (error) {
+        console.error("Error fetching users:", error);
+        return [];
+    }
+}
+export async function getUserByEmail(email) {
+    try {
+        const usersRef = collection(db, "users");
+        const que = query(
+            usersRef,
+            where("email", "==", email),
+            limit(1)
+        );
         const querySnapshot = await getDocs(que);
 
         if (querySnapshot.empty) {

@@ -1,26 +1,36 @@
-import React, { useState } from 'react';
-import { login } from "../../library/firebase/controller";
+import React, { useState, useEffect } from 'react';
+import { login, loginByGoogle } from "../../library/firebase/controller";
 // import '../css/login.css';
+import Cookies from 'js-cookie';
 export default function LoginPage({ onLogin }) {
     const [user, setUser] = useState('');
     const [pass, setPass] = useState('');
     const [loading, setLoading] = useState(false)
     const [viewPassword, setViewPassword] = useState(false)
+    const cookieStatus = Cookies.get('logged_status')
+    const loginWithGoogle = async () => {
+        const test = await loginByGoogle()
+        if (test.status === 'success' && test.boolean && test.data)
+            onLogin();
+        else
+            console.log('Login failed:', test.message);
+    }
     const loginAccount = async (event) => {
         event.preventDefault();
-        setLoading(true)
-        if (!user) {
-            clearForm()
-            console.log('Input Username.')
-            return false
-        }
-        if (!pass) {
-            clearForm()
-            console.log('Input Password.')
-            return false
-        }
+        // setLoading(true)
+        // if (!user) {
+        //     clearForm()
+        //     console.log('Input Username.')
+        //     return false
+        // }
+        // if (!pass) {
+        //     clearForm()
+        //     console.log('Input Password.')
+        //     return false
+        // }
         try {
-            const test = await login(user, pass)
+            // const test = await login(user, pass)
+            const test = await login('bell', 'bell')
             if (test.status === 'success' && test.boolean && test.data)
                 onLogin();
             else
@@ -69,6 +79,7 @@ export default function LoginPage({ onLogin }) {
                         </button>
                         {/* </div> */}
                     </form>
+                    <button onClick={loginWithGoogle}>Login by Google</button>
                     {/* <button onClick={setCookie}>Set Cookie</button>
                 <button onClick={updateCookie}>update Cookie</button>
                 <button onClick={destroyToken}>delete Cookie</button> */}

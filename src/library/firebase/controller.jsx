@@ -2,7 +2,7 @@ import { serverTimestamp } from 'firebase/firestore';
 import Cookies from 'js-cookie';
 import { successMsg, errorMsg, getUserID, convertToTimeStamp, convertToDate, componentIcons } from '../utils';
 import {
-    addData, updateData, getDataSingle, deleteData, getData, getUser, getAllData, getAllDataRealtime, getDataById, getAllDataActiveRealTime,
+    addData, updateData, getDataSingle, deleteData, getData, getUser, getUserByEmail, getAllData, getAllDataRealtime, getDataById, getAllDataActiveRealTime,
     getDataRealTime,
     //  getExpensesTrackerDataRealTime, 
     getDataCategoryRealTime,
@@ -13,7 +13,8 @@ import {
     deleteAllData,
     getAllTransactionsRealTime,
 } from './model';
-
+import { getAuth, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { auth, googleAuthProvider } from "./firebase";
 export async function checkStaticData(inputDate) {
     const getDataCollected = await getData('collectedData', inputDate)
     console.log(getDataCollected)
@@ -22,11 +23,13 @@ export async function checkStaticData(inputDate) {
 
 export async function login(user, password) {
     try {
+        // console.log('user, password: ', user, password)
         const response = await getUser(user, password);
+        // console.log('response', response)
         if (response && response.id) {
             for (let key in response) {
                 Cookies.set(key, response[key]);
-                // console.log(`Setting cookie: ${key} = ${response[key]}`);
+                console.log(`Setting cookie: ${key} = ${response[key]}`);
             }
             Cookies.set('logged_status', true);
             return successMsg('Login successful', response);
@@ -37,6 +40,41 @@ export async function login(user, password) {
         return errorMsg('An error occurred during login');
     }
 
+}
+export async function loginByGoogle() {
+    // const auth = getAuth();
+
+    // const text = await signInWithEmailAndPassword(auth, user, password);
+    const test = await signInWithPopup(auth, googleAuthProvider);
+    console.log(test.user);
+    if (test.user.email || test.user.emailVerified) {
+        Cookies.set('email', test.user.email);
+        Cookies.set('name', test.user.displayName);
+        Cookies.set('photoURL', test.user.photoURL);
+        Cookies.set('providerId', test.user.providerId);
+        Cookies.set('id', test.user.uid);
+        Cookies.set('logged_status', true);
+        return successMsg('Login successful', test.user);
+    }
+    return errorMsg('Login failed. Please check your username and password.');
+    // test.providerData
+    // displayName = BELL Pakner (BELL)
+    // email = bryansampi08@gmail.com
+    // phoneNumber = null
+    // photoURL = https://lh3.googleusercontent.com/a/ACg8ocJ03WLZ1UV6ha2MYKsTiNZr39_9fZYUEG_2Q6UWLUxs_Y1KnqW5=s96-c
+    // providerId = google.com
+    // uid = QGdQglCBTYTFdGdz2FSvVkef9et2
+    // const response = await getUserByEmail(test.user.email);
+    // console.log(response);
+    // if (response && response.id) {
+    //     for (let key in response) {
+    //         Cookies.set(key, response[key]);
+    //         console.log(`Setting cookie: ${key} = ${response[key]}`);
+    //     }
+    //     Cookies.set('logged_status', true);
+    //     return successMsg('Login successful', response);
+    // } else
+    //     return errorMsg('Login failed. Please check your username and password.');
 }
 // -------------------------- Collected Data Navbar -----------------------------------
 // export async function getCollectedDataByMonthRealTime_controller(inputDate, setData, isFetching) {
