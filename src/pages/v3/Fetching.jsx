@@ -14,6 +14,7 @@ export default function Fetching({ setIsFetching }) {
     const setTransactionData = transactionStore((state) => state.setData) || [];
     // Storage Data
     const storeMonthlyCollectedData = monthlyCollectedDataStore((state) => state.data) || [];
+    const storeTransactionData = transactionStore((state) => state.data) || [];
 
     // state
     const [isExpensesCategoryFetching, setIsExpensesCategoryFetching] = useState(true);
@@ -22,9 +23,10 @@ export default function Fetching({ setIsFetching }) {
     const [isMonthlyCollectedFetching, setIsMonthlyCollectedFetching] = useState(true);
     const [isTransactionFetching, setIsTransactionFetching] = useState(true);
 
-    useEffect(() => {
-        console.log('fetched transactions', storeMonthlyCollectedData);
-    }, [storeMonthlyCollectedData]);
+    // useEffect(() => {
+    //     console.log('fetched monthlyCollectedData', storeMonthlyCollectedData);
+    //     console.log('fetched transactions', storeTransactionData);
+    // }, [storeMonthlyCollectedData, storeTransactionData]);
 
     // useEffect(() => {
     //     console.log('storeWallet', storeWallet)

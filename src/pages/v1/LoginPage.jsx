@@ -29,8 +29,8 @@ export default function LoginPage({ onLogin }) {
             return false
         }
         try {
-            // const test = await login(user, pass)
-            const test = await login('bell', 'bell')
+            const test = await login(user, pass)
+            // const test = await login('bell', 'bell')
             if (test.status === 'success' && test.boolean && test.data)
                 onLogin();
             else
