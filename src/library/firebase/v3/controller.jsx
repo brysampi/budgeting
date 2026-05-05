@@ -1,5 +1,5 @@
 import { getAllDataModel, getAllDataRealtimeModel, addDataModel, getAllDataRealtimeByDateModel, updateData } from "./model";
-import { convertToTimeStamp, convertToDate, errorMsg, successMsg } from "../../utils";
+import { convertToTimeStamp, convertToDate, errorMsg, successMsg, accurateDecimal } from "../../utils";
 import Big from "big.js";
 
 // ----------------------------------General----------------------------------------
@@ -87,7 +87,7 @@ export async function getTransactions(paramMonth, setData, setIsFetching) {
 
 // ----------------------------------Income----------------------------------------
 export async function addIncome(arrayData, date, wallet, walletBalance) {
-    const invalidRows = arrayData.filter(row => !row.categoryId || !row.description || row.amount.toNumber() === 0)
+    const invalidRows = arrayData.filter(row => !row.categoryId || !row.description || accurateDecimal(row.amount || 0).toNumber() === 0)
     if (invalidRows.length > 0)
         return errorMsg('Category, Description, and Price is required')
     if (!wallet)
@@ -133,7 +133,7 @@ export async function addIncome(arrayData, date, wallet, walletBalance) {
 
 // ----------------------------------Expenses----------------------------------------
 export async function addExpenses(arrayData, date, wallet, walletBalance) {
-    const invalidArrayData = arrayData.filter(row => !row.categoryId || !row.description || row.price.toNumber() === 0)
+    const invalidArrayData = arrayData.filter(row => !row.categoryId || !row.description || accurateDecimal(row.price || 0).toNumber() === 0)
     if (invalidArrayData.length > 0)
         return errorMsg('Category, Description, and Price is required.')
     if (!wallet)
@@ -141,7 +141,7 @@ export async function addExpenses(arrayData, date, wallet, walletBalance) {
     if (!date)
         return errorMsg('Date is required.')
 
-    if (arrayData.filter(row => row.showDiscount && row.discount.toNumber() === 0).length > 0)
+    if (arrayData.filter(row => row.showDiscount && accurateDecimal(row.discount || 0).toNumber() === 0).length > 0)
         return errorMsg('Discount is required.')
 
     const type = 'expenses'
@@ -188,7 +188,7 @@ export async function addExpenses(arrayData, date, wallet, walletBalance) {
 
 // ----------------------------------Bills----------------------------------------
 export async function addBills(arrayData, date, wallet, walletBalance) {
-    const invalidRows = arrayData.filter(row => !row.categoryId || !row.description || row.expected.toNumber() === 0)
+    const invalidRows = arrayData.filter(row => !row.categoryId || !row.description || accurateDecimal(row.expected || 0).toNumber() === 0)
     if (invalidRows.length > 0)
         return errorMsg('Category, Description, and Expected Amount is required')
     if (!wallet)
