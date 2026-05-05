@@ -139,15 +139,21 @@ const ExpenseForm = ({ onFinish }) => {
         // }
         // console.log('rowssssssssssssssssss', rows)
         // console.log(accurateDecimal(storedWallets.find((wallet) => wallet.id === selectedWallet).balance));
-        setLoading(true);
-        const result = await addExpenses(rows, headerDate, selectedWallet,
-            accurateDecimal(storedWallets.find((wallet) => wallet.id === selectedWallet).balance)
-        );
-        console.log('result', result)
-        if (result.boolean)
-            handleClear();
-        alert(result.message);
-        setLoading(false);
+        try {
+            setLoading(true);
+            const result = await addExpenses(rows, headerDate, selectedWallet,
+                accurateDecimal(storedWallets.find((wallet) => wallet.id === selectedWallet).balance)
+            );
+            console.log('result', result)
+            if (result.boolean)
+                handleClear();
+            alert(result.message);
+        } catch (error) {
+            console.log('error', error)
+            alert('Failed to add expense.');
+        } finally {
+            setLoading(false);
+        }
         // if (successCount === rows.length) {
         //     console.log('success')
         //     if (onFinish) onFinish();
