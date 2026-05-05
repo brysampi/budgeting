@@ -158,7 +158,7 @@ export async function addExpenses(arrayData, date, wallet, walletBalance) {
             originalAmount;
 
         totalAmount += finalAmount;
-        initialWalletBalance = initialWalletBalance.sub(finalAmount).toNumber();
+        initialWalletBalance = accurateDecimal(initialWalletBalance).sub(finalAmount).toNumber();
 
         const data = {
             type: type,
