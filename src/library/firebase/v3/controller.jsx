@@ -99,12 +99,12 @@ export async function addIncome(arrayData, date, wallet, walletBalance) {
     let successCount = 0;
     let countErrors = 0;
     let totalAmount = 0;
-    let initialWalletBalance = walletBalance;
+    let initialWalletBalance = accurateDecimal(walletBalance).toNumber();
 
     for (const rowData of arrayData) {
-        const amount = rowData.amount.toNumber();
+        const amount = accurateDecimal(rowData.amount || 0).toNumber();
         totalAmount += amount;
-        initialWalletBalance = initialWalletBalance.add(rowData.amount);
+        initialWalletBalance = accurateDecimal(initialWalletBalance).add(amount).toNumber();
 
         const data = {
             type: type,
@@ -113,14 +113,14 @@ export async function addIncome(arrayData, date, wallet, walletBalance) {
             amount: amount,
             wallet: wallet,
             date: convertToTimeStamp(date),
-            walletBalance: initialWalletBalance.toNumber(),
+            walletBalance: initialWalletBalance,
         }
 
         const result = await addDataModel('transactions', data)
         result.boolean ? successCount++ : countErrors++
     }
 
-    await updateCollectedData(date, type, totalAmount, wallet, initialWalletBalance.toNumber());
+    await updateCollectedData(date, type, totalAmount, wallet, initialWalletBalance);
     // await updateData('wallets', wallet, { balance: initialWalletBalance.toNumber() });
 
     if (successCount > 0 && countErrors <= 0)
@@ -176,7 +176,7 @@ export async function addExpenses(arrayData, date, wallet, walletBalance) {
         result.boolean ? successCount++ : countErrors++
     }
 
-    await updateCollectedData(date, type, totalAmount, wallet, initialWalletBalance.toNumber());
+    await updateCollectedData(date, type, totalAmount, wallet, initialWalletBalance);
 
     if (successCount > 0 && countErrors <= 0)
         return successMsg(`Successfully added ${successCount} of ${arrayData.length} expenses.`)
@@ -200,30 +200,31 @@ export async function addBills(arrayData, date, wallet, walletBalance) {
     let successCount = 0;
     let countErrors = 0;
     let totalAmount = 0;
-    let initialWalletBalance = walletBalance;
+    let initialWalletBalance = accurateDecimal(walletBalance).toNumber();
 
     for (const rowData of arrayData) {
-        const amount = !rowData.amount || rowData.amount === 0 ? 0 : rowData.amount.toNumber();
+        const amount = accurateDecimal(rowData.amount || 0).toNumber();
+        const expected = accurateDecimal(rowData.expected || 0).toNumber();
         totalAmount += amount;
-        initialWalletBalance = initialWalletBalance.sub(rowData.amount || 0);
+        initialWalletBalance = accurateDecimal(initialWalletBalance).sub(amount).toNumber();
 
         const data = {
             type: type,
             category: rowData.categoryId,
             description: rowData.description,
             dueDate: convertToTimeStamp(rowData.dueDate),
-            expected: !rowData.expected || rowData.expected === 0 ? 0 : rowData.expected.toNumber(),
+            expected: expected,
             amount: amount,
             date: convertToTimeStamp(date),
             wallet: wallet,
-            walletBalance: initialWalletBalance.toNumber(),
+            walletBalance: initialWalletBalance,
         }
 
         const result = await addDataModel('transactions', data)
         result.boolean ? successCount++ : countErrors++
     }
 
-    await updateCollectedData(date, type, totalAmount, wallet, initialWalletBalance.toNumber());
+    await updateCollectedData(date, type, totalAmount, wallet, initialWalletBalance);
     // await updateData('wallets', wallet, { balance: initialWalletBalance.toNumber() });
 
     if (successCount > 0 && countErrors <= 0)
