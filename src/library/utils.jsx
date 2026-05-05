@@ -155,6 +155,7 @@ export function generateUniqueID() {
 }
 
 export function accurateDecimal(amount) {
-    if (!amount) return new Big(0);
+    if (amount instanceof Big) return amount;
+    if (amount === null || amount === undefined || amount === '' || isNaN(Number(amount))) return new Big(0);
     return new Big(amount);
 }

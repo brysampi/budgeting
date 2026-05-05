@@ -148,13 +148,13 @@ export async function addExpenses(arrayData, date, wallet, walletBalance) {
     let successCount = 0;
     let countErrors = 0;
     let totalAmount = 0;
-    let initialWalletBalance = accurateDecimal(walletBalance);
+    let initialWalletBalance = accurateDecimal(walletBalance).toNumber();
 
     for (const rowData of arrayData) {
         const originalAmount = rowData.price ? accurateDecimal(rowData.price).toNumber() : 0;
         const discount = rowData.discount ? accurateDecimal(rowData.discount).toNumber() : 0;
         const finalAmount = rowData.discount ?
-            accurateDecimal(rowData.price).sub(rowData.discount).toNumber() :
+            new Big(originalAmount).minus(new Big(discount)).toNumber() :
             originalAmount;
 
         totalAmount += finalAmount;
