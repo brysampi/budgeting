@@ -148,17 +148,17 @@ export async function addExpenses(arrayData, date, wallet, walletBalance) {
     let successCount = 0;
     let countErrors = 0;
     let totalAmount = 0;
-    let initialWalletBalance = walletBalance;
+    let initialWalletBalance = accurateDecimal(walletBalance);
 
     for (const rowData of arrayData) {
-        const originalAmount = rowData.price ? rowData.price.toNumber() : 0;
-        const discount = rowData.discount ? rowData.discount.toNumber() : 0;
+        const originalAmount = rowData.price ? accurateDecimal(rowData.price).toNumber() : 0;
+        const discount = rowData.discount ? accurateDecimal(rowData.discount).toNumber() : 0;
         const finalAmount = rowData.discount ?
-            rowData.price.minus(rowData.discount).toNumber() :
+            accurateDecimal(rowData.price).sub(rowData.discount).toNumber() :
             originalAmount;
 
         totalAmount += finalAmount;
-        initialWalletBalance = initialWalletBalance.sub(finalAmount);
+        initialWalletBalance = initialWalletBalance.sub(finalAmount).toNumber();
 
         const data = {
             type: type,
@@ -169,7 +169,7 @@ export async function addExpenses(arrayData, date, wallet, walletBalance) {
             amount: finalAmount,
             date: convertToTimeStamp(date),
             wallet: wallet,
-            walletBalance: initialWalletBalance.toNumber(),
+            walletBalance: initialWalletBalance,
         }
 
         const result = await addDataModel('transactions', data)
