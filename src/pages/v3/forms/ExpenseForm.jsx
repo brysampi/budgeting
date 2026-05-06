@@ -225,7 +225,7 @@ const ExpenseForm = ({ onFinish }) => {
                 {/* Total and Clear Actions */}
                 <div className="flex justify-between items-center ">
                     <div className="text-m font-bold text-[var(--color-light)] flex items-center gap-2">
-                        Total: <span className="text-yellow-500">{calculateTotal().toFixed(2)}</span>
+                        Total: <span className="text-yellow-500">{calculateTotal()}</span>
                     </div>
                     <div className="flex items-center gap-3">
                         {/* <button

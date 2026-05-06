@@ -1,6 +1,5 @@
 import { getAllDataModel, getAllDataRealtimeModel, addDataModel, getAllDataRealtimeByDateModel, updateData } from "./model";
 import { convertToTimeStamp, convertToDate, errorMsg, successMsg, accurateDecimal } from "../../utils";
-import Big from "big.js";
 
 // ----------------------------------General----------------------------------------
 export async function getAllDataRealtime(table, setData, isFetching) {
@@ -13,7 +12,8 @@ export async function getAllDataRealtimeByDate(table, setData, isFetching, date 
 
 // ----------------------------------Collected Data----------------------------------------
 export async function checkCollectedData(date) {
-    const resp = await getAllDataModel('collectedData', convertToTimeStamp(date))
+
+    const resp = await getAllDataModel('collectedData', date)
     if (resp.data && resp.data.length > 0) {
         return successMsg('Data found', resp.data[0])
     }
@@ -64,7 +64,7 @@ export async function addWallets(arrayData) {
     const data = {
         ...removedData,
         status: 'active',
-        balance: startingBudget.toNumber(),
+        balance: accurateDecimal(startingBudget).toNumber(),
     }
     return await addDataModel('wallets', data)
 }
@@ -99,28 +99,28 @@ export async function addIncome(arrayData, date, wallet, walletBalance) {
     let successCount = 0;
     let countErrors = 0;
     let totalAmount = 0;
-    let initialWalletBalance = accurateDecimal(walletBalance).toNumber();
+    let initialWalletBalance = accurateDecimal(walletBalance); // Big throughout
 
     for (const rowData of arrayData) {
-        const amount = accurateDecimal(rowData.amount || 0).toNumber();
-        totalAmount += amount;
-        initialWalletBalance = accurateDecimal(initialWalletBalance).add(amount).toNumber();
+        const amount = accurateDecimal(rowData.amount);
+        totalAmount += amount.toNumber();
+        initialWalletBalance = initialWalletBalance.plus(amount); // Big stays Big
 
         const data = {
             type: type,
             category: rowData.categoryId,
             description: rowData.description,
-            amount: amount,
+            amount: amount.toNumber(),
             wallet: wallet,
             date: convertToTimeStamp(date),
-            walletBalance: initialWalletBalance,
+            walletBalance: initialWalletBalance.toNumber(),
         }
 
         const result = await addDataModel('transactions', data)
         result.boolean ? successCount++ : countErrors++
     }
 
-    await updateCollectedData(date, type, totalAmount, wallet, initialWalletBalance);
+    await updateCollectedData(date, type, totalAmount, wallet, initialWalletBalance.toNumber());
     // await updateData('wallets', wallet, { balance: initialWalletBalance.toNumber() });
 
     if (successCount > 0 && countErrors <= 0)
@@ -148,35 +148,35 @@ export async function addExpenses(arrayData, date, wallet, walletBalance) {
     let successCount = 0;
     let countErrors = 0;
     let totalAmount = 0;
-    let initialWalletBalance = accurateDecimal(walletBalance).toNumber();
+    let initialWalletBalance = accurateDecimal(walletBalance); // stays Big throughout
 
     for (const rowData of arrayData) {
-        const originalAmount = rowData.price ? accurateDecimal(rowData.price).toNumber() : 0;
-        const discount = rowData.discount ? accurateDecimal(rowData.discount).toNumber() : 0;
-        const finalAmount = rowData.discount ?
-            new Big(originalAmount).minus(new Big(discount)).toNumber() :
-            originalAmount;
+        const price = accurateDecimal(rowData.price);
+        const discount = accurateDecimal(rowData.discount);
+        const finalAmount = rowData.discount
+            ? price.minus(discount)
+            : price;
 
-        totalAmount += finalAmount;
-        initialWalletBalance = accurateDecimal(initialWalletBalance).sub(finalAmount).toNumber();
+        totalAmount += finalAmount.toNumber();
+        initialWalletBalance = initialWalletBalance.minus(finalAmount); // Big stays Big
 
         const data = {
             type: type,
             category: rowData.categoryId,
             description: rowData.description,
-            originalAmount: originalAmount,
-            discount: discount,
-            amount: finalAmount,
+            originalAmount: price.toNumber(),
+            discount: discount.toNumber(),
+            amount: finalAmount.toNumber(),
             date: convertToTimeStamp(date),
             wallet: wallet,
-            walletBalance: initialWalletBalance,
+            walletBalance: initialWalletBalance.toNumber(),
         }
 
         const result = await addDataModel('transactions', data)
         result.boolean ? successCount++ : countErrors++
     }
 
-    await updateCollectedData(date, type, totalAmount, wallet, initialWalletBalance);
+    await updateCollectedData(date, type, totalAmount, wallet, initialWalletBalance.toNumber());
 
     if (successCount > 0 && countErrors <= 0)
         return successMsg(`Successfully added ${successCount} of ${arrayData.length} expenses.`)
@@ -200,31 +200,31 @@ export async function addBills(arrayData, date, wallet, walletBalance) {
     let successCount = 0;
     let countErrors = 0;
     let totalAmount = 0;
-    let initialWalletBalance = accurateDecimal(walletBalance).toNumber();
+    let initialWalletBalance = accurateDecimal(walletBalance); // Big throughout
 
     for (const rowData of arrayData) {
-        const amount = accurateDecimal(rowData.amount || 0).toNumber();
-        const expected = accurateDecimal(rowData.expected || 0).toNumber();
-        totalAmount += amount;
-        initialWalletBalance = accurateDecimal(initialWalletBalance).sub(amount).toNumber();
+        const amount = accurateDecimal(rowData.amount);
+        const expected = accurateDecimal(rowData.expected);
+        totalAmount += amount.toNumber();
+        initialWalletBalance = initialWalletBalance.minus(amount); // Big stays Big
 
         const data = {
             type: type,
             category: rowData.categoryId,
             description: rowData.description,
             dueDate: convertToTimeStamp(rowData.dueDate),
-            expected: expected,
-            amount: amount,
+            expected: expected.toNumber(),
+            amount: amount.toNumber(),
             date: convertToTimeStamp(date),
             wallet: wallet,
-            walletBalance: initialWalletBalance,
+            walletBalance: initialWalletBalance.toNumber(),
         }
 
         const result = await addDataModel('transactions', data)
         result.boolean ? successCount++ : countErrors++
     }
 
-    await updateCollectedData(date, type, totalAmount, wallet, initialWalletBalance);
+    await updateCollectedData(date, type, totalAmount, wallet, initialWalletBalance.toNumber());
     // await updateData('wallets', wallet, { balance: initialWalletBalance.toNumber() });
 
     if (successCount > 0 && countErrors <= 0)

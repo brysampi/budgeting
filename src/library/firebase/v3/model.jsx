@@ -1,6 +1,6 @@
 import { collection, onSnapshot, orderBy, query, where, addDoc, serverTimestamp, getDocs, doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
-import { getUserID, errorMsg, successMsg } from "../../utils";
+import { getUserID, getMonthRangeFromInput, errorMsg, successMsg } from "../../utils";
 
 export async function addDataModel(table, arrayData, created = serverTimestamp()) {
     try {
@@ -83,8 +83,11 @@ export async function getAllDataModel(table, date = null) {
             orderBy("date", "desc"),
         ];
         if (date) {
-            constraints.push(where("date", "<=", date));
-            constraints.push(where("date", ">=", date));
+            const { startOfMonth, endOfMonth } = getMonthRangeFromInput(date);
+            console.log('startOfMonth', startOfMonth)
+            console.log('endOfMonth', endOfMonth)
+            constraints.push(where("date", "<=", endOfMonth));
+            constraints.push(where("date", ">=", startOfMonth));
         }
 
         const que = query(

@@ -62,8 +62,15 @@ export function formatToYearMonth(date) {
 }
 // to get the range of the month in YYYY-MM-DD format
 export function getMonthRangeFromInput(inputDateString) {
-    // If no input provided, default to today
-    const inputDate = inputDateString ? new Date(inputDateString) : new Date();
+    let inputDate;
+
+    // Check if it's a Firebase Timestamp object
+    if (inputDateString && typeof inputDateString.toDate === "function") {
+        inputDate = inputDateString.toDate();
+    } else {
+        // If no input provided or it's a normal string/Date, parse it
+        inputDate = inputDateString ? new Date(inputDateString) : new Date();
+    }
 
     // Check if the date is actually valid
     if (isNaN(inputDate.getTime())) {
