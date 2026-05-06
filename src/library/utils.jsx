@@ -94,6 +94,7 @@ export function getMonthNames(inputDate) {
     ];
     return monthNames[inputDate.toDate().getMonth()];
 }
+
 // ParaMonth Date (Ex. 2025-08)
 // to get the month name from the ParaMonth Date (Ex. 2025-08) or from (YYYY-MM)
 export function getMonthNamesSingleDigit(paramMonth) {
@@ -114,6 +115,15 @@ export const getMonthNamesWithYear = (dateStr) => {
     // console.log(parseInt(month) - 1)
     return `${monthNames[parseInt(month) - 1]} ${year}`;
 };
+// Convert Date to Month-Day
+export function convertToMonthDay(date) {
+    // get month name from 
+    getMonthNamesWithYear
+    const dateObject = new Date(date);
+    const month = dateObject.getMonth() + 1;
+    const day = dateObject.getDate();
+    return `${month}-${day}`;
+}
 // to get the last day of the month (Ex. 2025-08) 
 export function getLastDayOfTheMonth(paramMonth) {
     // Set the last day of the month based on paramMonth for the default due date

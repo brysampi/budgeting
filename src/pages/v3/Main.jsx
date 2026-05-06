@@ -16,6 +16,7 @@ import Wallets from './components/Wallets';
 import AddForms from './components/AddForms';
 import Stats from './components/Stats';
 import Category from './components/Category';
+import Transactions from './components/Transactions';
 
 import { getAllDataRealTimeController } from '../../library/firebase/controller';
 import Fetching from './Fetching';
@@ -49,6 +50,7 @@ const main = () => {
             <Wallets />
             <Stats setParamMonth={setParamMonth} />
             <Category paramMonth={paramMonth} />
+            <Transactions />
             {/* <button onClick={() => changeMonth('2025-11')}>Change Month</button> */}
         </>
     );

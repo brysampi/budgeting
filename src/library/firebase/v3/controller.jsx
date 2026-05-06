@@ -1,4 +1,4 @@
-import { getAllDataModel, getAllDataRealtimeModel, addDataModel, getAllDataRealtimeByDateModel, updateData } from "./model";
+import { getAllDataModel, getAllDataRealtimeModel, addDataModel, getAllDataRealtimeByDateModel, updateData, deleteData, deleteAllData } from "./model";
 import { convertToTimeStamp, convertToDate, errorMsg, successMsg, accurateDecimal } from "../../utils";
 
 // ----------------------------------General----------------------------------------
@@ -83,6 +83,28 @@ export async function addTransactions(arrayData) {
 
 export async function getTransactions(paramMonth, setData, setIsFetching) {
     return await getAllDataRealtimeModel('transactions', setData, setIsFetching)
+}
+export async function undoTransaction(paramMonth, id, amount, type, walletId, initialWalletBalance) {
+    // await deleteAllData('transactions')
+    // await deleteAllData('collectedData')
+    // await deleteAllData('wallets')
+    // return
+    const existing = await checkCollectedData(paramMonth)
+    const updatePayload = {
+        balance: type === 'income' ?
+            existing.data.balance - amount :
+            existing.data.balance + amount,
+        [type]: existing.data[type] - amount
+    }
+    const walletBalance = type === 'income' ?
+        accurateDecimal(initialWalletBalance).minus(amount).toNumber() :
+        accurateDecimal(initialWalletBalance).plus(amount).toNumber()
+    console.log('walletBalance', walletBalance)
+    await updateData('wallets', walletId, { balance: walletBalance })
+    await updateData('collectedData', existing.data.id, updatePayload)
+
+    const result = await deleteData('transactions', id)
+    return result
 }
 
 // ----------------------------------Income----------------------------------------

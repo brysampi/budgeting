@@ -1,4 +1,4 @@
-import { collection, onSnapshot, orderBy, query, where, addDoc, serverTimestamp, getDocs, doc, updateDoc } from "firebase/firestore";
+import { collection, onSnapshot, orderBy, query, where, addDoc, serverTimestamp, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { getUserID, getMonthRangeFromInput, errorMsg, successMsg } from "../../utils";
 
@@ -123,5 +123,39 @@ export async function updateData(table, id, arrayData) {
     } catch (error) {
         console.log("Error updating data:", error)
         return errorMsg('Failed to update data. Check console for error.')
+    }
+}
+//---------------------------------------------------
+export async function deleteData(table, id) {
+    try {
+        const docRef = doc(db, table, id);
+        await deleteDoc(docRef);
+        return successMsg('Successfully Deleted.')
+    } catch (error) {
+        console.error("Error deleting data:", error);
+        return errorMsg('Failed to delete data. Check console for error.')
+    }
+}
+export async function deleteAllData(table) {
+    try {
+        const userID = getUserID();
+        if (!userID) {
+            return errorMsg('No LoggedIn User Found.');
+        }
+
+        const q = query(collection(db, table), where("user", "==", userID));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+            return successMsg('No data to delete.');
+        }
+
+        const deletePromises = querySnapshot.docs.map((docSnap) => deleteDoc(doc(db, table, docSnap.id)));
+        await Promise.all(deletePromises);
+
+        return successMsg('Successfully Deleted All Data.');
+    } catch (error) {
+        console.error("Error deleting all data:", error);
+        return errorMsg('Failed to delete all data. Check console for error.');
     }
 }
