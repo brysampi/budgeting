@@ -1,4 +1,4 @@
-import { collection, onSnapshot, orderBy, query, where, addDoc, serverTimestamp, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { collection, onSnapshot, orderBy, query, where, addDoc, serverTimestamp, getDocs, doc, updateDoc, deleteDoc, limit, startAfter } from "firebase/firestore";
 import { db } from "../firebase";
 import { getUserID, getMonthRangeFromInput, errorMsg, successMsg } from "../../utils";
 
@@ -157,5 +157,50 @@ export async function deleteAllData(table) {
     } catch (error) {
         console.error("Error deleting all data:", error);
         return errorMsg('Failed to delete all data. Check console for error.');
+    }
+}
+export async function firstLoad(table, setData, isFetching, limitParams = 5, onLastDoc = null) {
+    try {
+        const que = query(
+            collection(db, table),
+            where("user", "==", getUserID()),
+            orderBy("date", "desc"),
+            limit(limitParams),
+        );
+        // console.log('getUserID()', getUserID())
+        const unsubscribe = onSnapshot(que, async (snapshot) => {
+            const promises = snapshot.docs.map(async (docSnap) => ({
+                id: docSnap.id,
+                ...docSnap.data(),
+            }));
+            const resolvedData = await Promise.all(promises);
+            setData(resolvedData);
+            isFetching(false);
+            if (onLastDoc) onLastDoc(snapshot.docs[snapshot.docs.length - 1] ?? null);
+            return resolvedData;
+        });
+        return unsubscribe;
+    } catch (error) {
+        console.log(error)
+        return errorMsg('Failed to fetch data. Check console for error.');
+    }
+}
+export async function loadMore(table, lastDoc, limitParams = 5) {
+    try {
+        const q = query(
+            collection(db, table),
+            where("user", "==", getUserID()),
+            orderBy("date", "desc"),
+            startAfter(lastDoc),
+            limit(limitParams)
+        );
+        const snapshot = await getDocs(q);
+        const data = snapshot.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
+        const newLastDoc = snapshot.docs[snapshot.docs.length - 1] ?? null;
+        const hasMore = snapshot.docs.length === limitParams;
+        return { data, lastDoc: newLastDoc, hasMore };
+    } catch (error) {
+        console.log(error)
+        return { data: [], lastDoc: null, hasMore: false };
     }
 }

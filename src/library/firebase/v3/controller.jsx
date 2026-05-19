@@ -1,4 +1,11 @@
-import { getAllDataModel, getAllDataRealtimeModel, addDataModel, getAllDataRealtimeByDateModel, updateData, deleteData, deleteAllData } from "./model";
+import {
+    addDataModel,
+    getAllDataModel, getAllDataRealtimeModel, getAllDataRealtimeByDateModel,
+    updateData,
+    deleteData, deleteAllData,
+    firstLoad,
+    loadMore
+} from "./model";
 import { convertToTimeStamp, convertToDate, errorMsg, successMsg, accurateDecimal } from "../../utils";
 
 // ----------------------------------General----------------------------------------
@@ -81,8 +88,12 @@ export async function addCategory(arrayData) {
 export async function addTransactions(arrayData) {
 }
 
-export async function getTransactions(paramMonth, setData, setIsFetching) {
-    return await getAllDataRealtimeModel('transactions', setData, setIsFetching)
+export async function getTransactions(paramMonth, setData, setIsFetching, onLastDoc = null) {
+    return await firstLoad('transactions', setData, setIsFetching, 5, onLastDoc);
+}
+
+export async function loadMoreTransactions(lastDoc) {
+    return await loadMore('transactions', lastDoc, 5);
 }
 export async function undoTransaction(paramMonth, id, amount, type, walletId, initialWalletBalance) {
     // await deleteAllData('transactions')
